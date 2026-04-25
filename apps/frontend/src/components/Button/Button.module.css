@@ -1,0 +1,30 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+
+  border: none;
+  border-radius: 1000px;
+
+  background-color: var(--accent);
+
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+
+  cursor: pointer;
+
+  transition: background-color ease-in-out 0.2s;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  & > span {
+    flex: 1;
+  }
+
+  &:not(:disabled):hover {
+    background-color: oklch(from var(--accent) calc(0.85 * l) c h);
+  }
+}
