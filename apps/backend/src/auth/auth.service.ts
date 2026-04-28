@@ -7,23 +7,21 @@ export class AuthService {
   constructor(private readonly authRepository: AuthRepository) {}
 
   login(email: string, password: string): string {
-    const userEntity = this.authRepository.getUserByEmail(email);
+    const user = this.authRepository.getUserByEmail(email);
 
-    if (!userEntity) {
+    if (!user) {
       throw new Error('Invalid credentials');
     }
 
-    const userModel = userEntity.toModel();
-
-    if (userModel.password !== password) throw new Error('Invalid credentials');
+    if (user.password !== password) throw new Error('Invalid credentials');
 
     return 'fake-jwt-token';
   }
 
   register(username: string, email: string, password: string): string {
-    const userAlreadyExists = this.authRepository.getUserByEmail(email);
+    const user = this.authRepository.getUserByEmail(email);
 
-    if (userAlreadyExists) {
+    if (user) {
       throw new Error('This email is already used.');
     }
 
