@@ -4,13 +4,17 @@ import {
   type LoginRequestDTO,
   LoginRequestSchema,
   LoginResponseDTO,
+} from '@project/shared';
+import {
   type RegisterRequestDTO,
   RegisterRequestSchema,
   RegisterResponseDTO,
-  type UpdateRequestDTO,
-  UpdateRequestSchema,
-  UpdateResponseDTO,
-} from '@project/shared';
+} from '@project/shared/src/dtos/register.dto';
+import {
+  type UpdateUserRequestDTO,
+  UpdateUserRequestSchema,
+  UpdateUserResponseDTO,
+} from '@project/shared/src/dtos/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -46,12 +50,12 @@ export class AuthController {
 
   @Patch('update')
   @HttpCode(200)
-  update(@Body() body: UpdateRequestDTO) {
-    const validBody = UpdateRequestSchema.parse(body);
+  update(@Body() body: UpdateUserRequestDTO) {
+    const validBody = UpdateUserRequestSchema.parse(body);
 
     const token = this.authService.update(validBody.username, validBody.email);
 
-    const response: UpdateResponseDTO = { token };
+    const response: UpdateUserResponseDTO = { token };
 
     return response;
   }
