@@ -14,8 +14,10 @@ export const LoginForm = () => {
     <main className={styles.main}>
       <form action={formAction} className={styles.form}>
         <TextInput name="email" type="email" label="Email" required />
-        <TextInput name="password" type="password" label="Password" required />
-
+        <br></br>
+        <TextInput name="password" type="password" label="Password" required /> 
+        <br></br>
+        
         <Button
           text={isPending ? 'Logging in...' : 'Login'}
           type="submit"

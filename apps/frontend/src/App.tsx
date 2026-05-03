@@ -1,7 +1,7 @@
-import { LoginForm } from './features/auth/ui/LoginForm/LoginForm';
+import { Register } from './pages/Register/Register'
 
 function App() {
-  return <LoginForm />;
+  return <Register />;
 }
 
 export default App;

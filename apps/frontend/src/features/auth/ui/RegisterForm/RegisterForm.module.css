@@ -1,0 +1,19 @@
+.main {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+.form textinput{
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+
+  width: 100%;
+  max-width: 600px; 
+  padding: 2rem;
+}
+
+
+
+
