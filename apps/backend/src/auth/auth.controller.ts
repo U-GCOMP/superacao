@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Patch } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   type LoginRequestDTO,
@@ -10,11 +10,6 @@ import {
   RegisterRequestSchema,
   RegisterResponseDTO,
 } from '@project/shared/src/dtos/register.dto';
-import {
-  type UpdateUserRequestDTO,
-  UpdateUserRequestSchema,
-  UpdateUserResponseDTO,
-} from '@project/shared/src/dtos/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -44,18 +39,6 @@ export class AuthController {
     );
 
     const response: RegisterResponseDTO = { token };
-
-    return response;
-  }
-
-  @Patch('update')
-  @HttpCode(200)
-  update(@Body() body: UpdateUserRequestDTO) {
-    const validBody = UpdateUserRequestSchema.parse(body);
-
-    const token = this.authService.update(validBody.username, validBody.email);
-
-    const response: UpdateUserResponseDTO = { token };
 
     return response;
   }

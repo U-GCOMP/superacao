@@ -32,17 +32,4 @@ export class AuthService {
 
     return 'fake-jwt-token';
   }
-
-  update(newUsername: string, email: string): string {
-    const user = this.authRepository.getUserByEmail(email);
-
-    if (!user) {
-      throw new Error('This user doesn`t exist.');
-    }
-
-    const updatedUser = new UserModel(newUsername, user.email, user.password);
-    this.authRepository.saveUser(updatedUser);
-
-    return 'fake-jwt-token';
-  }
 }
