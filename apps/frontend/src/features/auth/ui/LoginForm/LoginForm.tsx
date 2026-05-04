@@ -1,5 +1,5 @@
 import { useActionState } from 'react';
-import styles from './LoginForm.module.css';
+import styles from '../auth.module.css';
 import { loginAction } from '../../api/login-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { Button } from '../../../../components/Button/Button';
@@ -13,9 +13,11 @@ export const LoginForm = () => {
   return (
     <main className={styles.main}>
       <form action={formAction} className={styles.form}>
-        <TextInput name="email" type="email" label="Email" required />
-        <TextInput name="password" type="password" label="Password" required />
-
+        <TextInput name="email" type="email" label="E-mail" required />
+        <br></br>
+        <TextInput name="password" type="password" label="Senha" required /> 
+        <br></br>
+        
         <Button
           text={isPending ? 'Logging in...' : 'Login'}
           type="submit"

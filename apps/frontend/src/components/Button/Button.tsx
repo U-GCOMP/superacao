@@ -6,6 +6,7 @@ interface ButtonProps {
   onClick?: () => void;
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   disabled?: boolean;
+  borderRadius?: string; 
 }
 
 export const Button = ({
@@ -13,6 +14,7 @@ export const Button = ({
   onClick,
   type = 'button',
   disabled = false,
+  borderRadius, 
 }: ButtonProps) => {
   return (
     <button
@@ -20,6 +22,7 @@ export const Button = ({
       onClick={onClick}
       type={type}
       disabled={disabled}
+      style={{ borderRadius }} 
     >
       <span>{text}</span>
     </button>

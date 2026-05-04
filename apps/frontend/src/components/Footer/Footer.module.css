@@ -1,0 +1,76 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 5%;
+  background-color: var(--accent);
+  color: white;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: auto; 
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.brandName {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px; 
+  background-color: #FDFCEE; 
+  color: #333;
+  border: 1px solid transparent;
+  border-radius: 6px; 
+  font-size: 1rem;
+  font-weight: medium;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.primaryButton:hover {
+  background-color: #ffffff;
+  border-color: #999;
+}
+
+.textButton {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: white;
+  padding: 6px 12px; 
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.textButton:hover {
+  opacity: 0.8;
+}
+
+.primaryButton:focus,
+.textButton:focus {
+  outline: 2px solid #c0d8b8;
+  outline-offset: 2px;
+  border-radius: 4px;
+}

@@ -1,7 +1,7 @@
-import { LoginForm } from './features/auth/ui/LoginForm/LoginForm';
+import { RedefinePassword } from './pages/RedefinePassword/RedefinePassword'
 
 function App() {
-  return <LoginForm />;
+  return <RedefinePassword />;
 }
 
 export default App;

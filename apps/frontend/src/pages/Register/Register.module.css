@@ -1,0 +1,24 @@
+.content {
+    color: #3A3232
+}
+
+.footerLinks {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #3A3232;
+}
+
+.footerLinks p {
+  margin: 0.5rem 0;
+}
+
+.accentText {
+  color: var(--accent); 
+  font-weight: Medium;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.accentText:hover {
+  text-decoration: underline;
+}
