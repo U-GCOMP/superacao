@@ -1,3 +1,38 @@
+# TypeORM + Docker Compose
+
+## Generate a migration
+Creates a new migration file based on entity changes.
+
+```bash
+pnpm typeorm migration:generate src/migrations/<migration_name>
+```
+
+## Run all migrations
+Executes all pending migrations against the database.
+```bash
+pnpm typeorm migration:run
+```
+
+## Start containers
+Starts all services defined in `docker-compose.yml` in detached mode.
+
+```bash
+docker compose up -d
+```
+
+## Stop containers
+Stops and removes the running containers.
+```bash
+docker compose down
+```
+
+## Stop containers and remove volumes
+Stops containers and also removes attached volumes.
+Useful when you want to reset persisted database data.
+```bash
+docker compose down -v
+```
+
 # Architecture
 
 This backend follows a **modular, layered architecture**.
