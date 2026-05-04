@@ -1,35 +1,53 @@
-import { Injectable } from '@nestjs/common';
-import { AuthRepository } from './auth.repository';
-import { UserModel } from '@project/shared/src/models/user.model';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly authRepository: AuthRepository) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  login(email: string, password: string): string {
-    const user = this.authRepository.getUserByEmail(email);
+  async login(email: string, pass: string): Promise<string> {
+    const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new UnauthorizedException('Credenciais inválidas');
     }
 
-    if (user.password !== password) throw new Error('Invalid credentials');
+    const isPasswordValid = await bcrypt.compare(pass, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
 
-    return 'fake-jwt-token';
+    const payload = { sub: user.id, username: user.username, email: user.email };
+    return this.jwtService.sign(payload);
   }
 
-  register(username: string, email: string, password: string): string {
-    const user = this.authRepository.getUserByEmail(email);
+  async register(username: string, email: string, pass: string): Promise<string> {
+    const userExists = await this.userRepository.findOne({ where: { email } });
 
-    if (user) {
-      throw new Error('This email is already used.');
+    if (userExists) {
+      throw new ConflictException('Este e-mail já está em uso.');
     }
 
-    const newUser = new UserModel(username, email, password);
-    this.authRepository.saveUser(newUser);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(pass, salt);
 
-    // Lacking e-mail confirmation. Probably gonna end-up doing separate module for that, since other functionalities are gonna use e-mail sending
+    const newUser = this.userRepository.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+    
+    await this.userRepository.save(newUser);
 
-    return 'fake-jwt-token';
+    const payload = { sub: newUser.id, username: newUser.username, email: newUser.email };
+    return this.jwtService.sign(payload);
   }
 }
