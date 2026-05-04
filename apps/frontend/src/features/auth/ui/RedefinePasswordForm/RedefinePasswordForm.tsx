@@ -1,11 +1,11 @@
 import { useActionState } from 'react';
 import styles from '../auth.module.css';
-import { registerAction } from '../../api/register-action';
+import { redefinePasswordAction } from '../../api/redefinePassword-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { Button } from '../../../../components/Button/Button';
 
-export const RegisterForm = () => {
-  const [state, formAction, isPending] = useActionState(registerAction, {
+export const RedefinePasswordForm = () => {
+  const [state, formAction, isPending] = useActionState(redefinePasswordAction, {
     message: '',
     success: false,
   });
@@ -13,17 +13,13 @@ export const RegisterForm = () => {
   return (
     <main className={styles.main}>
       <form action={formAction} className={styles.form}>
-        <TextInput name="username" type="text" label="Nome" required />
+        <TextInput name="newPassword" type="password" label="Nova senha" required />
         <br></br>
-        <TextInput name="email" type="email" label="Email" required />
-        <br></br>
-        <TextInput name="password" type="password" label="Password" required /> 
-        <br></br>
-        <TextInput name="passwordConfirmation" type="password" label="Confirmar senha" required /> 
+        <TextInput name="confirmNewPassword" type="password" label="Confirmar senha" required /> 
         <br></br>
         
         <Button
-          text={isPending ? 'Registering in...' : 'Cadastrar'}
+          text={isPending ? 'Redefining in...' : 'Prosseguir'}
           type="submit"
           disabled={isPending}
         />

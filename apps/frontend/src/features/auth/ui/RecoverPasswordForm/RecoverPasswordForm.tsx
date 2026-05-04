@@ -1,11 +1,11 @@
 import { useActionState } from 'react';
 import styles from '../auth.module.css';
-import { registerAction } from '../../api/register-action';
+import { recoverPasswordAction } from '../../api/recoverPassword-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { Button } from '../../../../components/Button/Button';
 
-export const RegisterForm = () => {
-  const [state, formAction, isPending] = useActionState(registerAction, {
+export const RecoverPasswordForm = () => {
+  const [state, formAction, isPending] = useActionState(recoverPasswordAction, {
     message: '',
     success: false,
   });
@@ -13,17 +13,11 @@ export const RegisterForm = () => {
   return (
     <main className={styles.main}>
       <form action={formAction} className={styles.form}>
-        <TextInput name="username" type="text" label="Nome" required />
-        <br></br>
-        <TextInput name="email" type="email" label="Email" required />
-        <br></br>
-        <TextInput name="password" type="password" label="Password" required /> 
-        <br></br>
-        <TextInput name="passwordConfirmation" type="password" label="Confirmar senha" required /> 
+        <TextInput name="email" type="email" label="E-mail" required />
         <br></br>
         
         <Button
-          text={isPending ? 'Registering in...' : 'Cadastrar'}
+          text={isPending ? 'Confirming in...' : 'Prosseguir'}
           type="submit"
           disabled={isPending}
         />

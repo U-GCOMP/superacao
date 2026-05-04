@@ -1,7 +1,7 @@
-import { Register } from './pages/Register/Register'
+import { RedefinePassword } from './pages/RedefinePassword/RedefinePassword'
 
 function App() {
-  return <Register />;
+  return <RedefinePassword />;
 }
 
 export default App;
