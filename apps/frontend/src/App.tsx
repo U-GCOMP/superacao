@@ -1,9 +1,8 @@
-import { RedefinePassword } from './pages/RedefinePassword/RedefinePassword'
-import { Register } from './pages/Register/Register'
-import { Login } from './pages/Login/Login'
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router'; 
 
 function App() {
-  return <Login />;
+  return <RouterProvider router={router} />;
 }
 
 export default App;

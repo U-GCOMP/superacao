@@ -1,6 +1,7 @@
 import { Navbar } from '../../components/NavBar/NavBar'
 import { LoginForm } from '../../features/auth/ui/LoginForm/LoginForm';
 import { Footer } from '../../components/Footer/Footer'
+import { Link } from 'react-router-dom';
 import styles from './Login.module.css';
 
 export const Login = () => {
@@ -23,8 +24,18 @@ export const Login = () => {
         <LoginForm />
 
         <div className={styles.footerLinks}>
-          <p>Não é cadastrado? <span className={styles.accentText}>Cadastre-se</span></p>
-          <p>Esqueceu a senha? <span className={styles.accentText}>Recupere-a</span></p>
+          <p>
+            Não é cadastrado?{' '}
+            <Link to="/cadastro" className={styles.accentText}>
+              Cadastre-se
+            </Link>
+          </p>
+          <p>
+            Esqueceu a senha?{' '}
+            <Link to="/recuperar-senha" className={styles.accentText}>
+              Recupere-a
+            </Link>
+          </p>
         </div>
       </main>
       <Footer footerItems={footerLinks}></Footer>

@@ -1,6 +1,7 @@
 import { Navbar } from '../../components/NavBar/NavBar'
 import { RegisterForm } from '../../features/auth/ui/RegisterForm/RegisterForm';
 import { Footer } from '../../components/Footer/Footer'
+import { Link } from 'react-router-dom';
 import styles from './Register.module.css';
 
 export const Register = () => {
@@ -23,7 +24,12 @@ export const Register = () => {
         <RegisterForm />
 
         <div className={styles.footerLinks}>
-          <p>Já é cadastrado? <span className={styles.accentText}>Faça login</span></p>
+          <p>
+            Já é cadastrado?{' '}
+            <Link to="/" className={styles.accentText}>
+              Faça login
+            </Link>
+          </p>
         </div>
       </main>
       <Footer footerItems={footerLinks}></Footer>

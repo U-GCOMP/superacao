@@ -1,6 +1,7 @@
 import { Navbar } from '../../components/NavBar/NavBar'
 import { RecoverPasswordForm } from '../../features/auth/ui/RecoverPasswordForm/RecoverPasswordForm';
 import { Footer } from '../../components/Footer/Footer'
+import { Link } from 'react-router-dom';
 import styles from './RecoverPassword.module.css';
 
 export const RecoverPassword = () => {
@@ -23,7 +24,12 @@ export const RecoverPassword = () => {
         <RecoverPasswordForm />
 
         <div className={styles.footerLinks}>
-          <p>Não é cadastrado? <span className={styles.accentText}>Cadastre-se</span></p>
+          <p>
+            Não é cadastrado?{' '}
+            <Link to="/cadastro" className={styles.accentText}>
+              Cadastre-se
+            </Link>
+          </p>
         </div>
       </main>
       <Footer footerItems={footerLinks}></Footer>
