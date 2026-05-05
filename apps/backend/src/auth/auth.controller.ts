@@ -1,20 +1,7 @@
-import { Body, Controller, HttpCode, Post, Patch } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {
-  type LoginRequestDTO,
-  LoginRequestSchema,
-  LoginResponseDTO,
-} from '@project/shared';
-import {
-  type RegisterRequestDTO,
-  RegisterRequestSchema,
-  RegisterResponseDTO,
-} from '@project/shared/src/dtos/register.dto';
-import {
-  type UpdateUserRequestDTO,
-  UpdateUserRequestSchema,
-  UpdateUserResponseDTO,
-} from '@project/shared/src/dtos/update-user.dto';
+import { LoginRequestSchema, LoginResponseDTO } from '@project/shared';
+import { RegisterRequestSchema, RegisterResponseDTO } from '@project/shared';
 
 @Controller('auth')
 export class AuthController {
@@ -22,41 +9,21 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
-  login(@Body() body: LoginRequestDTO) {
+  async login(@Body() body: unknown): Promise<LoginResponseDTO> {
     const validBody = LoginRequestSchema.parse(body);
-
-    const token = this.authService.login(validBody.email, validBody.password);
-
-    const response: LoginResponseDTO = { token };
-
-    return response;
+    const token = await this.authService.login(validBody.email, validBody.password);
+    return { token };
   }
 
   @Post('register')
   @HttpCode(201)
-  register(@Body() body: RegisterRequestDTO) {
+  async register(@Body() body: unknown): Promise<RegisterResponseDTO> {
     const validBody = RegisterRequestSchema.parse(body);
-
-    const token = this.authService.register(
+    const token = await this.authService.register(
       validBody.username,
       validBody.email,
       validBody.password,
     );
-
-    const response: RegisterResponseDTO = { token };
-
-    return response;
-  }
-
-  @Patch('update')
-  @HttpCode(200)
-  update(@Body() body: UpdateUserRequestDTO) {
-    const validBody = UpdateUserRequestSchema.parse(body);
-
-    const token = this.authService.update(validBody.username, validBody.email);
-
-    const response: UpdateUserResponseDTO = { token };
-
-    return response;
+    return { token };
   }
 }

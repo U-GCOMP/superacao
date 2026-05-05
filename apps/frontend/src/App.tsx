@@ -1,7 +1,8 @@
-import { RedefinePassword } from './pages/RedefinePassword/RedefinePassword'
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router'; 
 
 function App() {
-  return <RedefinePassword />;
+  return <RouterProvider router={router} />;
 }
 
 export default App;

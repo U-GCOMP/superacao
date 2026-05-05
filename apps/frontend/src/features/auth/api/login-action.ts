@@ -15,12 +15,24 @@ export const loginAction = async (_: unknown, formData: FormData) => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      return { message: errorData.message as string, success: false };
+      
+      const errorMessage = Array.isArray(errorData.message) 
+        ? errorData.message[0] 
+        : errorData.message;
+
+      return { 
+        message: errorMessage || 'E-mail ou senha incorretos.', 
+        success: false 
+      };
     }
 
     const data: LoginResponseDTO = await response.json();
-    return { message: data.token, success: true };
+    
+    localStorage.setItem('@Project:token', data.token);
+
+    return { message: 'Login realizado com sucesso!', success: true };
+    
   } catch (_) {
-    return { message: 'An error occurred during login.', success: false };
+    return { message: 'Erro de conexão com o servidor.', success: false };
   }
 };
