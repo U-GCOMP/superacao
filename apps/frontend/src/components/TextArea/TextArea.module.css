@@ -1,0 +1,39 @@
+.label {
+  display: grid;
+  position: relative;
+
+  & > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: white;
+    padding: 0 0.25rem;
+    font-size: 0.75rem; 
+    cursor: text;
+
+    transform: translate(1rem, calc(50%)); 
+
+    transition: transform ease-in-out 0.2s
+  }
+
+  &:has(textarea:focus, textarea:not(:placeholder-shown)) {
+    & > span {
+      font-size: 1rem;
+      transform: translate(0.75rem, -0.5rem);
+    }
+  }
+}
+
+.textarea {
+  padding: 1rem 0.75rem;
+  border: 2px solid var(--border);
+  border-radius: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  width: 100%;
+  min-height: 120px; 
+  resize: vertical;  
+  outline: none;
+  box-sizing: border-box;
+  color: solid var(--text); 
+}

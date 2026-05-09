@@ -1,7 +1,16 @@
-import { RecoverPasswordResponseDTO } from '@project/shared';
+import { RedefinePasswordEmailResponseDTO, RedefinePasswordEmailRequestSchema } from '@project/shared';
 
 export const recoverPasswordAction = async (_: unknown, formData: FormData) => {
-  const code = formData.get('text') as string;
+  const email = formData.get('text') as string;
+
+  const validation = RedefinePasswordEmailRequestSchema.safeParse({ email })
+    
+  if (!validation.success) {
+    return { 
+      message: validation.error.issues[0].message, 
+      success: false 
+    };
+  }
 
   try {
     const response = await fetch('http://localhost:3000/auth/recoverPassword', {
@@ -9,7 +18,7 @@ export const recoverPasswordAction = async (_: unknown, formData: FormData) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ email }),
     });
 
     if (!response.ok) {
@@ -17,7 +26,7 @@ export const recoverPasswordAction = async (_: unknown, formData: FormData) => {
       return { message: errorData.message as string, success: false };
     }
 
-    const data: RecoverPasswordResponseDTO = await response.json();
+    const data: RedefinePasswordEmailResponseDTO = await response.json();
     return { message: data.token, success: true };
   } catch (_) {
     return { message: 'An error occurred during recovery.', success: false };

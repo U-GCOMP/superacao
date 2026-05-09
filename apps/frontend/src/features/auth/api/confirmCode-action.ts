@@ -1,7 +1,16 @@
-import { ConfirmCodeResponseDTO } from '@project/shared';
+import { ConfirmCodeResponseDTO, ConfirmCodeRequestSchema } from '@project/shared';
 
 export const confirmCodeAction = async (_: unknown, formData: FormData) => {
   const code = formData.get('text') as string;
+
+  const validation = ConfirmCodeRequestSchema.safeParse({ code })
+    
+  if (!validation.success) {
+    return { 
+      message: validation.error.issues[0].message, 
+      success: false 
+    };
+  }
 
   try {
     const response = await fetch('http://localhost:3000/auth/confirmCode', {

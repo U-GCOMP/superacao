@@ -1,8 +1,17 @@
-import { LoginResponseDTO } from '@project/shared';
+import { LoginResponseDTO, LoginRequestSchema } from '@project/shared';
 
 export const loginAction = async (_: unknown, formData: FormData) => {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
+
+  const validation = LoginRequestSchema.safeParse({ email, password })
+  
+  if (!validation.success) {
+    return { 
+      message: validation.error.issues[0].message, 
+      success: false 
+    };
+  }
 
   try {
     const response = await fetch('http://localhost:3000/auth/login', {
