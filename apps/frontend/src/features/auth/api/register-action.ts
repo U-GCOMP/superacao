@@ -1,4 +1,4 @@
-import { RegisterResponseDTO } from '@project/shared';
+import { RegisterResponseDTO, RegisterRequestSchema } from '@project/shared';
 
 export const registerAction = async (_: unknown, formData: FormData) => {
   const username = formData.get('username') as string;
@@ -8,6 +8,15 @@ export const registerAction = async (_: unknown, formData: FormData) => {
 
   if (password !== passwordConfirmation) {
     return { message: 'As senhas não coincidem. Tente novamente.', success: false };
+  }
+
+  const validation = RegisterRequestSchema.safeParse({ username, email, password })
+
+  if (!validation.success) {
+    return { 
+      message: validation.error.issues[0].message, 
+      success: false 
+    };
   }
 
   try {

@@ -5,6 +5,7 @@ import { Register } from '../pages/Register/Register';
 import { RedefinePassword } from '../pages/RedefinePassword/RedefinePassword';
 import { ConfirmCode } from '../pages/ConfirmCode/ConfirmCode';
 import { RecoverPassword } from '../pages/RecoverPassword/RecoverPassword';
+import { RegisterEvent } from '../pages/RegisterEvent/RegisterEvent';
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +25,11 @@ export const router = createBrowserRouter([
     element: <RecoverPassword />,
   },
   {
-    path: 'confirmar-codigo',
+    path: '/confirmar-codigo',
     element: <ConfirmCode />,
+  },
+  {
+    path: '/cadastrar-evento',
+    element: <RegisterEvent />,
   }
 ]);
