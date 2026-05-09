@@ -1,17 +1,39 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Get,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequestSchema, LoginResponseDTO } from '@project/shared';
 import { RegisterRequestSchema, RegisterResponseDTO } from '@project/shared';
+import { AuthGuard } from './auth.guard';
+import type { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  //REMOVE: Example
+  @Get('hello')
+  @HttpCode(200)
+  @UseGuards(AuthGuard)
+  sayHello(@Request() req: AuthenticatedRequest) {
+    console.log(req['user'].email);
+    return this.authService.sayHello();
+  }
+
   @Post('login')
   @HttpCode(200)
   async login(@Body() body: unknown): Promise<LoginResponseDTO> {
     const validBody = LoginRequestSchema.parse(body);
-    const token = await this.authService.login(validBody.email, validBody.password);
+    const token = await this.authService.login(
+      validBody.email,
+      validBody.password,
+    );
     return { token };
   }
 
