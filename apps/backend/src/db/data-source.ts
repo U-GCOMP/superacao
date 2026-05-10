@@ -1,17 +1,26 @@
-import 'dotenv/config';
-import { DataSource } from 'typeorm';
+import 'reflect-metadata';
 
-//TODO: Nao consegui importar de arquivo de configuracao base e gerar migrations
-//import { baseDbConfig } from './orm.config';
+import { config } from 'dotenv';
 
-export default new DataSource({
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+
+import { Users } from '../auth/entities/user.entity';
+import { PasswordResetRequest } from '../auth/entities/reset-password-request.entity';
+
+config();
+
+const configService = new ConfigService();
+const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
+  host: configService.get<string>('DB_HOST'),
+  port: configService.get<number>('DB_PORT'),
+  username: configService.get<string>('DB_USER'),
+  password: configService.get<string>('DB_PASSWORD'),
+  database: configService.get<string>('DB_DATABASE'),
+  entities: [Users, PasswordResetRequest],
+  migrations: [__dirname + '/../migrations/*.ts'],
   synchronize: false,
-  entities: ['src/**/entities/*.entity.ts'],
-  migrations: ['src/migrations/*.ts'],
-});
+};
+
+export default new DataSource(dataSourceOptions);

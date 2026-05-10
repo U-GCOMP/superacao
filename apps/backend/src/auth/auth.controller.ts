@@ -6,12 +6,24 @@ import {
   Get,
   UseGuards,
   Request,
+  UnauthorizedException,
+  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginRequestSchema, LoginResponseDTO } from '@project/shared';
+import {
+  ConfirmCodeRequestSchema,
+  ConfirmCodeResponseDTO,
+  LoginRequestSchema,
+  LoginResponseDTO,
+  RedefinePasswordEmailRequestSchema,
+  RedefinePasswordEmailResponseDTO,
+  RedefinePasswordRequestSchema,
+  RedefinePasswordResponseDTO,
+} from '@project/shared';
 import { RegisterRequestSchema, RegisterResponseDTO } from '@project/shared';
 import { AuthGuard } from './auth.guard';
 import type { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
+import { JwtResetPasswordPayload } from './interfaces/jwt-reset-password-payload.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -24,6 +36,51 @@ export class AuthController {
   sayHello(@Request() req: AuthenticatedRequest) {
     console.log(req['user'].email);
     return this.authService.sayHello();
+  }
+
+  @Post('recoverPassword')
+  async recoverPassword(
+    @Body() body: unknown,
+  ): Promise<RedefinePasswordEmailResponseDTO> {
+    const validBody = RedefinePasswordEmailRequestSchema.parse(body);
+
+    await this.authService.recoverPassword(validBody.email);
+
+    return { token: 'oi' };
+  }
+
+  @Post('confirmCode')
+  async confirmCode(@Body() body: unknown): Promise<ConfirmCodeResponseDTO> {
+    const validBody = ConfirmCodeRequestSchema.parse(body);
+
+    const token = await this.authService.confirmCode(validBody.code);
+
+    return { token };
+  }
+
+  @Post('redefinePassword')
+  async redefinePassword(
+    @Headers('authorization') authorization: string,
+    @Body() body: unknown,
+  ): Promise<RedefinePasswordResponseDTO> {
+    if (!authorization) {
+      throw new UnauthorizedException('Token não informado');
+    }
+
+    const [type, resetToken] = authorization.split(' ');
+
+    if (type !== 'Bearer' || !resetToken) {
+      throw new UnauthorizedException('Token inválido');
+    }
+
+    const validBody = RedefinePasswordRequestSchema.parse(body);
+
+    const token = await this.authService.redefinePassword(
+      resetToken,
+      validBody.newPassword,
+    );
+
+    return { token };
   }
 
   @Post('login')
