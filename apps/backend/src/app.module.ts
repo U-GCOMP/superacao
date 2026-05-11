@@ -4,7 +4,7 @@ import { UserModule } from './user/user.module';
 import { DatabaseModule } from './db/database.module';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from './auth/entities/user.entity';
+import { Users } from './entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -23,7 +23,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     AuthModule,
     UserModule,
-    DatabaseModule
+    DatabaseModule,
   ],
   providers: [AppService],
 })

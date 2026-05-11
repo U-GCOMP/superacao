@@ -1,20 +1,18 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Users } from './entities/user.entity';
+import { AuthRepository } from './auth.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Users)
-    private readonly userRepository: Repository<Users>,
+    private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
   ) {}
 
   async login(email: string, pass: string): Promise<string> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.authRepository.getUserByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Credenciais inválidas');
@@ -30,7 +28,7 @@ export class AuthService {
   }
 
   async register(username: string, email: string, pass: string): Promise<string> {
-    const userExists = await this.userRepository.findOne({ where: { email } });
+    const userExists = await this.authRepository.getUserByEmail(email);
 
     if (userExists) {
       throw new ConflictException('Este e-mail já está em uso.');
@@ -39,13 +37,7 @@ export class AuthService {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(pass, salt);
 
-    const newUser = this.userRepository.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
-    
-    await this.userRepository.save(newUser);
+    const newUser = await this.authRepository.saveUser({username, email, password: hashedPassword});
 
     const payload = { sub: newUser.id, username: newUser.username, email: newUser.email };
     return this.jwtService.sign(payload);

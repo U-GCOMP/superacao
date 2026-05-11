@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { baseDbConfig } from './orm.config';
-import { Users } from '../auth/entities/user.entity';
+import { Users } from '../entities/user.entity';
 
 export const databaseProviders = [
   {

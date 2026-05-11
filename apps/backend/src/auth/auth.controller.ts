@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginRequestSchema, LoginResponseDTO } from '@project/shared';
@@ -12,18 +13,17 @@ export class AuthController {
   async login(@Body() body: unknown): Promise<LoginResponseDTO> {
     const validBody = LoginRequestSchema.parse(body);
     const token = await this.authService.login(validBody.email, validBody.password);
-    return { token };
+
+    const response: LoginResponseDTO = { token }
+
+    return response;
   }
 
   @Post('register')
   @HttpCode(201)
   async register(@Body() body: unknown): Promise<RegisterResponseDTO> {
     const validBody = RegisterRequestSchema.parse(body);
-    const token = await this.authService.register(
-      validBody.username,
-      validBody.email,
-      validBody.password,
-    );
+    const token = await this.authService.register(validBody.username, validBody.email, validBody.password);
     return { token };
   }
 }
