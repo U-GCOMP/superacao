@@ -6,6 +6,8 @@ import { MailModule } from '../mail/mail.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { PasswordResetRequest } from './entities/reset-password-request.entity';
+import { AuthRepository } from './auth.repository';
+import { PasswordRepository } from './password.repository';
 
 @Module({
   imports: [
@@ -18,6 +20,6 @@ import { PasswordResetRequest } from './entities/reset-password-request.entity';
     MailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, AuthRepository, PasswordRepository],
 })
 export class AuthModule {}

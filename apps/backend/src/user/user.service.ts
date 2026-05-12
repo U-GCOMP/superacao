@@ -1,21 +1,22 @@
-import { Injectable } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import { UserModel } from '@project/shared/src/models/user.model';
 
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  update(newUsername: string, email: string): string {
-    const user = this.userRepository.getUserByEmail(email);
+  async update(newUsername: string, email: string): Promise<string> {
+    const user = await this.userRepository.getUserByEmail(email);
 
     if (!user) {
-      throw new Error('This user doesn`t exist.');
+      throw new ConflictException('This user doesn`t exist.');
     }
 
-    const updatedUser = new UserModel(newUsername, user.email, user.password);
-    this.userRepository.saveUser(updatedUser);
+    user.username = newUsername;
 
-    return 'fake-jwt-token';
+    await this.userRepository.saveUser(user);
+
+    return 'Success';
   }
 }

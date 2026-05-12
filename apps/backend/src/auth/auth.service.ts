@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Injectable,
   UnauthorizedException,
@@ -5,24 +6,20 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Users } from './entities/user.entity';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { PasswordResetRequest } from './entities/reset-password-request.entity';
 import { MailService } from '../mail/mail.service';
-import { InjectRepository } from '@nestjs/typeorm';
 import { JwtResetPasswordPayload } from './interfaces/jwt-reset-password-payload.interface';
+import { AuthRepository } from './auth.repository';
+import { PasswordRepository } from './password.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Users)
-    private readonly userRepository: Repository<Users>,
+    private readonly authRepository: AuthRepository,
 
-    @InjectRepository(PasswordResetRequest)
-    private readonly passwordRepository: Repository<PasswordResetRequest>,
+    private readonly passwordRepository: PasswordRepository,
 
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
@@ -34,7 +31,7 @@ export class AuthService {
   }
 
   async login(email: string, pass: string): Promise<string> {
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.authRepository.getUserByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Credenciais inválidas');
@@ -60,12 +57,8 @@ export class AuthService {
     return hashedPassword;
   }
 
-  async register(
-    username: string,
-    email: string,
-    pass: string,
-  ): Promise<string> {
-    const userExists = await this.userRepository.findOne({ where: { email } });
+  async register(username: string, email: string, pass: string): Promise<string> {
+    const userExists = await this.authRepository.getUserByEmail(email);
 
     if (userExists) {
       throw new ConflictException('Este e-mail já está em uso.');
@@ -73,13 +66,7 @@ export class AuthService {
 
     const hashedPassword = await this.genPassword(pass);
 
-    const newUser = this.userRepository.create({
-      username,
-      email,
-      password: hashedPassword,
-    });
-
-    await this.userRepository.save(newUser);
+    const newUser = await this.authRepository.saveUser({username, email, password: hashedPassword});
 
     const payload = {
       sub: newUser.id,
@@ -106,14 +93,14 @@ export class AuthService {
     }
 
     const id = payload.sub;
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.authRepository.getUserById(id);
 
     if (!user) {
       throw new NotFoundException('Usuário não encontrado');
     }
 
     user.password = await this.genPassword(newPassword);
-    await this.userRepository.save(user);
+    await this.authRepository.saveUser(user);
 
     return this.login(user.email, newPassword);
   }
@@ -123,33 +110,23 @@ export class AuthService {
   }
 
   async recoverPassword(email: string): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { email },
-    });
+    const user = await this.authRepository.getUserByEmail(email);
 
     if (!user) {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    const request = this.passwordRepository.create({
-      user,
-      code: this.generateCode(),
-      used_at: null,
-      expires_at: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
-    });
-
-    await this.passwordRepository.save(request);
+    const request = await this.passwordRepository.createRequest(
+      user, 
+      this.generateCode(), 
+      new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+    );
 
     await this.mailService.sendResetPasswordEmail(email, request.code);
   }
 
   async confirmCode(code: string): Promise<string> {
-    const request = await this.passwordRepository.findOne({
-      where: {
-        code: code,
-      },
-      relations: ['user'],
-    });
+    const request = await this.passwordRepository.findByCode(code);
 
     if (!request) {
       throw new BadRequestException('Código inválido');
@@ -165,7 +142,7 @@ export class AuthService {
 
     request.used_at = new Date();
 
-    await this.passwordRepository.save(request);
+    await this.passwordRepository.updateRequest(request);
 
     const token = this.jwtService.sign<JwtResetPasswordPayload>(
       {

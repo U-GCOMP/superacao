@@ -1,18 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { UserModel } from '@project/shared/src/models/user.model';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Users } from './entities/user.entity';
 
 @Injectable()
 export class AuthRepository {
-  private mockedMap: { [key: string]: UserModel } = {
-    'email@email.com': new UserModel('1', 'email@email.com', '123'),
-    'admin@email.com': new UserModel('2', 'admin@email.com', '123'),
-  };
+  constructor(
+    @InjectRepository(Users)
+    private readonly typeormRepo: Repository<Users>,
+  ) {}
 
-  getUserByEmail(email: string): UserModel | null {
-    return this.mockedMap[email] || null;
+  async getUserByEmail(email: string): Promise<Users | null> {
+    return this.typeormRepo.findOne({ where: { email } });
   }
 
-  saveUser(user: UserModel): void {
-    this.mockedMap[user.email] = user;
+  async saveUser(userData: Partial<Users>): Promise<Users> {
+    const newUser = this.typeormRepo.create(userData);
+    return this.typeormRepo.save(newUser);
+  }
+
+  async getUserById(id: number): Promise<Users | null> {
+    return this.typeormRepo.findOne({ where: { id } });
   }
 }
