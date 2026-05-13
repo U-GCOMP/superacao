@@ -1,6 +1,8 @@
 .content {
-  color: #3A3232;
-  flex: 1;
+  text-align: center;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
 }
 
 .footerLinks {
@@ -18,14 +20,7 @@
   font-weight: Medium;
   cursor: pointer;
   text-decoration: none;
-}
 
-.accentText:hover {
-  text-decoration: underline;
-}
-
-.page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  --link-accent-color: var(--accent);
+  --link-bar-color: transparent;
 }

@@ -11,10 +11,8 @@ export const ConfirmCodeForm = () => {
   });
 
   return (
-    <main className={styles.main}>
       <form action={formAction} className={styles.form}>
         <TextInput name="code" type="text" label="Código" required />
-        <br></br>
         
         <Button
           text={isPending ? 'Confirming in...' : 'Prosseguir'}
@@ -28,6 +26,5 @@ export const ConfirmCodeForm = () => {
           </p>
         )}
       </form>
-    </main>
   );
 };

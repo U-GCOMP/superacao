@@ -7,6 +7,7 @@ interface ButtonProps {
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   disabled?: boolean;
   borderRadius?: string; 
+  buttonStyle?: 'primary' | 'secondary';
 }
 
 export const Button = ({
@@ -15,10 +16,11 @@ export const Button = ({
   type = 'button',
   disabled = false,
   borderRadius, 
+  buttonStyle = 'primary',
 }: ButtonProps) => {
   return (
     <button
-      className={styles.button}
+      className={`${styles.button} ${styles[buttonStyle]}`}
       onClick={onClick}
       type={type}
       disabled={disabled}

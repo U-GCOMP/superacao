@@ -3,6 +3,8 @@
   position: relative;
 
   & > span {
+    pointer-events: none;
+    
     position: absolute;
     top: 0;
     left: 0;
@@ -12,15 +14,15 @@
 
     cursor: text;
 
-    transform: translate(1rem, calc(50%));
+    transform-origin: left top;
+    transform: translate(1rem, calc(50% + 0.25ch));
 
     transition: transform ease-in-out 0.2s;
   }
 
   &:has(input:focus, input:not(:placeholder-shown)) {
     & > span {
-      font-size: 1rem;
-      transform: translate(0.75rem, -0.75rem);
+      transform: translate(0.75rem, -1.25rem) scale(1.33);
     }
   }
 }

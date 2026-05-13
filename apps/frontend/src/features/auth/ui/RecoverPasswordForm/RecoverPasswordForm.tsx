@@ -11,23 +11,20 @@ export const RecoverPasswordForm = () => {
   });
 
   return (
-    <main className={styles.main}>
-      <form action={formAction} className={styles.form}>
-        <TextInput name="email" type="email" label="E-mail" required />
-        <br></br>
-        
-        <Button
-          text={isPending ? 'Confirming in...' : 'Prosseguir'}
-          type="submit"
-          disabled={isPending}
-        />
+    <form action={formAction} className={styles.form}>
+      <TextInput name="email" type="email" label="E-mail" required />
+      
+      <Button
+        text={isPending ? 'Confirming in...' : 'Prosseguir'}
+        type="submit"
+        disabled={isPending}
+      />
 
-        {state?.message && (
-          <p style={{ color: state.success ? 'green' : 'red' }}>
-            {state.message}
-          </p>
-        )}
-      </form>
-    </main>
+      {state?.message && (
+        <p style={{ color: state.success ? 'green' : 'red' }}>
+          {state.message}
+        </p>
+      )}
+    </form>
   );
 };

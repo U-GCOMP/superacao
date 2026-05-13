@@ -1,18 +1,25 @@
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/icons/Logo SuperAção.svg';
 import styles from './Navbar.module.css';
+import { useAuthentication } from '../../hooks/useAuthentication.hook';
+import { AppRoutes } from '../../router/routes';
 
 interface NavItem {
   label: string;
-  onClick: () => void;
-  isPrimary?: boolean;
-  borderRadius?: number;
+  route: string;
 }
 
 interface NavbarProps {
-  navItems: NavItem[];
+  navItems?: NavItem[];
 }
 
 export const Navbar = ({ navItems }: NavbarProps) => {
+  const { isAuthenticated } = useAuthentication();
+  const location = useLocation();
+  
+  const defaultNavItems: NavItem[] = getDefaultNavItems(isAuthenticated);
+  const itemsToRender = navItems && navItems.length > 0 ? navItems : defaultNavItems;
+  
   return (
     <nav className={styles.navbar}>
       <div className={styles.logoContainer}>
@@ -21,24 +28,34 @@ export const Navbar = ({ navItems }: NavbarProps) => {
       </div>
 
       <div className={styles.links}>
-        {navItems.map((item, index) => (
-          <div key={index} className={styles.navItem}>
-            {item.isPrimary ? (
-              <button 
-                className={styles.primaryButton} 
-                onClick={item.onClick}
-                style={item.borderRadius ? { borderRadius: item.borderRadius } : {}}
-              >
+        {itemsToRender.map((item, index) => {
+          const isHighlighted = location.pathname === item.route;
+          
+          return(
+            <div
+              key={`navbar-link-${index}`}
+              className={styles.navItem + (isHighlighted ? ` ${styles.highlighted}` : '')}
+            >
+              <Link to={item.route}>
                 {item.label}
-              </button>
-            ) : (
-              <button className={styles.textButton} onClick={item.onClick}>
-                {item.label}
-              </button>
-            )}
-          </div>
-        ))}
+              </Link>
+            </div>
+        )})}
       </div>
     </nav>
   );
 };
+
+function getDefaultNavItems(isAuthenticated: boolean): NavItem[] {
+  const defaultNavItems = [
+    { label: 'Eventos', route: AppRoutes.EVENTS },
+    { label: 'Meus Eventos', route: AppRoutes.MY_EVENTS },
+  ];
+
+  if (isAuthenticated)
+    defaultNavItems.push({ label: 'Meu perfil', route: AppRoutes.PROFILE });
+  else
+    defaultNavItems.push({ label: 'Entrar', route: AppRoutes.LOGIN });
+
+  return defaultNavItems;
+}
