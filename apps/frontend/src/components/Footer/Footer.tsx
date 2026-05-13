@@ -9,10 +9,17 @@ interface FooterItem {
 }
 
 interface FooterProps {
-  footerItems: FooterItem[];
+  footerItems?: FooterItem[];
 }
 
 export const Footer = ({ footerItems }: FooterProps) => {
+  const defaultFooterItems: FooterItem[] = [
+    { label: 'Saiba Mais', onClick: () => {}},
+    { label: 'Email', onClick: () => {}},
+  ];
+
+  const itemsToRender = footerItems && footerItems.length > 0 ? footerItems : defaultFooterItems;
+
   return (
     <footer className={styles.footer}>
       <div className={styles.logoContainer}>
@@ -21,7 +28,7 @@ export const Footer = ({ footerItems }: FooterProps) => {
       </div>
 
       <div className={styles.links}>
-        {footerItems.map((item, index) => (
+        {itemsToRender.map((item, index) => (
           <div key={index} className={styles.footerItem}>
             {item.isPrimary ? (
               <button 

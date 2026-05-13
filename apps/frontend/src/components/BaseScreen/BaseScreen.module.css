@@ -1,0 +1,9 @@
+.main {
+    display: grid;
+    grid-template-rows: min-content 1fr auto;
+}
+
+.content {
+    display: grid;
+    padding: 2rem;
+}

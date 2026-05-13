@@ -11,25 +11,21 @@ export const RedefinePasswordForm = () => {
   });
 
   return (
-    <main className={styles.main}>
-      <form action={formAction} className={styles.form}>
-        <TextInput name="newPassword" type="password" label="Nova senha" required />
-        <br></br>
-        <TextInput name="confirmNewPassword" type="password" label="Confirmar senha" required /> 
-        <br></br>
-        
-        <Button
-          text={isPending ? 'Redefining in...' : 'Prosseguir'}
-          type="submit"
-          disabled={isPending}
-        />
+    <form action={formAction} className={styles.form}>
+      <TextInput name="newPassword" type="password" label="Nova senha" required />
+      <TextInput name="confirmNewPassword" type="password" label="Confirmar senha" required /> 
+      
+      <Button
+        text={isPending ? 'Redefining in...' : 'Prosseguir'}
+        type="submit"
+        disabled={isPending}
+      />
 
-        {state?.message && (
-          <p style={{ color: state.success ? 'green' : 'red' }}>
-            {state.message}
-          </p>
-        )}
-      </form>
-    </main>
+      {state?.message && (
+        <p style={{ color: state.success ? 'green' : 'red' }}>
+          {state.message}
+        </p>
+      )}
+    </form>
   );
 };

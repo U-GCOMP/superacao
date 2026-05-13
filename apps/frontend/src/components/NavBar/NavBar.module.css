@@ -1,12 +1,18 @@
 .navbar {
+  position: sticky;
+  top: 0;
+  
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 5%;
+  padding: 1.5rem 2rem;
   background-color: var(--accent);
   color: white;
+  height: fit-content;
   width: 100%;
   box-sizing: border-box;
+
+  z-index: 1000;
 }
 
 .logoContainer {
@@ -29,52 +35,26 @@
   display: flex;
   align-items: center;
   gap: 2rem;
-}
 
-.primaryButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 16px; 
-  background-color: #FDFCEE; 
-  color: #3A3232;
-  border: 1px solid transparent; 
-  border-radius: 8px; 
-  font-size: 1rem;
-  font-weight: medium;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-
-.primaryButton:hover {
-  background-color: #ffffff;
-  border-color: #999;
-}
-
-.primaryButton:focus {
-  outline: 2px solid #c0d8b8;  
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-.textButton {
-  display: inline-flex;
-  align-items: center;
-  background: none;
-  border: none;
   color: white;
-  padding: 6px 12px; 
-  font-size: 1rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
 }
 
-.textButton:hover {
-  opacity: 0.8;
+.navItem {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+
+  & > a {
+    --link-accent-color: #FDFCEE;
+    --link-bar-color: var(--accent);
+  }
 }
 
-.textButton:focus {
-  outline: 2px solid #c0d8b8;
-  outline-offset: 2px;
-  border-radius: 4px;
+.navItem.highlighted {
+  background-color: #FDFCEE;
+  color: #3A3232;
+
+  & > a {
+    --link-accent-color: var(--accent);
+    --link-bar-color: white;
+  }
 }

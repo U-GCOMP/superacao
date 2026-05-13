@@ -3,14 +3,14 @@ import { HTMLInputTypeAttribute, useId } from 'react';
 
 interface TextInputProps {
   name: string;
-  type: HTMLInputTypeAttribute;
+  type?: HTMLInputTypeAttribute;
   label: string;
   required?: boolean;
 }
 
 export const TextInput = ({
   name,
-  type,
+  type = 'text',
   label,
   required = false,
 }: TextInputProps) => {

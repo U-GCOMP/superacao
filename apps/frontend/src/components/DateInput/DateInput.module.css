@@ -8,20 +8,12 @@
     left: 0;
     background-color: white; 
     padding: 0 0.25rem;
-    font-size: 0.75rem; 
     cursor: text;
 
-    transform: translate(1rem, calc(50%)); 
-
-    transition: transform ease-in-out 0.2s
+    font-size: 1rem; 
+    transform: translate(0.75rem, -0.75rem);
   }
 
-  &:has(input:focus) {
-    & > span {
-      font-size: 1rem; 
-      transform: translate(0.75rem, -0.5rem);
-    }
-  }
 }
 
 .input {

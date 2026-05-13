@@ -6,30 +6,41 @@ import { RedefinePassword } from '../pages/RedefinePassword/RedefinePassword';
 import { ConfirmCode } from '../pages/ConfirmCode/ConfirmCode';
 import { RecoverPassword } from '../pages/RecoverPassword/RecoverPassword';
 import { RegisterEvent } from '../pages/RegisterEvent/RegisterEvent';
+import { Events } from '../pages/Events/Events';
+import { AppRoutes } from './routes';
 
 export const router = createBrowserRouter([
+  // TODO: Criar um middleware para lidar com autenticação e redirecionamento
   {
     path: '/',
+    element: <Events />,
+  },
+  {
+    path: AppRoutes.LOGIN,
     element: <Login />,
   },
   {
-    path: '/cadastro',
+    path: AppRoutes.REGISTER,
     element: <Register />,
   },
   {
-    path: '/redefinir-senha',
+    path: AppRoutes.PASSWORD_RESET,
     element: <RedefinePassword />,
   },
   {
-    path: '/recuperar-senha',
+    path: AppRoutes.PASSWORD_RECOVERY,
     element: <RecoverPassword />,
   },
   {
-    path: '/confirmar-codigo',
+    path: AppRoutes.CONFIRM_CODE,
     element: <ConfirmCode />,
   },
   {
-    path: '/cadastrar-evento',
+    path: AppRoutes.REGISTER_EVENT,
     element: <RegisterEvent />,
+  },
+  {
+    path: AppRoutes.EVENTS,
+    element: <Events />,
   }
 ]);

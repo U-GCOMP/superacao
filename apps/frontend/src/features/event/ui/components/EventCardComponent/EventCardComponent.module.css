@@ -1,0 +1,42 @@
+:root {
+    font: 18px/145% var(--sans);
+    letter-spacing: 0.18px;
+    color: var(--text);
+}
+
+.card {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 1rem;
+
+    background-color: #C0D8D8;
+    border-radius: 1rem;
+
+    padding: 1.5rem;
+}
+
+.textContainer {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.title {
+    font-size: 1.5rem;
+}
+
+.description {
+    display: -webkit-box;           
+    line-clamp: 3;
+    -webkit-line-clamp: 3;          
+    -webkit-box-orient: vertical;   
+    overflow: hidden;     
+    
+    font-size: 1rem;
+    color: #7E7E7E;
+}
+
+.info {    
+    & > span {
+        font-weight: bold;
+    }
+}

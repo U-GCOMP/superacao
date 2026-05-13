@@ -1,0 +1,36 @@
+.section {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 1rem;
+}
+
+.filtersContainer {
+    display: grid;
+    gap: 1rem;
+
+    & > h4 {
+        color: #04805C;
+    }
+}
+
+.filtersForm {
+    display: grid;
+    grid-template-columns: 1fr repeat(3, auto);
+    gap: 1rem;
+
+    & > button {
+        align-self: center;
+    }
+}
+
+.eventsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    gap: 1rem;
+
+    & > p {
+        margin: auto;
+        text-align: center;
+        color: #666;
+    }
+}
