@@ -57,7 +57,11 @@ export class AuthService {
     return hashedPassword;
   }
 
-  async register(username: string, email: string, pass: string): Promise<string> {
+  async register(
+    username: string,
+    email: string,
+    pass: string,
+  ): Promise<string> {
     const userExists = await this.authRepository.getUserByEmail(email);
 
     if (userExists) {
@@ -66,7 +70,11 @@ export class AuthService {
 
     const hashedPassword = await this.genPassword(pass);
 
-    const newUser = await this.authRepository.saveUser({username, email, password: hashedPassword});
+    const newUser = await this.authRepository.saveUser({
+      username,
+      email,
+      password: hashedPassword,
+    });
 
     const payload = {
       sub: newUser.id,
@@ -117,8 +125,8 @@ export class AuthService {
     }
 
     const request = await this.passwordRepository.createRequest(
-      user, 
-      this.generateCode(), 
+      user,
+      this.generateCode(),
       new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
     );
 

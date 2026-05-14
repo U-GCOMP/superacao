@@ -1,5 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { UserRepository } from './user.repository';
 
 @Injectable()

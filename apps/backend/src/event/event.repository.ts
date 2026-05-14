@@ -12,7 +12,13 @@ export class EventRepository {
   ) {}
 
   async findEvents(params: FetchEventQueryParametersDTO): Promise<Event[]> {
-    const { page = 1, pageSize = 10, search, date, isDescending = false } = params;
+    const {
+      page = 1,
+      pageSize = 10,
+      search,
+      date,
+      isDescending = false,
+    } = params;
 
     const query = this.ormRepository.createQueryBuilder('event');
 
