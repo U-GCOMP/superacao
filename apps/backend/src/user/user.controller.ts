@@ -17,7 +17,10 @@ export class UserController {
   async update(@Body() body: UpdateUserRequestDTO) {
     const validBody = UpdateUserRequestSchema.parse(body);
 
-    const token = await this.userService.update(validBody.username, validBody.email);
+    const token = await this.userService.update(
+      validBody.username,
+      validBody.email,
+    );
 
     const response: UpdateUserResponseDTO = { token };
 
