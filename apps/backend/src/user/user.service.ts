@@ -23,4 +23,16 @@ export class UserService {
 
     return 'Success';
   }
+
+  async disable(email: string): Promise<string> {
+    const user = await this.userRepository.getUserByEmail(email);
+
+    if (!user) {
+      throw new ConflictException('This user doesn`t exist.');
+    }
+
+    await this.userRepository.disableUser(email);
+
+    return 'Success'
+  }
 }

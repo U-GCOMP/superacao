@@ -1,19 +1,22 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
-export class Users {
+export class EventRatings {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
-  username!: string;
+  event_id!: number;
 
   @Column()
-  email!: string;
+  author_id!: string;
 
   @Column()
-  password!: string;
+  category_id!: number;
 
   @Column()
-  is_deleted?: boolean;
+  rating!: number;
+
+  @Column()
+  comment?: string;
 }

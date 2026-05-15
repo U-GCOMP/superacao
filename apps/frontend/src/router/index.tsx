@@ -7,6 +7,7 @@ import { ConfirmCode } from '../pages/ConfirmCode/ConfirmCode';
 import { RecoverPassword } from '../pages/RecoverPassword/RecoverPassword';
 import { RegisterEvent } from '../pages/RegisterEvent/RegisterEvent';
 import { Events } from '../pages/Events/Events';
+import { UserNotFound } from '../pages/UserNotFound/UserNotFound';
 import { AppRoutes } from './routes';
 
 export const router = createBrowserRouter([
@@ -42,5 +43,9 @@ export const router = createBrowserRouter([
   {
     path: AppRoutes.EVENTS,
     element: <Events />,
-  }
+  },
+  {
+    path: AppRoutes.USER_NOT_FOUND,
+    element: <UserNotFound />,
+  },
 ]);

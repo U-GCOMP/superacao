@@ -18,4 +18,9 @@ export class UserRepository {
     const User = this.typeormRepo.create(userData);
     return this.typeormRepo.save(User);
   }
+
+  async disableUser(email: string): Promise<string> {
+    await this.typeormRepo.update({ email }, { is_deleted: true });
+    return 'Usuário desativado com sucesso';
+  }
 }
