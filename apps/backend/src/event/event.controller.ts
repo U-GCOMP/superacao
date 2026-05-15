@@ -1,13 +1,16 @@
 import { Controller, Get, Query, BadRequestException } from '@nestjs/common';
 import { EventService } from './event.service';
-import { FetchEventQueryParametersSchema } from '@project/shared'
+import {
+  FetchEventQueryParametersDTO,
+  FetchEventQueryParametersSchema,
+} from '@project/shared';
 
 @Controller('events')
 export class EventController {
   constructor(private readonly eventsService: EventService) {}
 
   @Get()
-  async fetchEvents(@Query() rawQuery: any) {
+  async fetchEvents(@Query() rawQuery: FetchEventQueryParametersDTO) {
     const validation = FetchEventQueryParametersSchema.safeParse(rawQuery);
 
     if (!validation.success) {
