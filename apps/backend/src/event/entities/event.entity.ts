@@ -7,11 +7,13 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 
-export enum EventStatus {
-  SCHEDULED = 'SCHEDULED',
-  COMPLETED = 'COMPLETED',
-  CANCELED = 'CANCELED',
-}
+const EventStatus = {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELED: 'CANCELED',
+} as const;
+
+export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus];
 
 @Entity('events')
 export class Event {
