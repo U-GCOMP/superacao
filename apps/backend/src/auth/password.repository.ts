@@ -12,16 +12,27 @@ export class PasswordRepository {
     private readonly typeormRepo: Repository<PasswordResetRequest>,
   ) {}
 
-  async createRequest(user: Users, code: string, expiresAt: Date): Promise<PasswordResetRequest> {
-    const request = this.typeormRepo.create({user, code, used_at: null, expires_at: expiresAt});
+  async createRequest(
+    user: Users,
+    code: string,
+    expiresAt: Date,
+  ): Promise<PasswordResetRequest> {
+    const request = this.typeormRepo.create({
+      user,
+      code,
+      used_at: null,
+      expires_at: expiresAt,
+    });
     return this.typeormRepo.save(request);
   }
 
   async findByCode(code: string): Promise<PasswordResetRequest | null> {
-    return this.typeormRepo.findOne({where: { code }, relations: ['user']});
+    return this.typeormRepo.findOne({ where: { code }, relations: ['user'] });
   }
 
-  async updateRequest(request: PasswordResetRequest): Promise<PasswordResetRequest> {
+  async updateRequest(
+    request: PasswordResetRequest,
+  ): Promise<PasswordResetRequest> {
     return this.typeormRepo.save(request);
   }
 }

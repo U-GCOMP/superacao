@@ -1,12 +1,19 @@
-import { 
-  Entity, 
-  Column, 
-  PrimaryGeneratedColumn, 
-  OneToMany, 
-  CreateDateColumn, 
-  UpdateDateColumn, 
-  DeleteDateColumn 
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
+
+const EventStatus = {
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELED: 'CANCELED',
+} as const;
+
+export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus];
 
 @Entity('events')
 export class Event {
@@ -14,13 +21,19 @@ export class Event {
   id!: string;
 
   @Column()
-  name!: string;
+  title!: string;
+
+  @Column({ type: 'text', nullable: true })
+  description!: string;
 
   @Column({ type: 'timestamp' })
   date!: Date;
 
   @Column('uuid')
   owner_id!: string;
+
+  @Column({ type: 'enum', enum: EventStatus, default: EventStatus.SCHEDULED })
+  status!: EventStatus;
 
   @Column({ type: 'timestamp' })
   volunteers_subscription_deadline_date!: Date;
@@ -48,6 +61,4 @@ export class Event {
 
   @DeleteDateColumn()
   deleted_at?: Date;
-
-  // Missing relation (OneToMany)
 }
