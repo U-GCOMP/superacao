@@ -1,8 +1,8 @@
-import { FetchEventQueryParametersDTO, FetchEventResponseDTO } from "@project/shared";
+import { FetchEventListItemResponseDTO, FetchEventListQueryParametersDTO,  } from "@project/shared";
 import { HttpClient } from "../../../lib/http-client"
 import { objectToQueryParams } from "../../../utils/object-to-query-params";
 
-export const fetchEventsAction = async (queryParameters: FetchEventQueryParametersDTO): Promise<FetchEventResponseDTO[]> => {
+export const fetchEventsAction = async (queryParameters: FetchEventListQueryParametersDTO): Promise<FetchEventListItemResponseDTO[]> => {
     // TODO: Remover mock quando backend estiver pronto
     await new Promise(resolve => setTimeout(resolve, 1000));
     // return Array.from({ length: 10 }, (_, i) => ({
@@ -20,6 +20,6 @@ export const fetchEventsAction = async (queryParameters: FetchEventQueryParamete
 
     const queryParams = objectToQueryParams(queryParameters);
 
-    const response = await httpClient.get<FetchEventResponseDTO[]>(`/events?${queryParams}`);
+    const response = await httpClient.get<FetchEventListItemResponseDTO[]>(`/events?${queryParams}`);
     return response;
 }

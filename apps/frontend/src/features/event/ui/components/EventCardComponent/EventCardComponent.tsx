@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import styles from "./EventCardComponent.module.css";
-import { FetchEventResponseDTO } from "@project/shared";
+import { FetchEventListItemResponseDTO } from "@project/shared";
 
-export const EventCardComponent = ({eventId, imageUrl, title, description, volunteersCount, maxVolunteers, status, date}: FetchEventResponseDTO) => {
+export const EventCardComponent = ({eventId, imageUrl, title, description, volunteersCount, maxVolunteers, status, date}: FetchEventListItemResponseDTO) => {
     const getStatusText = () => {
         type StatusOptions = typeof status;
         
