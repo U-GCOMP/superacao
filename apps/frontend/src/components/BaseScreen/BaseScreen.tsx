@@ -1,6 +1,6 @@
 import styles from "./BaseScreen.module.css"
 import { Footer } from "../Footer/Footer"
-import { Navbar } from "../Navbar/Navbar";
+import { Navbar } from "../Navbar/NavBar";
 
 interface BaseScreenProps {
     children: React.ReactNode;

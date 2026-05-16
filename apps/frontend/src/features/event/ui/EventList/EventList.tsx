@@ -78,6 +78,46 @@ export const EventList = () => {
                 {events?.map((event, index) => (
                     <EventCardComponent key={`event-${index}`} {...event} />
                 ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                {events?.map((event, index) => (
+                    <EventCardComponent key={`event-${index}`} {...event} />
+                ))}
+                
             </div>
         </section>
     )
