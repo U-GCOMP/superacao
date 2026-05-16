@@ -1,4 +1,4 @@
-import { FetchEventQueryParametersSchema, FetchEventResponseDTO } from '@project/shared';
+import { FetchEventListQueryParametersSchema, FetchEventListItemResponseDTO } from '@project/shared';
 import { DateInput } from '../../../../components/DateInput/DateInput';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { EventCardComponent } from '../components/EventCardComponent/EventCardComponent';
@@ -9,7 +9,7 @@ import { Button } from '../../../../components/Button/Button';
 import { Dropdown } from '../../../../components/Dropdown/Dropdown';
 
 export const EventList = () => {
-    const [events, setEvents] = useState<FetchEventResponseDTO[] | null>(null);
+    const [events, setEvents] = useState<FetchEventListItemResponseDTO[] | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const isEmpty = !isLoading && events?.length === 0;
@@ -37,7 +37,7 @@ export const EventList = () => {
         
         const rawDate = formData.get(filterFormNames.date);
 
-        const queryParams = FetchEventQueryParametersSchema.safeParse({
+        const queryParams = FetchEventListQueryParametersSchema.safeParse({
             search: formData.get(filterFormNames.search),
             date: rawDate ? new Date(rawDate.toString()) : undefined,
             isDescending: formData.get(filterFormNames.orderBy) === 'descending'

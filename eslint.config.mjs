@@ -28,6 +28,7 @@ export default tseslint.config(
     ],
     rules: {
       "no-unused-vars": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -35,7 +36,7 @@ export default tseslint.config(
           "varsIgnorePattern": "^_",
           "caughtErrorsIgnorePattern": "^_",
         }
-      ]
+      ],
     },
   },
 
