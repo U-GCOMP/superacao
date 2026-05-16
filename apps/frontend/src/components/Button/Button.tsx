@@ -7,7 +7,7 @@ interface ButtonProps {
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   disabled?: boolean;
   borderRadius?: string; 
-  buttonStyle?: 'primary' | 'secondary';
+  buttonStyle?: 'primary' | 'secondary' | 'terciary';
 }
 
 export const Button = ({
