@@ -8,7 +8,7 @@ export const FetchEventRatingsEventResponseSchema = z.object({
   authorId: z.string(),
   categoryId: z.number(),
   rating: z.number(),
-  comment: z.string(),
+  comment: z.string().nullable(),
 });
 
 export type FetchEventRatingsEventRequestDTO = z.infer<typeof FetchEventRatingsEventRequestSchema>;

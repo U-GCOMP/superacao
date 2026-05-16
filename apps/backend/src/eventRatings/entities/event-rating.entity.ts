@@ -1,12 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Event } from '../../event/entities/event.entity';
 
-@Entity()
+@Entity('event_ratings')
 export class EventRatings {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
-  @Column()
-  event_id!: number;
+  @Column({ type: 'uuid' })
+  event_id!: string;
 
   @Column()
   author_id!: string;
@@ -17,6 +24,13 @@ export class EventRatings {
   @Column()
   rating!: number;
 
-  @Column()
+  @Column({ nullable: true })
   comment?: string;
+
+  @ManyToOne(() => Event, (event) => event.ratings, { onDelete: 'CASCADE' })
+  @JoinColumn({
+    name: 'event_id',
+    referencedColumnName: 'id',
+  })
+  event!: Event;
 }
