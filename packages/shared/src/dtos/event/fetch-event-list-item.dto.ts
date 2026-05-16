@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const FetchEventQueryParametersSchema = z.object({
+export const FetchEventListQueryParametersSchema = z.object({
     page: z.coerce.number().min(1, 'Page must be at least 1').default(1).optional(),
     pageSize: z.coerce.number().min(1, 'Page size must be at least 1').default(10).optional(),
     search: z.string().optional(),
@@ -8,7 +8,7 @@ export const FetchEventQueryParametersSchema = z.object({
     isDescending: z.coerce.boolean().default(false).optional(),
 })
 
-export const FetchEventResponseSchema = z.object({
+export const FetchEventListItemResponseSchema = z.object({
     eventId: z.string().nonempty('Event ID is required'),
     imageUrl: z.url('Invalid image URL'),
     title: z.string().nonempty('Title is required'),
@@ -19,5 +19,5 @@ export const FetchEventResponseSchema = z.object({
     date: z.coerce.date()
 })
 
-export type FetchEventQueryParametersDTO = z.infer<typeof FetchEventQueryParametersSchema>;
-export type FetchEventResponseDTO = z.infer<typeof FetchEventResponseSchema>;
+export type FetchEventListQueryParametersDTO = z.infer<typeof FetchEventListQueryParametersSchema>;
+export type FetchEventListItemResponseDTO = z.infer<typeof FetchEventListItemResponseSchema>;

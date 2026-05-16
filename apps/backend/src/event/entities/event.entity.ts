@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Users } from '../../auth/entities/user.entity';
 
 const EventStatus = {
   SCHEDULED: 'SCHEDULED',
@@ -29,8 +32,12 @@ export class Event {
   @Column({ type: 'timestamp' })
   date!: Date;
 
-  @Column('uuid')
-  owner_id!: string;
+  @ManyToOne(() => Users, {
+    nullable: false,
+    onDelete: 'NO ACTION',
+  })
+  @JoinColumn({ name: 'user_id' })
+  owner!: Users;
 
   @Column({ type: 'enum', enum: EventStatus, default: EventStatus.SCHEDULED })
   status!: EventStatus;

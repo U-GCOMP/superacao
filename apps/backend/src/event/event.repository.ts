@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './entities/event.entity'; // Ajuste o path conforme seu projeto
-import { FetchEventQueryParametersDTO } from '@project/shared';
+import { FetchEventListQueryParametersDTO } from '@project/shared';
 
 @Injectable()
 export class EventRepository {
@@ -11,7 +11,7 @@ export class EventRepository {
     private readonly ormRepository: Repository<Event>,
   ) {}
 
-  async findEvents(params: FetchEventQueryParametersDTO): Promise<Event[]> {
+  async findEvents(params: FetchEventListQueryParametersDTO): Promise<Event[]> {
     const {
       page = 1,
       pageSize = 10,
@@ -39,5 +39,12 @@ export class EventRepository {
     query.skip(skip).take(pageSize);
 
     return query.getMany();
+  }
+
+  async findEventByIdWithOrganizerData(eventId: string): Promise<Event | null> {
+    return this.ormRepository.findOne({
+      where: { id: eventId },
+      relations: ['owner'],
+    });
   }
 }
