@@ -11,5 +11,6 @@ export * from './src/dtos/update-user.dto';
 // Event module DTOs
 export * from './src/dtos/event/fetch-event-list-item.dto';
 export * from './src/dtos/event/register-event.dto';
+export * from './src/dtos/event/fetch-event-ratings.dto';
 
 export * from './src/models/user.model';

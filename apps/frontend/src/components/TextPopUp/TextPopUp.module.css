@@ -1,0 +1,77 @@
+.overlay {
+  position: fixed;
+  inset: 0; 
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.modal {
+  background-color: var(--bg);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  max-width: 400px;
+  width: 100%;
+}
+
+.title {
+  margin: 0 0 1rem;
+  color: var(--text-h);
+  font-size: 1.5rem;
+}
+
+.description {
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background-color: var(--code-bg);
+  color: var(--text);
+  margin-bottom: 2rem;
+  box-sizing: border-box;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.button {
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.cancelButton {
+  background-color: var(--code-bg);
+  color: var(--text);
+}
+
+.confirmButton {
+  background-color: var(--accent); 
+  color: white;
+}
+
+.confirmButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button:hover:not(:disabled) {
+  opacity: 0.8;
+}

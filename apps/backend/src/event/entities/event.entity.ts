@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 import { Users } from '../../auth/entities/user.entity';
+
+import { EventRatings } from '../../eventRatings/entities/event-rating.entity';
 
 const EventStatus = {
   SCHEDULED: 'SCHEDULED',
@@ -68,4 +71,7 @@ export class Event {
 
   @DeleteDateColumn()
   deleted_at?: Date;
+
+  @OneToMany(() => EventRatings, (rating) => rating.event)
+  ratings!: EventRatings[];
 }

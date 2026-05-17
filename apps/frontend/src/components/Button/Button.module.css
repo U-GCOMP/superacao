@@ -42,4 +42,11 @@
     --text-color: #04805C;
   }
 
+  &.terciary {
+    --button-bg: #FFFFFF;
+    --text-color: #D83018;
+    --border-color: #D83018;
+    border: 1px solid #D83018;
+  }
+
 }

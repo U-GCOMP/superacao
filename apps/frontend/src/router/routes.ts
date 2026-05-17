@@ -8,4 +8,5 @@ export const AppRoutes = {
     EVENTS: '/eventos',
     MY_EVENTS: '/meus-eventos',
     PROFILE: '/meu-perfil',
+    USER_NOT_FOUND: '/usuario-nao-encontrado', 
 }
