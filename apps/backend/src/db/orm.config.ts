@@ -4,6 +4,7 @@ import { DataSourceOptions } from 'typeorm';
 import { Users } from '../auth/entities/user.entity';
 import { PasswordResetRequest } from '../auth/entities/reset-password-request.entity';
 import { Event } from '../event/entities/event.entity';
+import { EventRatings } from '../eventRatings/entities/event-rating.entity';
 
 export const getDataSourceOptions = (
   configService?: ConfigService,
@@ -16,7 +17,7 @@ export const getDataSourceOptions = (
     username: cfg.get<string>('DB_USER'),
     password: cfg.get<string>('DB_PASSWORD'),
     database: cfg.get<string>('DB_DATABASE'),
-    entities: [Users, PasswordResetRequest, Event],
+    entities: [Users, PasswordResetRequest, Event, EventRatings],
     migrations: [__dirname + '/../migrations/*{.ts,.js}'],
     synchronize: false,
   };
