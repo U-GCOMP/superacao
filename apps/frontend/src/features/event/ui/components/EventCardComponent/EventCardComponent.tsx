@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./EventCardComponent.module.css";
 import { FetchEventListItemResponseDTO } from "@project/shared";
+import { DateFormatter } from "../../../../../utils/date-formater";
 
 export const EventCardComponent = ({eventId, imageUrl, title, description, volunteersCount, maxVolunteers, status, date}: FetchEventListItemResponseDTO) => {
     const getStatusText = () => {
@@ -17,21 +18,23 @@ export const EventCardComponent = ({eventId, imageUrl, title, description, volun
 
     return (
         <div className={styles.card}>
-            <img src={imageUrl} alt="" role="presentation" />
-            <div className={styles.textContainer}>
-                <h3 className={styles.title}>{title}</h3>
-                <p className={styles.description} >{description}</p>
-                <p className={styles.info}>
-                    <span>Vagas preenchidas:</span> {volunteersCount}/{maxVolunteers} voluntários
-                </p>
-                <p className={styles.info}>
-                    <span>Status:</span> {getStatusText()}
-                </p>
-                <p className={styles.info}>
-                    <span>Data:</span> {date.toLocaleDateString()}
-                </p>
+            <img className={styles.image} src={imageUrl} alt="" role="presentation" />
+            <div className={styles.content}>
+                <div className={styles.textContainer}>
+                    <h3 className={styles.title}>{title}</h3>
+                    <p className={styles.description} >{description}</p>
+                    <p className={styles.info}>
+                        <span>Vagas preenchidas:</span> {volunteersCount}/{maxVolunteers} voluntários
+                    </p>
+                    <p className={styles.info}>
+                        <span>Status:</span> {getStatusText()}
+                    </p>
+                    <p className={styles.info}>
+                        <span>Data:</span> {DateFormatter.formatToBrazilianDate(date)}
+                    </p>
+                </div>
+                <Link to={`/eventos/${eventId}`}>Ver mais</Link>
             </div>
-            <Link to={`/eventos/${eventId}`}>Ver mais</Link>
         </div>
     )
 }
