@@ -5,9 +5,10 @@ import { EventController } from './event.controller';
 import { EventService } from './event.service';
 import { EventRepository } from './event.repository';
 import { EventRatings } from '../eventRatings/entities/event-rating.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, EventRatings])],
+  imports: [TypeOrmModule.forFeature([Event, EventRatings]), AuthModule],
   controllers: [EventController],
   providers: [EventService, EventRepository],
   exports: [EventService],

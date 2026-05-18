@@ -1,17 +1,27 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { EventRepository } from './event.repository';
 import {
   FetchEventListQueryParametersDTO,
   FetchEventListItemResponseDTO,
+  RegisterEventRequestDTO,
 } from '@project/shared';
 import {
   FetchEventDetailsRequestDTO,
   FetchEventDetailsResponseDTO,
 } from '@project/shared/src/dtos/event/fetch-event-details.dto';
+import { Users } from '../auth/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
+
+import { randomUUID } from 'crypto';
+import { join } from 'path';
+import { writeFile } from 'fs/promises';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly eventsRepository: EventRepository) {}
+  constructor(
+    private readonly eventsRepository: EventRepository,
+    private readonly configService: ConfigService,
+  ) {}
 
   async fetchEvents(
     params: FetchEventListQueryParametersDTO,
@@ -61,5 +71,59 @@ export class EventService {
         name: event.owner.username,
       },
     };
+  }
+
+  async createImageUrl(image: Express.Multer.File): Promise<string> {
+    const imagesPath = this.configService.get<string>('IMAGES_PATH');
+
+    if (!imagesPath) {
+      throw new Error('IMAGES_PATH is not defined');
+    }
+
+    const mimeExtensions: Record<string, string> = {
+      'image/jpeg': '.jpg',
+      'image/png': '.png',
+      'image/webp': '.webp',
+    };
+
+    const extension = mimeExtensions[image.mimetype];
+
+    if (!extension) {
+      throw new Error('Unsupported image type');
+    }
+
+    const fileName = `${randomUUID()}${extension}`;
+
+    const fullPath = join(imagesPath, fileName);
+
+    await writeFile(fullPath, image.buffer);
+
+    return fileName;
+  }
+
+  async registerEvent(
+    params: RegisterEventRequestDTO,
+    owner: Users,
+    image: Express.Multer.File | undefined,
+  ): Promise<string> {
+    if (params.startDate >= params.endDate) {
+      throw new BadRequestException('Start date must be before end date');
+    }
+
+    let imageUrl = '';
+    if (image) {
+      const filename = await this.createImageUrl(image);
+      imageUrl =
+        this.configService.get<string>('BASE_URL') +
+        '/events/image/' +
+        filename;
+    }
+
+    const event = await this.eventsRepository.registerEvent(
+      params,
+      owner,
+      imageUrl,
+    );
+    return event.id;
   }
 }
