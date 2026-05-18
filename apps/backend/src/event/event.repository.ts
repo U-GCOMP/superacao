@@ -28,7 +28,8 @@ export class EventRepository {
     const event = this.ormRepository.create({
       owner: owner,
       title: params.title,
-      description: params.description + `\nPlace: ${params.place}`,
+      description: params.description,
+      place: params.place,
       volunteers_max: params.maxSlots,
       date: date,
       volunteers_subscription_deadline_date: params.endDate,

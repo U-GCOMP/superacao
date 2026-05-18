@@ -32,6 +32,9 @@ export class Event {
   @Column({ type: 'text', nullable: true })
   description!: string;
 
+  @Column({ type: 'text', nullable: true })
+  place!: string;
+
   @Column({ type: 'timestamp' })
   date!: Date;
 
