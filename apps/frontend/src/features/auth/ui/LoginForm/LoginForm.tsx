@@ -19,7 +19,7 @@ export const LoginForm = () => {
       // setTimeout(function() {
       // }, 2000);
       // mudar para tela principal, qnd tiver
-      navigate(AppRoutes.REGISTER);
+      navigate(AppRoutes.EVENTS);
     }
   }, [state?.success, navigate]);
 
