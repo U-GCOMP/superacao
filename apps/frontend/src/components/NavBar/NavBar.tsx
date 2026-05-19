@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/icons/Logo SuperAção.svg';
-import styles from './Navbar.module.css';
+import styles from './NavBar.module.css';
 import { useAuthentication } from '../../hooks/useAuthentication.hook';
 import { AppRoutes } from '../../router/routes';
 
