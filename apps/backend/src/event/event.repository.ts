@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './entities/event.entity'; // Ajuste o path conforme seu projeto
-import { FetchEventListQueryParametersDTO } from '@project/shared';
+import {
+  FetchEventListQueryParametersDTO,
+  RegisterEventRequestDTO,
+} from '@project/shared';
+import { Users } from '../auth/entities/user.entity';
 
 @Injectable()
 export class EventRepository {
@@ -10,6 +14,31 @@ export class EventRepository {
     @InjectRepository(Event)
     private readonly ormRepository: Repository<Event>,
   ) {}
+
+  async registerEvent(
+    params: RegisterEventRequestDTO,
+    owner: Users,
+    imageUrl: string,
+  ): Promise<Event> {
+    const date = new Date(params.startDate);
+    const [hours, minutes] = params.startTime.split(':').map(Number);
+    date.setHours(hours, minutes, 0, 0);
+
+    // TODO: Evaluate whether 'place' should become a dedicated entity attribute
+    const event = this.ormRepository.create({
+      owner: owner,
+      title: params.title,
+      description: params.description,
+      place: params.place,
+      volunteers_max: params.maxSlots,
+      date: date,
+      volunteers_subscription_deadline_date: params.endDate,
+      imageUrl: imageUrl,
+    });
+    const saved = await this.ormRepository.save(event);
+
+    return saved;
+  }
 
   async findEvents(params: FetchEventListQueryParametersDTO): Promise<Event[]> {
     const {

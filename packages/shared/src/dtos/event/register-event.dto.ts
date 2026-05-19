@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const RegisterEventRequestSchema = z.object({
   title: z.string().min(1, 'Minimum of a character'),
   description: z.string().min(1, 'Minimum of a character'),
-  maxSlots: z.int().min(1, 'Minimum of a slot'),
+  maxSlots: z.coerce.number().int().min(1),
   place: z.string().min(1, 'Minimum of a character'),
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
