@@ -87,7 +87,7 @@ export class EventController {
     return new StreamableFile(file);
   }
   @UseGuards(AuthGuard)
-  @Post()
+  @Post('register')
   @UseInterceptors(FileInterceptor('image'))
   async registerEvent(
     @Request() req: AuthenticatedRequest,
