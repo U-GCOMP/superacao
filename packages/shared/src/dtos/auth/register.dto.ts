@@ -1,14 +1,14 @@
 import { z } from 'zod';
 
 export const RegisterRequestSchema = z.object({
-  username: z.string().min(1, 'Minimum of a character'),
+  username: z.string().min(1, 'Mínimo de 1 caracter'),
   email: z.email(),
   password: z
     .string()
-    .min(8, 'Minimum of 8 characters')
-    .regex(/[A-Z]/, 'At least an uppercase letter')
-    .regex(/[a-z]/, 'At least an undercase letter')
-    .regex(/[\W_]/, 'At least an special character'),
+    .min(8, 'Mínimo de 8 caracteres')
+    .regex(/[A-Z]/, 'Pelo menos uma letra maiúscula')
+    .regex(/[a-z]/, 'Pelo menos uma letra minúscula')
+    .regex(/[\W_]/, 'Pelo menos um caracter especial'),
 });
 
 export const RegisterResponseSchema = z.object({

@@ -77,6 +77,13 @@ export class AuthService {
       is_deleted: false,
     });
 
+    this.mailService
+      .sendWelcomeEmail(newUser.email, newUser.username)
+      .catch((err) => {
+        // Apenas loga o erro no console caso o envio falhe
+        console.error('Erro ao enviar e-mail de boas-vindas:', err);
+      });
+
     const payload = {
       sub: newUser.id,
       username: newUser.username,

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const FetchEventRatingsEventRequestSchema = z.object({
-  eventId: z.string().min(1, 'Minimum of a character'),
+  eventId: z.string().min(1, 'Mínimo de 1 caracter'),
 });
 
 export const FetchEventRatingsEventResponseSchema = z.object({
