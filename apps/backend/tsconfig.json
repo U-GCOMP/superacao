@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "outDir": "./dist",
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "multer"]
   },
   "include": ["../../apps/backend/src/**/*", "../../packages/shared/src/**/*"]
 }
