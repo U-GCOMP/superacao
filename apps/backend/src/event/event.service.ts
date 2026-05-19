@@ -30,9 +30,7 @@ export class EventService {
 
     return events.map((event) => ({
       eventId: event.id,
-      imageUrl:
-        event.imageUrl ??
-        'https://img.magnific.com/free-photo/beautiful-view-sunset-sea_23-2148019892.jpg?size=626&ext=jpg',
+      imageUrl: event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg',
       title: event.title,
       description: event.description ?? '',
       volunteersCount: event.volunteers_count,
@@ -57,9 +55,7 @@ export class EventService {
 
     return {
       id: event.id,
-      imageUrl:
-        event.imageUrl ??
-        'https://img.magnific.com/free-photo/beautiful-view-sunset-sea_23-2148019892.jpg?size=626&ext=jpg',
+      imageUrl: event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg',
       title: event.title,
       description: event.description ?? '',
       volunteersCount: event.volunteers_count,
@@ -110,7 +106,7 @@ export class EventService {
       throw new BadRequestException('Start date must be before end date');
     }
 
-    let imageUrl = '';
+    let imageUrl = 'https://i.ibb.co/pvnYzhb4/fundo.jpg';
     if (image) {
       const filename = await this.createImageUrl(image);
       imageUrl =
