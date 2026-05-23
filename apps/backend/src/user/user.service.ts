@@ -122,9 +122,7 @@ export class UserService {
     const profileData = {
       username: user.username,
       bio: user.bio ?? '',
-      imageUrl:
-        user.imageUrl ??
-        'https://passport-photo.online/images/cms/30_40_mm_photo_specifications_6a908f5709.webp?quality=80&format=webp&width=1920', //TODO: Temporário, já que o Raphael Leiva sugeriu adicionarmos iniciais como imagem de usuário se ele nn adicionar
+      imageUrl: user.imageUrl,
       events_organized_count: organizedEvents.length,
       events_participated_count: participatedEvents.length,
       rating: averageRating,
