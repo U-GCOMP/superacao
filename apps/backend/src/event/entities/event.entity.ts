@@ -11,7 +11,8 @@ import {
 } from 'typeorm';
 import { Users } from '../../auth/entities/user.entity';
 
-import { EventRatings } from '../../eventRatings/entities/event-rating.entity';
+import { EventRatings } from './event-rating.entity';
+import { EventVolunteers } from './event-volunteers.entity';
 
 const EventStatus = {
   SCHEDULED: 'SCHEDULED',
@@ -38,7 +39,7 @@ export class Event {
   @Column({ type: 'timestamp' })
   date!: Date;
 
-  @ManyToOne(() => Users, {
+  @ManyToOne(() => Users, (user) => user.events_organized, {
     nullable: false,
     onDelete: 'NO ACTION',
   })
@@ -77,4 +78,7 @@ export class Event {
 
   @OneToMany(() => EventRatings, (rating) => rating.event)
   ratings!: EventRatings[];
+
+  @OneToMany(() => EventVolunteers, (volunteer) => volunteer.event)
+  volunteers!: EventVolunteers[];
 }

@@ -5,7 +5,7 @@ export const FetchEventRatingsEventRequestSchema = z.object({
 });
 
 export const FetchEventRatingsEventResponseSchema = z.object({
-  authorId: z.string(),
+  authorId: z.number(),
   categoryId: z.number(),
   rating: z.number(),
   comment: z.string().nullable(),

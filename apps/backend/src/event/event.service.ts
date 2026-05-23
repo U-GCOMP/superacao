@@ -1,9 +1,15 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { EventRepository } from './event.repository';
+import { EventRatingsRepository } from './eventRatings.repository';
 import {
   FetchEventListQueryParametersDTO,
   FetchEventListItemResponseDTO,
   RegisterEventRequestDTO,
+  FetchEventRatingsEventResponseDTO,
 } from '@project/shared';
 import {
   FetchEventDetailsRequestDTO,
@@ -20,6 +26,7 @@ import { writeFile } from 'fs/promises';
 export class EventService {
   constructor(
     private readonly eventsRepository: EventRepository,
+    private readonly eventRatingRepository: EventRatingsRepository,
     private readonly configService: ConfigService,
   ) {}
 
@@ -121,5 +128,19 @@ export class EventService {
       imageUrl,
     );
     return event.id;
+  }
+
+  async fetchEventRatings(
+    event_id: string,
+  ): Promise<FetchEventRatingsEventResponseDTO[]> {
+    const eventRatings =
+      await this.eventRatingRepository.fetchEventRatings(event_id);
+
+    return eventRatings.map((rating) => ({
+      authorId: rating.author_id,
+      categoryId: rating.category_id,
+      rating: rating.rating,
+      comment: rating.comment || '',
+    }));
   }
 }

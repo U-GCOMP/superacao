@@ -1,4 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+
+import { UserRatings } from '../../user/entities/user-ratings.entity';
+import { Event } from '../../event/entities/event.entity';
+import { EventVolunteers } from '../../event/entities/event-volunteers.entity';
+import { EventRatings } from '../../event/entities/event-rating.entity';
 
 @Entity()
 export class Users {
@@ -14,6 +19,33 @@ export class Users {
   @Column()
   password!: string;
 
-  @Column()
+  @Column({ nullable: true })
+  bio?: string;
+
+  @Column({ default: false })
   is_deleted?: boolean;
+
+  @Column({ type: 'real', default: 0 })
+  rating_sum!: number;
+
+  @Column({ default: 0 })
+  rating_count!: number;
+
+  @Column({ nullable: true })
+  imageUrl?: string;
+
+  @OneToMany(() => Event, (event) => event.owner)
+  events_organized!: Event[];
+
+  @OneToMany(() => EventVolunteers, (volunteer) => volunteer.user)
+  events_participated!: EventVolunteers[];
+
+  @OneToMany(() => EventRatings, (rating) => rating.author)
+  event_ratings_authored!: EventRatings[];
+
+  @OneToMany(() => UserRatings, (rating) => rating.author)
+  ratings_authored!: UserRatings[];
+
+  @OneToMany(() => UserRatings, (rating) => rating.target)
+  ratings_received!: UserRatings[];
 }

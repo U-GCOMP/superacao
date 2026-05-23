@@ -23,6 +23,9 @@ import {
   RegisterEventRequestDTO,
   RegisterEventRequestSchema,
   RegisterEventResponseDTO,
+  FetchEventRatingsEventRequestDTO,
+  FetchEventRatingsEventRequestSchema,
+  FetchEventRatingsEventResponseDTO,
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -118,5 +121,14 @@ export class EventController {
     return {
       token: id,
     };
+  }
+
+  @Get()
+  async fetch(
+    @Query() query: FetchEventRatingsEventRequestDTO,
+  ): Promise<FetchEventRatingsEventResponseDTO[]> {
+    const validQuery = FetchEventRatingsEventRequestSchema.parse(query);
+
+    return await this.eventsService.fetchEventRatings(validQuery.eventId);
   }
 }
