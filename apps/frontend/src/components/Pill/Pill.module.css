@@ -1,0 +1,29 @@
+.pill {
+  --button-bg: #C0D8D8;
+  --text-color: black;
+
+  height: 2.5rem;
+
+  display: inline-flex;
+  align-items: center;
+  padding: 0.0rem 1rem;
+
+  border: none;
+  border-radius: 1000px;
+
+  background-color: var(--button-bg);
+
+  color: var(--text-color);
+  font-size: 1rem;
+  text-align: center;
+
+  &.primary {
+    --button-bg: #C0D8D8;
+    --text-color: black;
+  }
+
+  &.secondary {
+    --button-bg: #04805C;
+    --text-color: white;
+  }
+}

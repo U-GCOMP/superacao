@@ -49,4 +49,12 @@
     border: 1px solid #D83018;
   }
 
+  &.subscribe {
+    --button-bg: #FFFFFF;
+    --text-color: #04805C;
+    --border-color: #04805C;
+    border: 1px solid #04805C;
+    font-weight: bold;
+  }
+
 }
