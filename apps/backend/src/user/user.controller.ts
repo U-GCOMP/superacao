@@ -48,10 +48,8 @@ export class UserController {
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateUsernameRequestSchema))
   async updateUsername(@Body() body: UpdateUsernameRequestDTO) {
-    const token = await this.userService.updateUsername(
-      body.username,
-      body.email,
-    );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const token = await this.userService.updateUsername(body.username, body.id);
 
     const response: UpdateUsernameResponseDTO = { token };
 
@@ -62,7 +60,8 @@ export class UserController {
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateImageRequestSchema))
   async updateImage(@Body() body: UpdateImageRequestDTO) {
-    const token = await this.userService.updateImage(body.imageURL, body.email);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const token = await this.userService.updateImage(body.imageURL, body.id);
 
     const response: UpdateImageResponseDTO = { token };
 
@@ -73,7 +72,8 @@ export class UserController {
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateBioRequestSchema))
   async updateBio(@Body() body: UpdateBioRequestDTO) {
-    const token = await this.userService.updateBio(body.bio, body.email);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const token = await this.userService.updateBio(body.bio, body.id);
 
     const response: UpdateBioResponseDTO = { token };
 
@@ -84,7 +84,8 @@ export class UserController {
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(DisableUserRequestSchema))
   async disableUser(@Body() body: DisableUserRequestDTO) {
-    const token = await this.userService.disable(body.email);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const token = await this.userService.disable(body.id);
 
     const response: DisableUserResponseDTO = { token };
 
@@ -97,6 +98,7 @@ export class UserController {
   async fetchUserProfile(
     @Query() query: FetchUserProfileRequestDTO,
   ): Promise<FetchUserProfileResponseDTO> {
-    return this.userService.fetchUserProfile(query.email);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    return this.userService.fetchUserProfile(query.id);
   }
 }

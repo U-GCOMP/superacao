@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const FetchUserRatingRequestSchema = z.object({
-  email: z.email(),
+  id: z.number().int(),
 });
 
 export const FetchUserRatingResponseSchema = z.object({

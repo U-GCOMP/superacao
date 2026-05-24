@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const UpdateImageRequestSchema = z.object({
   imageURL: z.string().min(0),
-  email: z.email(),
+  id: z.number().int(),
 });
 
 export const UpdateImageResponseSchema = z.object({

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const UpdateUsernameRequestSchema = z.object({
   username: z.string().min(0),
-  email: z.email(),
+  id: z.number().int(),
 });
 
 export const UpdateUsernameResponseSchema = z.object({

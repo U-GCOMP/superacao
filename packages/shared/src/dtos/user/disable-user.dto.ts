@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const DisableUserRequestSchema = z.object({
-  email: z.email(),
+  id: z.number().int(),
 });
 
 export const DisableUserResponseSchema = z.object({

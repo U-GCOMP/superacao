@@ -15,8 +15,8 @@ import {
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async updateUsername(newUsername: string, email: string): Promise<string> {
-    const user = await this.userRepository.getUserByEmail(email);
+  async updateUsername(newUsername: string, id: number): Promise<string> {
+    const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
       throw new ConflictException('Esse usuário não existe.');
@@ -29,8 +29,8 @@ export class UserService {
     return 'Success';
   }
 
-  async updateImage(newImageURL: string, email: string): Promise<string> {
-    const user = await this.userRepository.getUserByEmail(email);
+  async updateImage(newImageURL: string, id: number): Promise<string> {
+    const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
       throw new ConflictException('Esse usuário não existe.');
@@ -43,8 +43,8 @@ export class UserService {
     return 'Success';
   }
 
-  async updateBio(newBio: string, email: string): Promise<string> {
-    const user = await this.userRepository.getUserByEmail(email);
+  async updateBio(newBio: string, id: number): Promise<string> {
+    const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
       throw new ConflictException('Esse usuário não existe.');
@@ -57,20 +57,20 @@ export class UserService {
     return 'Success';
   }
 
-  async disable(email: string): Promise<string> {
-    const user = await this.userRepository.getUserByEmail(email);
+  async disable(id: number): Promise<string> {
+    const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
       throw new ConflictException('Esse usuário não existe.');
     }
 
-    await this.userRepository.disableUser(email);
+    await this.userRepository.disableUser(id);
 
     return 'Success';
   }
 
-  async fetchUserProfile(email: string): Promise<FetchUserProfileResponseDTO> {
-    const user = await this.userRepository.getUserWithEventsByEmail(email);
+  async fetchUserProfile(id: number): Promise<FetchUserProfileResponseDTO> {
+    const user = await this.userRepository.getUserWithEventsByID(id);
 
     if (!user) {
       throw new ConflictException('Esse usuário não existe.');

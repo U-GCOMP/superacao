@@ -3,7 +3,7 @@ import { FetchEventListItemResponseSchema } from '../event/fetch-event-list-item
 import { FetchUserRatingResponseSchema } from './fetch-user-rating.dto';
 
 export const FetchUserProfileRequestSchema = z.object({
-  email: z.email(),
+  id: z.number().int(),
 });
 
 export const FetchUserProfileResponseSchema = z.object({

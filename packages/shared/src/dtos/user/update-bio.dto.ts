@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const UpdateBioRequestSchema = z.object({
   bio: z.string().min(0),
-  email: z.email(),
+  id: z.number().int(),
 });
 
 export const UpdateBioResponseSchema = z.object({
