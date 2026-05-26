@@ -3,9 +3,22 @@ import styles from '../auth.module.css';
 import { registerAction } from '../../api/register-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { Button } from '../../../../components/Button/Button';
+import { useNavigate } from 'react-router-dom';
 
 export const RegisterForm = () => {
-  const [state, formAction, isPending] = useActionState(registerAction, {
+  const navigate = useNavigate();
+
+  const actionWithRedirect = async (prevState: any, formData: FormData) => {
+    const result = await registerAction(prevState, formData);
+    
+    if (result.success) {
+      navigate('/');
+    }
+    
+    return result;
+  };
+
+  const [state, formAction, isPending] = useActionState(actionWithRedirect, {
     message: '',
     success: false,
   });
