@@ -5,7 +5,8 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { Event } from '../../event/entities/event.entity';
+import { Event } from './event.entity';
+import { Users } from '../../auth/entities/user.entity';
 
 @Entity('event_ratings')
 export class EventRatings {
@@ -16,7 +17,16 @@ export class EventRatings {
   event_id!: string;
 
   @Column()
-  author_id!: string;
+  author_id!: number;
+
+  @ManyToOne(() => Users, (user) => user.event_ratings_authored, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({
+    name: 'author_id',
+    referencedColumnName: 'id',
+  })
+  author!: Users;
 
   @Column()
   category_id!: number;
