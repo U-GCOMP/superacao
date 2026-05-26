@@ -64,7 +64,9 @@ export class UserService {
       throw new ConflictException('Esse usuário não existe.');
     }
 
-    await this.userRepository.disableUser(id);
+    user.is_deleted = true;
+
+    await this.userRepository.saveUser(user);
 
     return 'Success';
   }
@@ -120,6 +122,7 @@ export class UserService {
         : 0;
 
     const profileData = {
+      id: user.id,
       username: user.username,
       bio: user.bio ?? '',
       imageUrl: user.imageUrl,

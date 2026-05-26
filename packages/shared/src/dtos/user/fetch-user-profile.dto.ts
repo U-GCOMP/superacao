@@ -7,6 +7,7 @@ export const FetchUserProfileRequestSchema = z.object({
 });
 
 export const FetchUserProfileResponseSchema = z.object({
+  id: z.number().int(),
   username: z.string().min(0),
   bio: z.string(),
   events_organized_count: z.number().int(),

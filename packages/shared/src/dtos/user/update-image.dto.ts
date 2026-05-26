@@ -6,7 +6,8 @@ export const UpdateImageRequestSchema = z.object({
 });
 
 export const UpdateImageResponseSchema = z.object({
-  token: z.string(),
+  imageURL: z.string().min(0),
+  id: z.number().int(),
 });
 
 export type UpdateImageRequestDTO = z.infer<typeof UpdateImageRequestSchema>;

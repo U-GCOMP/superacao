@@ -6,7 +6,8 @@ export const UpdateUsernameRequestSchema = z.object({
 });
 
 export const UpdateUsernameResponseSchema = z.object({
-  token: z.string(),
+  username: z.string().min(0),
+  id: z.number().int(),
 });
 
 export type UpdateUsernameRequestDTO = z.infer<typeof UpdateUsernameRequestSchema>;

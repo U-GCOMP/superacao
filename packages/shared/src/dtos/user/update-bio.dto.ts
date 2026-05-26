@@ -6,7 +6,8 @@ export const UpdateBioRequestSchema = z.object({
 });
 
 export const UpdateBioResponseSchema = z.object({
-  token: z.string(),
+  bio: z.string().min(0),
+  id: z.number().int(),
 });
 
 export type UpdateBioRequestDTO = z.infer<typeof UpdateBioRequestSchema>;

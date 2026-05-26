@@ -19,11 +19,6 @@ export class UserRepository {
     return this.typeormRepo.save(User);
   }
 
-  async disableUser(id: number): Promise<string> {
-    await this.typeormRepo.update({ id }, { is_deleted: true });
-    return 'Usuário desativado com sucesso';
-  }
-
   async getUserWithEventsByID(id: number): Promise<Users | null> {
     return this.typeormRepo
       .createQueryBuilder('user')

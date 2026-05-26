@@ -47,11 +47,11 @@ export class UserController {
   @Patch('update-username')
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateUsernameRequestSchema))
-  async updateUsername(@Body() body: UpdateUsernameRequestDTO) {
+  async updateUsername(@Body() { username, id }: UpdateUsernameRequestDTO) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const token = await this.userService.updateUsername(body.username, body.id);
+    await this.userService.updateUsername(username, id);
 
-    const response: UpdateUsernameResponseDTO = { token };
+    const response: UpdateUsernameResponseDTO = { username, id };
 
     return response;
   }
@@ -59,11 +59,11 @@ export class UserController {
   @Patch('update-image')
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateImageRequestSchema))
-  async updateImage(@Body() body: UpdateImageRequestDTO) {
+  async updateImage(@Body() { imageURL, id }: UpdateImageRequestDTO) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const token = await this.userService.updateImage(body.imageURL, body.id);
+    await this.userService.updateImage(imageURL, id);
 
-    const response: UpdateImageResponseDTO = { token };
+    const response: UpdateImageResponseDTO = { imageURL, id };
 
     return response;
   }
@@ -71,11 +71,11 @@ export class UserController {
   @Patch('update-bio')
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateBioRequestSchema))
-  async updateBio(@Body() body: UpdateBioRequestDTO) {
+  async updateBio(@Body() { bio, id }: UpdateBioRequestDTO) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const token = await this.userService.updateBio(body.bio, body.id);
+    await this.userService.updateBio(bio, id);
 
-    const response: UpdateBioResponseDTO = { token };
+    const response: UpdateBioResponseDTO = { bio, id };
 
     return response;
   }

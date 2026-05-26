@@ -61,6 +61,7 @@ export class AuthService {
     username: string,
     email: string,
     pass: string,
+    bio?: string,
   ): Promise<string> {
     const userExists = await this.authRepository.getUserByEmail(email);
 
@@ -70,13 +71,13 @@ export class AuthService {
 
     const hashedPassword = await this.genPassword(pass);
 
-    const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username)}`; //NOTE: Não sei se vai funcionar, mas parece que gera a imagem na URL com as iniciais do nome do caboclo
+    const avatarUrl = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(username)}`; 
 
     const newUser = await this.authRepository.saveUser({
       username,
       email,
       password: hashedPassword,
-      bio: "Diga à comunidade quem você é...",
+      bio: bio ?? undefined,
       imageUrl: avatarUrl,
       is_deleted: false,
     });
