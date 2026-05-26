@@ -1,7 +1,7 @@
 import { ConfirmCodeResponseDTO, ConfirmCodeRequestSchema } from '@project/shared';
 
 export const confirmCodeAction = async (_: unknown, formData: FormData) => {
-  const code = formData.get('text') as string;
+  const code = formData.get('code') as string;
 
   const validation = ConfirmCodeRequestSchema.safeParse({ code })
     
@@ -27,7 +27,10 @@ export const confirmCodeAction = async (_: unknown, formData: FormData) => {
     }
 
     const data: ConfirmCodeResponseDTO = await response.json();
-    return { message: data.token, success: true };
+
+    sessionStorage.setItem('reset_token', data.token);
+
+    return { message: 'Código correto, redirecionando...', success: true };
   } catch (_) {
     return { message: 'An error occurred during confirmation.', success: false };
   }
