@@ -26,6 +26,7 @@ import {
   FetchEventRatingsEventRequestDTO,
   FetchEventRatingsEventRequestSchema,
   FetchEventRatingsEventResponseDTO,
+  FetchUserSubscribedEventDTO,
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -58,37 +59,6 @@ export class EventController {
     return this.eventsService.fetchEvents(query);
   }
 
-  @Get(':eventId')
-  @UsePipes(new ZodValidationPipe(FetchEventDetailsRequestSchema))
-  async fetchEventDetails(@Param() params: FetchEventDetailsRequestDTO) {
-    return this.eventsService.fetchEventDetails(params);
-  }
-
-  @Get('image/:name')
-  getEventImage(
-    @Param('name') name: string,
-    @Res({ passthrough: true }) res: Response,
-  ): StreamableFile {
-    const imagesPath = this.configService.get<string>('IMAGES_PATH');
-
-    if (!imagesPath) {
-      throw new Error('IMAGES_PATH is not defined');
-    }
-
-    const fullPath = join(imagesPath, name);
-
-    if (!existsSync(fullPath)) {
-      throw new NotFoundException('Image not found');
-    }
-
-    const file = createReadStream(fullPath);
-
-    const mimeType = lookup(fullPath) || 'application/octet-stream';
-
-    res.setHeader('Content-Type', mimeType);
-
-    return new StreamableFile(file);
-  }
   @UseGuards(AuthGuard)
   @Post('register')
   @UseInterceptors(FileInterceptor('image'))
@@ -123,6 +93,42 @@ export class EventController {
     };
   }
 
+  @UseGuards(AuthGuard)
+  @Get('user')
+  async getUserEvents(
+    @Request() req: AuthenticatedRequest,
+  ): Promise<FetchUserSubscribedEventDTO[]> {
+    const email = req['user'].email;
+
+    return this.eventsService.getUserSubscribedEvents(email);
+  }
+
+  @Get('image/:name')
+  getEventImage(
+    @Param('name') name: string,
+    @Res({ passthrough: true }) res: Response,
+  ): StreamableFile {
+    const imagesPath = this.configService.get<string>('IMAGES_PATH');
+
+    if (!imagesPath) {
+      throw new Error('IMAGES_PATH is not defined');
+    }
+
+    const fullPath = join(imagesPath, name);
+
+    if (!existsSync(fullPath)) {
+      throw new NotFoundException('Image not found');
+    }
+
+    const file = createReadStream(fullPath);
+
+    const mimeType = lookup(fullPath) || 'application/octet-stream';
+
+    res.setHeader('Content-Type', mimeType);
+
+    return new StreamableFile(file);
+  }
+
   @Get()
   async fetch(
     @Query() query: FetchEventRatingsEventRequestDTO,
@@ -130,5 +136,11 @@ export class EventController {
     const validQuery = FetchEventRatingsEventRequestSchema.parse(query);
 
     return await this.eventsService.fetchEventRatings(validQuery.eventId);
+  }
+
+  @Get(':eventId')
+  @UsePipes(new ZodValidationPipe(FetchEventDetailsRequestSchema))
+  async fetchEventDetails(@Param() params: FetchEventDetailsRequestDTO) {
+    return this.eventsService.fetchEventDetails(params);
   }
 }

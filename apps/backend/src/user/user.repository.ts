@@ -35,4 +35,21 @@ export class UserRepository {
       .where('user.id = :id', { id })
       .getOne();
   }
+
+  async getUserWithEventsByEmail(email: string): Promise<Users | null> {
+    return this.typeormRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.events_organized', 'events_organized')
+      .leftJoinAndSelect('user.events_participated', 'events_participated')
+      .leftJoinAndSelect('events_participated.event', 'event')
+      .leftJoinAndSelect('user.ratings_received', 'ratings_received')
+      .leftJoinAndSelect(
+        'ratings_received.author',
+        'author',
+        'author.is_deleted = :isDeleted',
+        { isDeleted: false },
+      )
+      .where('user.email = :email', { email })
+      .getOne();
+  }
 }
