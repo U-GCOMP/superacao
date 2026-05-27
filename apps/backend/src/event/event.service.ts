@@ -1,14 +1,26 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { EventRepository } from './event.repository';
+import { EventRatingsRepository } from './eventRatings.repository';
+import { EventVolunteersRepository } from './eventVolunteers.repository';
 import {
   FetchEventListQueryParametersDTO,
   FetchEventListItemResponseDTO,
   RegisterEventRequestDTO,
+  FetchEventRatingsEventResponseDTO,
 } from '@project/shared';
 import {
   FetchEventDetailsRequestDTO,
   FetchEventDetailsResponseDTO,
 } from '@project/shared/src/dtos/event/fetch-event-details.dto';
+import {
+  SubscribeToEventResponseSchema,
+  SubscribeToEventResponseDTO,
+} from '@project/shared/src/dtos/event/subscribe-to-event.dto';
 import { Users } from '../auth/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 
@@ -20,6 +32,8 @@ import { writeFile } from 'fs/promises';
 export class EventService {
   constructor(
     private readonly eventsRepository: EventRepository,
+    private readonly eventRatingRepository: EventRatingsRepository,
+    private readonly eventVolunteersRepository: EventVolunteersRepository,
     private readonly configService: ConfigService,
   ) {}
 
@@ -121,5 +135,62 @@ export class EventService {
       imageUrl,
     );
     return event.id;
+  }
+
+  async fetchEventRatings(
+    event_id: string,
+  ): Promise<FetchEventRatingsEventResponseDTO[]> {
+    const eventRatings =
+      await this.eventRatingRepository.fetchEventRatings(event_id);
+
+    return eventRatings.map((rating) => ({
+      authorId: rating.author_id,
+      categoryId: rating.category_id,
+      rating: rating.rating,
+      comment: rating.comment || '',
+    }));
+  }
+
+  async subscribeEvent(
+    event_id: string,
+    user_id: number,
+  ): Promise<SubscribeToEventResponseDTO> {
+    const event = await this.eventsRepository.getEventById(event_id);
+
+    // NOTE: .findOne from typeorm standard behavior is to either return one or nothing, so this fucker of LSP seems to not enjoy that it can be null or undefined event, even though we all know event is gonna exist because user is gonna subscribe to an event trough its own event details page, that was accessed through event listing (that only brings events that exist). So this mf is here only to not use attribute "?" after event on the other ifs
+    if (!event) {
+      throw new NotFoundException('O evento especificado não existe.');
+    }
+
+    if (event.status != 'SCHEDULED') {
+      throw new ConflictException('Esse evento já ocorreu ou está cancelado');
+    }
+
+    if (event.volunteers_count > event?.volunteers_max) {
+      throw new ConflictException('Esse evento está lotado');
+    }
+
+    const subscription = await this.eventVolunteersRepository.getSubscription(
+      event_id,
+      user_id,
+    );
+
+    if (subscription) {
+      throw new ConflictException('Usuário já inscrito em evento');
+    }
+
+    await this.eventVolunteersRepository.saveSubscription(event_id, user_id);
+
+    await this.eventsRepository.saveEvent({
+      id: event.id,
+      volunteers_count: event.volunteers_count + 1,
+    });
+
+    const responsePayload = {
+      eventId: event_id,
+      userId: user_id,
+    };
+
+    return SubscribeToEventResponseSchema.parse(responsePayload);
   }
 }

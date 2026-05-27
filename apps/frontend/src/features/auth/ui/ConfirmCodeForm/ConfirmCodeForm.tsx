@@ -3,9 +3,22 @@ import styles from '../auth.module.css';
 import { confirmCodeAction } from '../../api/confirmCode-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { Button } from '../../../../components/Button/Button';
+import { useNavigate } from 'react-router-dom';
 
 export const ConfirmCodeForm = () => {
-  const [state, formAction, isPending] = useActionState(confirmCodeAction, {
+  const navigate = useNavigate();
+
+  const actionWithRedirect = async (prevState: any, formData: FormData) => {
+    const result = await confirmCodeAction(prevState, formData);
+    
+    if (result.success) {
+      navigate('/redefinir-senha');
+    }
+    
+    return result;
+  };
+
+  const [state, formAction, isPending] = useActionState(actionWithRedirect, {
     message: '',
     success: false,
   });

@@ -10,7 +10,11 @@ export class Init1777561104464 implements MigrationInterface {
         "username" character varying NOT NULL,
         "email" character varying NOT NULL,
         "password" character varying NOT NULL,
+        "bio" character varying(100),
         "is_deleted" boolean NOT NULL DEFAULT false,
+        "rating_sum" real NOT NULL DEFAULT 0,
+        "rating_count" integer NOT NULL DEFAULT 0,
+        "imageUrl" character varying,
         CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433"
         PRIMARY KEY ("id")
       )

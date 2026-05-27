@@ -10,8 +10,8 @@ export class UserRepository {
     private readonly typeormRepo: Repository<Users>,
   ) {}
 
-  async getUserByEmail(email: string): Promise<Users | null> {
-    return this.typeormRepo.findOne({ where: { email } });
+  async getUserByID(id: number): Promise<Users | null> {
+    return this.typeormRepo.findOne({ where: { id } });
   }
 
   async saveUser(userData: Partial<Users>): Promise<Users> {
@@ -19,8 +19,20 @@ export class UserRepository {
     return this.typeormRepo.save(User);
   }
 
-  async disableUser(email: string): Promise<string> {
-    await this.typeormRepo.update({ email }, { is_deleted: true });
-    return 'Usuário desativado com sucesso';
+  async getUserWithEventsByID(id: number): Promise<Users | null> {
+    return this.typeormRepo
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.events_organized', 'events_organized')
+      .leftJoinAndSelect('user.events_participated', 'events_participated')
+      .leftJoinAndSelect('events_participated.event', 'event')
+      .leftJoinAndSelect('user.ratings_received', 'ratings_received')
+      .leftJoinAndSelect(
+        'ratings_received.author',
+        'author',
+        'author.is_deleted = :isDeleted',
+        { isDeleted: false },
+      )
+      .where('user.id = :id', { id })
+      .getOne();
   }
 }

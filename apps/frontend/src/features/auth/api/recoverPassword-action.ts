@@ -1,7 +1,7 @@
 import { RedefinePasswordEmailResponseDTO, RedefinePasswordEmailRequestSchema } from '@project/shared';
 
 export const recoverPasswordAction = async (_: unknown, formData: FormData) => {
-  const email = formData.get('text') as string;
+  const email = formData.get('email') as string;
 
   const validation = RedefinePasswordEmailRequestSchema.safeParse({ email })
     
@@ -27,7 +27,8 @@ export const recoverPasswordAction = async (_: unknown, formData: FormData) => {
     }
 
     const data: RedefinePasswordEmailResponseDTO = await response.json();
-    return { message: data.token, success: true };
+
+    return { message: 'Se o e-mail existir em nossa base, um código de recuperação será enviado.', success: true };
   } catch (_) {
     return { message: 'An error occurred during recovery.', success: false };
   }

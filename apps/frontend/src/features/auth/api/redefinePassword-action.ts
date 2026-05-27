@@ -1,14 +1,14 @@
 import { RedefinePasswordResponseDTO, RedefinePasswordRequestSchema } from '@project/shared';
 
-export const redefinePasswordAction = async (_: unknown, formData: FormData) => {
-  const password = formData.get('password') as string;
-  const passwordConfirmation = formData.get('passwordConfirmation') as string;
+export const redefinePasswordAction = async (_: any, formData: FormData) => {
+  const newPassword = formData.get('newPassword') as string;
+  const confirmNewPassword = formData.get('confirmNewPassword') as string;
 
-  if (password !== passwordConfirmation) {
+  if (newPassword !== confirmNewPassword) {
     return { message: 'As senhas não coincidem. Tente novamente.', success: false };
   }
 
-  const validation = RedefinePasswordRequestSchema.safeParse({ password })
+  const validation = RedefinePasswordRequestSchema.safeParse({ newPassword });
   
   if (!validation.success) {
     return { 
@@ -17,13 +17,20 @@ export const redefinePasswordAction = async (_: unknown, formData: FormData) => 
     };
   }
 
+  const resetToken = sessionStorage.getItem('reset_token');
+
+  if (!resetToken) {
+    return { message: 'Sessão expirada. Por favor, reinicie a recuperação de senha.', success: false };
+  }
+
   try {
     const response = await fetch('http://localhost:3000/auth/redefinePassword', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${resetToken}`,
       },
-      body: JSON.stringify({ password }),
+      body: JSON.stringify({ newPassword }),
     });
 
     if (!response.ok) {
@@ -32,8 +39,12 @@ export const redefinePasswordAction = async (_: unknown, formData: FormData) => 
     }
 
     const data: RedefinePasswordResponseDTO = await response.json();
-    return { message: data.token, success: true };
-  } catch (_) {
-    return { message: 'An error occurred during redefinition.', success: false };
+    
+    sessionStorage.removeItem('reset_token');
+
+    return { message: 'Senha redefinida com sucesso!', success: true };
+    
+  } catch (error) {
+    return { message: 'Um erro ocorreu durante a redefinição de senha.', success: false };
   }
 };

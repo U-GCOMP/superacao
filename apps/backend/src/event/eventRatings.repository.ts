@@ -5,7 +5,7 @@ import { EventRatings } from './entities/event-rating.entity';
 import { Users } from '../auth/entities/user.entity';
 
 @Injectable()
-export class EventRatingRepository {
+export class EventRatingsRepository {
   constructor(
     @InjectRepository(EventRatings)
     private readonly typeormRepo: Repository<EventRatings>,
