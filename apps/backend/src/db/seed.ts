@@ -34,26 +34,29 @@ async function bootstrap() {
     const hashedPassword = await bcrypt.hash('Senha123@', salt);
 
     const usersData = [
-      { 
-        username: 'admin', 
-        email: 'admin@teste.com', 
-        password: hashedPassword, 
-        bio: 'Admin do sistema'
+      {
+        username: 'admin',
+        email: 'admin@teste.com',
+        password: hashedPassword,
+        bio: 'Admin do sistema',
+        imageUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent('admin')}`,
       },
-      { 
-        username: 'joao_voluntario', 
-        email: 'joao@teste.com', 
-        password: hashedPassword, 
-        bio: 'Amo ajudar e ler light novels!'
+      {
+        username: 'joao_voluntario',
+        email: 'joao@teste.com',
+        password: hashedPassword,
+        bio: 'Amo ajudar e ler light novels!',
+        imageUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent('joao_voluntario')}`,
       },
-      { 
-        username: 'maria_ong', 
-        email: 'maria@teste.com', 
-        password: hashedPassword, 
-        bio: 'Organizadora de eventos.'
+      {
+        username: 'maria_ong',
+        email: 'maria@teste.com',
+        password: hashedPassword,
+        bio: 'Organizadora de eventos.',
+        imageUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent('maria_ong')}`,
       },
     ];
-    
+
     const savedUsers = await userRepo.save(usersData);
 
     console.log('Criando Eventos...');
@@ -63,7 +66,9 @@ async function bootstrap() {
         description: 'Vamos limpar o parque do povo neste final de semana.',
         place: 'Parque do Povo',
         date: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
-        volunteers_subscription_deadline_date: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000),
+        volunteers_subscription_deadline_date: new Date(
+          new Date().getTime() + 5 * 24 * 60 * 60 * 1000,
+        ),
         volunteers_max: 20,
         owner: savedUsers[2],
         status: 'SCHEDULED' as const,
@@ -73,7 +78,9 @@ async function bootstrap() {
         description: 'Arrecadação de agasalhos para o inverno.',
         place: 'Auditório da UNESP',
         date: new Date(new Date().getTime() - 2 * 24 * 60 * 60 * 1000),
-        volunteers_subscription_deadline_date: new Date(new Date().getTime() - 4 * 24 * 60 * 60 * 1000),
+        volunteers_subscription_deadline_date: new Date(
+          new Date().getTime() - 4 * 24 * 60 * 60 * 1000,
+        ),
         volunteers_max: 10,
         owner: savedUsers[0],
         status: 'COMPLETED' as const,
@@ -83,8 +90,18 @@ async function bootstrap() {
 
     console.log('Criando Voluntários...');
     await eventVolunteersRepo.save([
-      { event_id: savedEvents[1].id, user_id: savedUsers[1].id, event: savedEvents[1], user: savedUsers[1] },
-      { event_id: savedEvents[1].id, user_id: savedUsers[2].id, event: savedEvents[1], user: savedUsers[2] }
+      {
+        event_id: savedEvents[1].id,
+        user_id: savedUsers[1].id,
+        event: savedEvents[1],
+        user: savedUsers[1],
+      },
+      {
+        event_id: savedEvents[1].id,
+        user_id: savedUsers[2].id,
+        event: savedEvents[1],
+        user: savedUsers[2],
+      },
     ]);
 
     savedEvents[1].volunteers_count = 2;
