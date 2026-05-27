@@ -6,9 +6,11 @@ import {
   Get,
   Query,
   UsePipes,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
+import { AuthGuard } from '../auth/auth.guard';
 
 import {
   type UpdateUsernameRequestDTO,
@@ -45,6 +47,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Patch('update-username')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateUsernameRequestSchema))
   async updateUsername(@Body() { username, id }: UpdateUsernameRequestDTO) {
@@ -57,6 +60,7 @@ export class UserController {
   }
 
   @Patch('update-image')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateImageRequestSchema))
   async updateImage(@Body() { imageURL, id }: UpdateImageRequestDTO) {
@@ -69,6 +73,7 @@ export class UserController {
   }
 
   @Patch('update-bio')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateBioRequestSchema))
   async updateBio(@Body() { bio, id }: UpdateBioRequestDTO) {
@@ -81,6 +86,7 @@ export class UserController {
   }
 
   @Patch('disable')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(DisableUserRequestSchema))
   async disableUser(@Body() body: DisableUserRequestDTO) {
