@@ -107,19 +107,16 @@ export class EventService {
   async registerEvent(
     params: RegisterEventRequestDTO,
     owner: Users,
-    image: Express.Multer.File | undefined,
   ): Promise<string> {
     if (params.startDate >= params.endDate) {
-      throw new BadRequestException('Start date must be before end date');
+      throw new BadRequestException(
+        'A data de início deve ser anterior à data de término',
+      );
     }
 
     let imageUrl = 'https://i.ibb.co/pvnYzhb4/fundo.jpg';
-    if (image) {
-      const filename = await this.createImageUrl(image);
-      imageUrl =
-        this.configService.get<string>('BASE_URL') +
-        '/events/image/' +
-        filename;
+    if (params.imageURL) {
+      imageUrl = params.imageURL;
     }
 
     const event = await this.eventsRepository.registerEvent(

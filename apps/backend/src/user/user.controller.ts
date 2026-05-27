@@ -4,11 +4,18 @@ import {
   HttpCode,
   Patch,
   Get,
+  Post,
+  UseGuards,
+  Param,
   Query,
   UsePipes,
+  Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
+import { AuthGuard } from '../auth/auth.guard';
+import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 
 import {
   type UpdateUsernameRequestDTO,
@@ -39,6 +46,12 @@ import {
   FetchUserProfileRequestSchema,
   FetchUserProfileResponseDTO,
 } from '@project/shared/src/dtos/user/fetch-user-profile.dto';
+
+import {
+  type RegisterUserRatingRequestDTO,
+  RegisterUserRatingRequestSchema,
+  RegisterUserRatingResponseDTO,
+} from '@project/shared/src/dtos/user/register-user-rating.dto';
 
 @Controller('user')
 export class UserController {
@@ -100,5 +113,26 @@ export class UserController {
   ): Promise<FetchUserProfileResponseDTO> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return this.userService.fetchUserProfile(query.id);
+  }
+
+  @Post(':targetId/rate')
+  @UseGuards(AuthGuard)
+  @HttpCode(201)
+  @UsePipes(new ZodValidationPipe(RegisterUserRatingRequestSchema))
+  async createUserRating(
+    @Param('targetId', ParseIntPipe) targetId: number,
+    @Body() { rating, comment }: RegisterUserRatingRequestDTO,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<RegisterUserRatingResponseDTO> {
+    const authorId = Number(req.user.sub);
+
+    const response = await this.userService.createUserRating(
+      authorId,
+      targetId,
+      rating,
+      comment ?? undefined,
+    );
+
+    return response;
   }
 }

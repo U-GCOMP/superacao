@@ -16,9 +16,15 @@
 }
 
 .row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  display: flex;
+  flex-direction: row; 
   gap: 1rem;
+  width: 100%;
+}
+
+.row > div {
+  flex: 1; 
+  min-width: 150px; 
 }
 
 .form button {

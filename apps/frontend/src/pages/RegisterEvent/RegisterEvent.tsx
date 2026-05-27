@@ -5,6 +5,7 @@ import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 import { useState } from 'react';
 import { Button } from '../../components/Button/Button';
 
+//NOTE: Modal is only here to use in the future inside Meu perfil page
 export const RegisterEvent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
