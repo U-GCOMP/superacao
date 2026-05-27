@@ -31,28 +31,38 @@ export const EventList = () => {
         fetchInitialData();
     }, []);
 
-    const handleFilterFormSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
+    const handleFilterFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         
-        const rawDate = formData.get(filterFormNames.date);
+        const rawDate = formData.get(filterFormNames.date)?.toString().trim();
+        const rawSearch = formData.get(filterFormNames.search)?.toString().trim();
+        const rawOrderBy = formData.get(filterFormNames.orderBy)?.toString();
 
-        const queryParams = FetchEventListQueryParametersSchema.safeParse({
-            search: formData.get(filterFormNames.search),
-            date: rawDate ? new Date(rawDate.toString()) : undefined,
-            isDescending: formData.get(filterFormNames.orderBy) === 'descending'
-        });
+        const parsedData = {
+            search: rawSearch || undefined,
+            date: rawDate ? new Date(rawDate) : undefined, 
+            isDescending: rawOrderBy === 'descending'
+        };
+
+        const queryParams = FetchEventListQueryParametersSchema.safeParse(parsedData);
 
         if (!queryParams.success) {
-            console.error(queryParams.error);
+            console.error('Erro de validação dos filtros:', queryParams.error.format());
             return;
         }
 
         setEvents(null);
         setIsLoading(true);
-        const events = await fetchEventsAction(queryParams.data);
-        setEvents(events);
-        setIsLoading(false);
+        
+        try {
+            const events = await fetchEventsAction(queryParams.data);
+            setEvents(events);
+        } catch (error) {
+            console.error('Erro ao buscar eventos filtrados:', error);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -64,7 +74,14 @@ export const EventList = () => {
                         label='Procure por um evento'
                         name={filterFormNames.search}
                     />
-                    <Dropdown label='Ordem' name={filterFormNames.orderBy} options={[{label: 'Datas mais próximas primeiro', value: 'descending'}, {label: 'Datas mais distantes primeiro', value: 'ascending'}]} />
+                    <Dropdown
+                        label='Ordem'
+                        name={filterFormNames.orderBy}
+                        options={[
+                            {label: 'Datas mais próximas primeiro', value: 'ascending'},
+                            {label: 'Datas mais distantes primeiro', value: 'descending'}
+                        ]}
+                    />
                     <DateInput
                         label='Data'
                         name={filterFormNames.date}

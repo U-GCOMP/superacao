@@ -3,10 +3,16 @@ import z from "zod";
 export const FetchEventListQueryParametersSchema = z.object({
     page: z.coerce.number().min(1, 'Página deve ser pelo menos 1').default(1).optional(),
     pageSize: z.coerce.number().min(1, 'O tamanho da página deve ser pelo menos 1').default(10).optional(),
-    search: z.string().optional(),
-    date: z.coerce.date().optional(),
-    isDescending: z.coerce.boolean().default(false).optional(),
-})
+    // Se vier string vazia, transforma em undefined, se nao, valida como string
+    search: z.preprocess((val) => val === '' ? undefined : val, z.string().optional()),
+    // Se vier string vazia, transforma em undefined, se nao, converte para Date
+    date: z.preprocess((val) => val === '' ? undefined : val, z.coerce.date().optional()),
+    // Converte a string 'true' da URL para o boolean true, o resto eh false
+    isDescending: z.preprocess(
+        (val) => val === 'true' || val === true, 
+        z.boolean().default(false).optional()
+    ),
+});
 
 export const FetchEventListItemResponseSchema = z.object({
     eventId: z.string().nonempty('ID do evento é requerido'),
