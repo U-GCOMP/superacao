@@ -9,6 +9,7 @@ import { RegisterEvent } from '../pages/RegisterEvent/RegisterEvent';
 import { Events } from '../pages/Events/Events';
 import { UserNotFound } from '../pages/UserNotFound/UserNotFound';
 import { AppRoutes } from './routes';
+import { EventDetails } from '../pages/EventDetails/EventDetails';
 
 export const router = createBrowserRouter([
   // TODO: Criar um middleware para lidar com autenticação e redirecionamento
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
   {
     path: AppRoutes.EVENTS,
     element: <Events />,
+  },
+  {
+    path: AppRoutes.DETAIL_EVENT,
+    element: <EventDetails />,
   },
   {
     path: AppRoutes.USER_NOT_FOUND,
