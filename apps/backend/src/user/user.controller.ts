@@ -4,13 +4,16 @@ import {
   HttpCode,
   Patch,
   Get,
-  Query,
+  Param,
   UsePipes,
   UseGuards,
+  Request,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import { AuthGuard } from '../auth/auth.guard';
+import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
 
 import {
   type UpdateUsernameRequestDTO,
@@ -31,16 +34,11 @@ import {
 } from '@project/shared/src/dtos/user/update-bio.dto';
 
 import {
-  type DisableUserRequestDTO,
   DisableUserRequestSchema,
   DisableUserResponseDTO,
 } from '@project/shared/src/dtos/user/disable-user.dto';
 
-import {
-  type FetchUserProfileRequestDTO,
-  FetchUserProfileRequestSchema,
-  FetchUserProfileResponseDTO,
-} from '@project/shared/src/dtos/user/fetch-user-profile.dto';
+import { type FetchUserProfileResponseDTO } from '@project/shared/src/dtos/user/fetch-user-profile.dto';
 
 @Controller('user')
 export class UserController {
@@ -50,11 +48,15 @@ export class UserController {
   @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateUsernameRequestSchema))
-  async updateUsername(@Body() { username, id }: UpdateUsernameRequestDTO) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    await this.userService.updateUsername(username, id);
+  async updateUsername(
+    @Body() { username }: UpdateUsernameRequestDTO,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    const userId = Number(req.user.sub);
 
-    const response: UpdateUsernameResponseDTO = { username, id };
+    await this.userService.updateUsername(username, userId);
+
+    const response: UpdateUsernameResponseDTO = { username, id: userId };
 
     return response;
   }
@@ -63,11 +65,15 @@ export class UserController {
   @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateImageRequestSchema))
-  async updateImage(@Body() { imageURL, id }: UpdateImageRequestDTO) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    await this.userService.updateImage(imageURL, id);
+  async updateImage(
+    @Body() { imageURL }: UpdateImageRequestDTO,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    const userId = Number(req.user.sub);
 
-    const response: UpdateImageResponseDTO = { imageURL, id };
+    await this.userService.updateImage(imageURL, userId);
+
+    const response: UpdateImageResponseDTO = { imageURL, id: userId };
 
     return response;
   }
@@ -76,11 +82,15 @@ export class UserController {
   @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(UpdateBioRequestSchema))
-  async updateBio(@Body() { bio, id }: UpdateBioRequestDTO) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    await this.userService.updateBio(bio, id);
+  async updateBio(
+    @Body() { bio }: UpdateBioRequestDTO,
+    @Request() req: AuthenticatedRequest,
+  ) {
+    const userId = Number(req.user.sub);
 
-    const response: UpdateBioResponseDTO = { bio, id };
+    await this.userService.updateBio(bio, userId);
+
+    const response: UpdateBioResponseDTO = { bio, id: userId };
 
     return response;
   }
@@ -89,22 +99,21 @@ export class UserController {
   @UseGuards(AuthGuard)
   @HttpCode(200)
   @UsePipes(new ZodValidationPipe(DisableUserRequestSchema))
-  async disableUser(@Body() body: DisableUserRequestDTO) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const token = await this.userService.disable(body.id);
+  async disableUser(@Request() req: AuthenticatedRequest) {
+    const userId = Number(req.user.sub);
+
+    const token = await this.userService.disable(userId);
 
     const response: DisableUserResponseDTO = { token };
 
     return response;
   }
 
-  @Get('profile')
+  @Get(':id/profile')
   @HttpCode(200)
-  @UsePipes(new ZodValidationPipe(FetchUserProfileRequestSchema))
   async fetchUserProfile(
-    @Query() query: FetchUserProfileRequestDTO,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<FetchUserProfileResponseDTO> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    return this.userService.fetchUserProfile(query.id);
+    return this.userService.fetchUserProfile(id);
   }
 }
