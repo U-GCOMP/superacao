@@ -1,9 +1,9 @@
 .button {
   --button-bg: var(--accent);
   --text-color: white;
-  
+
   height: 2.5rem;
-  
+
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
@@ -34,27 +34,20 @@
   }
 
   &.primary {
-  --button-bg: var(--accent);
+    --button-bg: var(--accent);
   }
 
   &.secondary {
-    --button-bg: #C0D8D8;
-    --text-color: #04805C;
+    --button-bg: #c0d8d8;
+    --text-color: #04805c;
   }
 
   &.terciary {
-    --button-bg: #FFFFFF;
-    --text-color: #D83018;
-    --border-color: #D83018;
-    border: 1px solid #D83018;
+    --button-bg: var(--terciary-bg, #ffffff);
+    --text-color: var(--terciary-text, #d83018);
+    --border-color: var(--terciary-border, #d83018);
+    --font-weight: var(--terciary-font-weight, normal);
+    border: 1px solid var(--border-color);
+    font-weight: var(--font-weight);
   }
-
-  &.subscribe {
-    --button-bg: #FFFFFF;
-    --text-color: #04805C;
-    --border-color: #04805C;
-    border: 1px solid #04805C;
-    font-weight: bold;
-  }
-
 }

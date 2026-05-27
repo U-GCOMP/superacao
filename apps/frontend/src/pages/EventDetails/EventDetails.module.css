@@ -1,74 +1,77 @@
 .container {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 
 .leftContent {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .leftUpperContent {
-    width: 100%;
+  width: 100%;
 }
 
 .eventHeader {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .eventHeader > h4 {
-    margin-top: 0.5rem;
-    color: #04805C;
+  margin-top: 0.5rem;
+  color: #04805c;
 }
 
 .eventContent {
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .eventFooter > span {
-    color: #04805C;
+  color: #04805c;
 }
 
 .leftBottomContent {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: end;
-    width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: end;
+  width: 100%;
 }
 
 .pills {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .buttons {
-    display: flex;
-    gap: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .rightContent {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    margin-left: 2rem;
-    width: 30%;
+  margin-left: 2rem;
+  width: 30%;
 }
 
 .rightContent > img {
-    width: 100%;
+  width: 100%;
 }
 
 .subscribeBtn {
-    margin-top: auto;
-    width: 100%;
+  margin-top: auto;
+  width: 100%;
 }
 
 .subscribeBtn > button {
-    width: 100%;
+  --terciary-text: #04805c;
+  --terciary-border: #04805c;
+  --terciary-font-weight: bold;
+  width: 100%;
 }

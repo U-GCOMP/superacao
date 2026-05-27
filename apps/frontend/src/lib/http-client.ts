@@ -16,7 +16,7 @@ export class HttpClient {
         const response = await fetch(`${this.baseUrl}${endpoint}`);
         if (!response.ok) {
             const error = await response.json();
-            throw new Error(error);
+            throw new Error(error.message);
         }
         return response.json();
     }
