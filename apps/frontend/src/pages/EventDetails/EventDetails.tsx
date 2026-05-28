@@ -114,6 +114,10 @@ export const EventDetails = () => {
               {isCanceled && (
                 <span className={styles.canceledBadge}>EVENTO CANCELADO</span>
               )}
+
+              {isCompleted && (
+                <span className={styles.completedBadge}>EVENTO CONCLUÍDO</span>
+              )}
             </div>
 
             <div className={styles.eventContent}>
