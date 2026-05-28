@@ -94,4 +94,10 @@
         
         color: #04805C;
     }
+
+    & > p {
+        padding: 0 4rem;
+        color: #7E7E7E;
+        font-weight: 600;
+    }
 }

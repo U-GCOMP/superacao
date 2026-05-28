@@ -4,7 +4,7 @@ import { HttpClient } from "../../../lib/http-client";
 export const fetchUserDetailsAction = async (request: FetchUserProfileRequestDTO): Promise<FetchUserProfileResponseDTO> => {
     const httpClient = HttpClient.getInstance();
 
-    const response = await httpClient.get<FetchUserProfileResponseDTO>(`/user/profile/${request.id}`);
+    const response = await httpClient.get<FetchUserProfileResponseDTO>(`/user/${request.id}/profile`);
 
     return response;
 } 

@@ -84,10 +84,20 @@ export const Profile = () => {
             <section className={`${styles.section} ${styles.eventSection}`}>
                 <h2>Eventos participados</h2>
                 <EventCarousel events={profileData.events_participated} />
+                {
+                    profileData.events_participated.length === 0 && (
+                        <p className={styles.noEventsMessage}>Nenhum evento participado ainda.</p>
+                    )
+                }
             </section>
             <section className={`${styles.section} ${styles.eventSection}`}>
                 <h2>Eventos organizados</h2>
                 <EventCarousel events={profileData.events_organized} />
+                {
+                    profileData.events_organized.length === 0 && (
+                        <p className={styles.noEventsMessage}>Nenhum evento organizado ainda.</p>
+                    )
+                }
             </section>
         </BaseScreen>
     )
