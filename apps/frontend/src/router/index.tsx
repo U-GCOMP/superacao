@@ -10,6 +10,7 @@ import { Events } from '../pages/Events/Events';
 import { UserNotFound } from '../pages/UserNotFound/UserNotFound';
 import { AppRoutes } from './routes';
 import { EventDetails } from '../pages/EventDetails/EventDetails';
+import { Profile } from '../pages/Profile/Profile';
 
 export const router = createBrowserRouter([
   // TODO: Criar um middleware para lidar com autenticação e redirecionamento
@@ -53,4 +54,8 @@ export const router = createBrowserRouter([
     path: AppRoutes.USER_NOT_FOUND,
     element: <UserNotFound />,
   },
+  {
+    path: AppRoutes.PROFILE,
+    element: <Profile />,
+  }
 ]);

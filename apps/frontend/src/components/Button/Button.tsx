@@ -6,8 +6,8 @@ interface ButtonProps {
   onClick?: () => void;
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   disabled?: boolean;
-  borderRadius?: string; 
   buttonStyle?: 'primary' | 'secondary' | 'terciary';
+  compact?: boolean;
 }
 
 export const Button = ({
@@ -15,8 +15,8 @@ export const Button = ({
   onClick,
   type = 'button',
   disabled = false,
-  borderRadius, 
   buttonStyle = 'primary',
+  compact = false,
 }: ButtonProps) => {
   return (
     <button
@@ -24,7 +24,7 @@ export const Button = ({
       onClick={onClick}
       type={type}
       disabled={disabled}
-      style={{ borderRadius }} 
+      data-compact={compact}
     >
       <span>{text}</span>
     </button>
