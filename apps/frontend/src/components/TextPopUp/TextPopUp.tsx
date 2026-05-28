@@ -8,6 +8,8 @@ interface TextPopUpProps {
   title: string;           // Título personalizável
   description: string;     // Texto explicativo
   confirmText: string;     // Texto que o usuário deve digitar (ex: "Desativar")
+  value: string;
+  onChange: (value: string) => void;
   labelCancel?: string;    // Texto do botão cancelar (opcional, default 'Cancelar')
   labelConfirm?: string;   // Texto do botão confirmar (opcional, default 'Confirmar')
 }
@@ -19,14 +21,14 @@ export const TextPopUp = ({
   title, 
   description, 
   confirmText,
+  value,
+  onChange,
   labelCancel = 'Cancelar', 
   labelConfirm = 'Confirmar' 
 }: TextPopUpProps) => {
-  const [inputValue, setInputValue] = useState('');
-
   if (!isOpen) return null;
 
-  const isConfirmEnabled = inputValue === confirmText;
+  const isConfirmEnabled = value === confirmText;
 
   return (
     <div className={styles.overlay}>
@@ -40,9 +42,9 @@ export const TextPopUp = ({
         <input
           type="text"
           className={styles.input}
-          placeholder={`Escreva '${confirmText}'`}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={`${confirmText}`}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
         />
 
         <div className={styles.buttonGroup}>
