@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  ForbiddenException
 } from '@nestjs/common';
 import { EventRepository } from './event.repository';
 import { EventRatingsRepository } from './eventRatings.repository';
@@ -192,5 +193,36 @@ export class EventService {
     };
 
     return SubscribeToEventResponseSchema.parse(responsePayload);
+  }
+
+  async deactivateEvent(
+    eventId: string,
+    userId: number,
+  ): Promise<void> {
+    const event = await this.eventsRepository.findEventByIdWithOrganizerData(eventId);
+
+    // Nao eh para cair em nenhum desses if, pois o front ja vai tratar isso,
+    // i.e. o botao soh vai aparecer se o user for o dono e se o evento nao estiver
+    // nem cancelado nem concluido, apenas coloquei como guardrail por seguranca
+    if (!event) {
+      throw new NotFoundException('Evento não encontrado.');
+    }
+
+    if (event.owner.id !== userId) {
+      throw new ForbiddenException('Você não tem permissão para desativar este evento. Apenas o organizador pode realizar esta ação.');
+    }
+
+    if (event.status === 'CANCELED') {
+      throw new ConflictException('Este evento já está cancelado.');
+    }
+    
+    if (event.status === 'COMPLETED') {
+      throw new ConflictException('Não é possível cancelar um evento que já foi concluído.');
+    }
+
+    await this.eventsRepository.saveEvent({
+      id: event.id,
+      status: 'CANCELED',
+    });
   }
 }

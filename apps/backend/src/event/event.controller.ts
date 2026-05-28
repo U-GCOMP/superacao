@@ -15,6 +15,7 @@ import {
   Res,
   StreamableFile,
   BadRequestException,
+  Patch
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import {
@@ -28,6 +29,8 @@ import {
   FetchEventRatingsEventResponseDTO,
   SubscribeToEventRequestSchema,
   SubscribeToEventResponseDTO,
+  DeactivateEventParamDTO,
+  DeactivateEventParamSchema
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -146,5 +149,22 @@ export class EventController {
     const response = await this.eventsService.subscribeEvent(eventId, userId);
 
     return response;
+  }
+
+  @Patch(':eventId/deactivate')
+  @UseGuards(AuthGuard)
+  @UsePipes(new ZodValidationPipe(DeactivateEventParamSchema))
+  async deactivateEvent(
+    @Request() req: AuthenticatedRequest,
+    @Param() params: DeactivateEventParamDTO, 
+  ) {
+    const userId = Number(req.user.sub);
+
+    await this.eventsService.deactivateEvent(params.eventId, userId);
+
+    return {
+      success: true,
+      message: 'Evento desativado com sucesso.',
+    };
   }
 }

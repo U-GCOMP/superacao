@@ -20,5 +20,6 @@ export * from './src/dtos/event/register-event.dto';
 export * from './src/dtos/event/fetch-event-ratings.dto';
 export * from './src/dtos/event/fetch-event-details.dto';
 export * from './src/dtos/event/subscribe-to-event.dto';
+export * from './src/dtos/event/deactivate-event.dto';
 
 export * from './src/models/user.model';
