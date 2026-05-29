@@ -5,21 +5,94 @@ import { Pill } from '../../components/Pill/Pill';
 import { FetchEventDetailsResponseDTO } from '@project/shared';
 import { useEffect, useState } from 'react';
 import { fetchEventDetailsAction } from '../../features/event/api/fetch-event-details-action';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuthentication } from '../../hooks/useAuthentication.hook';
+import { AppRoutes } from '../../router/routes';
+import { eventSubscribeAction } from '../../features/event/api/event-subscribe-action';
+import { HttpError } from '../../lib/http-client';
+import { checkEventSubscriptionAction } from '../../features/event/api/check-event-subscription-action';
+import { checkEventOwnershipAction } from '../../features/event/api/check-event-ownership-action';
 
 export const EventDetails = () => {
+  const navigate = useNavigate();
+
   const [event, setEvent] = useState<FetchEventDetailsResponseDTO | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // TODO: Implement authorization checks:
-  // 1. Verify whether the user is authenticated.
-  // 2. If authenticated, verify whether the user owns the current event.
-  const [isOwner, _] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const { isAuthenticated, token } = useAuthentication();
 
   const { id } = useParams();
 
+  const subscribeFn = async () => {
+    if (!isAuthenticated || !token) {
+      navigate(AppRoutes.LOGIN);
+      return;
+    }
+
+    if (isSubscribed) {
+      alert('Já inscrito no evento');
+      return;
+    }
+
+    if (!id) {
+      return;
+    }
+
+    try {
+      const subscription = await eventSubscribeAction(token, id);
+
+      setIsSubscribed(true);
+      console.log(subscription);
+    } catch (error) {
+      if (error instanceof HttpError) {
+        if (error.status === 409) {
+          alert('Já inscrito no evento');
+        }
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage('Erro desconhecido');
+      }
+    }
+  };
+
   useEffect(() => {
+    const checkSubscription = async (): Promise<void> => {
+      try {
+        if (!token || !id) {
+          setIsSubscribed(false);
+          return;
+        }
+
+        const subscription = await checkEventSubscriptionAction(token, id);
+
+        setIsSubscribed(subscription.subscribed);
+      } catch (error) {
+        if (error instanceof HttpError) {
+          setErrorMessage(error.message);
+        }
+      }
+    };
+
+    const checkOwnership = async (): Promise<void> => {
+      try {
+        if (!token || !id) {
+          setIsOwner(false);
+          return;
+        }
+
+        const ownership = await checkEventOwnershipAction(token, id);
+
+        setIsOwner(ownership.owns);
+      } catch (error) {
+        if (error instanceof HttpError) {
+          setErrorMessage(error.message);
+        }
+      }
+    };
+
     const fetchEvent = async (id: string) => {
       try {
         setIsLoading(true);
@@ -29,7 +102,7 @@ export const EventDetails = () => {
 
         setEvent(event);
       } catch (error) {
-        if (error instanceof Error) {
+        if (error instanceof HttpError) {
           setErrorMessage(error.message);
         } else {
           setErrorMessage('Unexpected error');
@@ -42,8 +115,10 @@ export const EventDetails = () => {
 
     if (id) {
       fetchEvent(id);
+      checkSubscription();
+      checkOwnership();
     }
-  }, [id]);
+  }, [id, isAuthenticated, token]);
 
   if (isLoading) {
     return (
@@ -111,13 +186,15 @@ export const EventDetails = () => {
           <img src={event.imageUrl} />
           <div className={styles.subscribeBtn}>
             <Button
-              text="Quero me inscrever!"
+              text={isSubscribed ? 'Inscrito' : 'Quero me inscrever!'}
               buttonStyle="terciary"
               disabled={
                 isOwner ||
                 event?.status === 'COMPLETED' ||
-                event?.status === 'CANCELED'
+                event?.status === 'CANCELED' ||
+                isSubscribed
               }
+              onClick={subscribeFn}
             />
           </div>
         </div>

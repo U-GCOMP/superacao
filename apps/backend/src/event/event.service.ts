@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { EventRepository } from './event.repository';
 import { EventRatingsRepository } from './eventRatings.repository';
@@ -12,6 +13,8 @@ import {
   FetchEventListItemResponseDTO,
   RegisterEventRequestDTO,
   FetchEventRatingsEventResponseDTO,
+  EventSubscriptionResponseDTO,
+  EventOwnershipResponseDTO,
 } from '@project/shared';
 import {
   FetchEventDetailsRequestDTO,
@@ -27,6 +30,7 @@ import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { join } from 'path';
 import { writeFile } from 'fs/promises';
+import { AuthRepository } from '../auth/auth.repository';
 
 @Injectable()
 export class EventService {
@@ -34,6 +38,7 @@ export class EventService {
     private readonly eventsRepository: EventRepository,
     private readonly eventRatingRepository: EventRatingsRepository,
     private readonly eventVolunteersRepository: EventVolunteersRepository,
+    private readonly authRepository: AuthRepository,
     private readonly configService: ConfigService,
   ) {}
 
@@ -113,7 +118,7 @@ export class EventService {
 
   async registerEvent(
     params: RegisterEventRequestDTO,
-    owner: Users,
+    ownerId: number,
     image: Express.Multer.File | undefined,
   ): Promise<string> {
     if (params.startDate >= params.endDate) {
@@ -127,6 +132,12 @@ export class EventService {
         this.configService.get<string>('BASE_URL') +
         '/events/image/' +
         filename;
+    }
+
+    const owner = await this.authRepository.getUserById(ownerId);
+
+    if (!owner) {
+      throw new ForbiddenException('An event must have a owner');
     }
 
     const event = await this.eventsRepository.registerEvent(
@@ -192,5 +203,37 @@ export class EventService {
     };
 
     return SubscribeToEventResponseSchema.parse(responsePayload);
+  }
+
+  async eventSubscription(
+    userId: number,
+    eventId: string,
+  ): Promise<EventSubscriptionResponseDTO> {
+    const subscription = await this.eventVolunteersRepository.getSubscription(
+      eventId,
+      userId,
+    );
+
+    return {
+      subscribed: !!subscription,
+    };
+  }
+
+  async eventOwnership(
+    userId: number,
+    eventId: string,
+  ): Promise<EventOwnershipResponseDTO> {
+    const event =
+      await this.eventsRepository.getEventByIdWithOwnerInfo(eventId);
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    const owns = event.owner.id == userId;
+
+    return {
+      owns,
+    };
   }
 }

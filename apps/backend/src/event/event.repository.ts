@@ -78,14 +78,23 @@ export class EventRepository {
   }
 
   async getEventById(eventId: string): Promise<Event | null> {
-    const Event = this.ormRepository.findOne({
+    const event = this.ormRepository.findOne({
       where: { id: eventId },
     });
-    return Event;
+    return event;
+  }
+
+  async getEventByIdWithOwnerInfo(eventId: string): Promise<Event | null> {
+    const event = await this.ormRepository.findOne({
+      where: { id: eventId },
+      relations: ['owner'],
+    });
+
+    return event;
   }
 
   async saveEvent(eventData: Partial<Event>): Promise<Event> {
-    const Event = this.ormRepository.create(eventData);
-    return this.ormRepository.save(Event);
+    const event = this.ormRepository.create(eventData);
+    return this.ormRepository.save(event);
   }
 }
