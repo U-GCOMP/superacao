@@ -70,7 +70,7 @@ export class UserService {
       throw new ConflictException('Esse usuário não existe.');
     }
 
-    user.is_deleted = true;
+    user.deleted_at = new Date();
 
     await this.userRepository.saveUser(user);
 

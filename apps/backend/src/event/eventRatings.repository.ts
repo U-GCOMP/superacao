@@ -16,7 +16,6 @@ export class EventRatingsRepository {
       .createQueryBuilder('eventRating')
       .innerJoinAndSelect(Users, 'user', 'user.id = eventRating.author_id')
       .where('eventRating.event_id = :eventId', { eventId: event_id })
-      .andWhere('user.is_deleted = :deleted', { deleted: false })
       .getMany();
   }
 }
