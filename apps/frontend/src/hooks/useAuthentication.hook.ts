@@ -1,13 +1,10 @@
+import { AuthTokenPayload } from "@project/shared";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { AppRoutes } from "../router/routes";
 
-interface AuthTokenPayload {
-  sub: number;
-  username: string;
-  email: string;
-}
-
-const AUTH_TOKEN_KEY = '@Project:token';
-const AUTH_USER_KEY = '@Project:user';
+export const AUTH_TOKEN_KEY = '@Project:token';
+export const AUTH_USER_KEY = '@Project:user';
 
 export const saveAuthSession = (token: string) => {
   const payload = jwtDecode<AuthTokenPayload>(token);
@@ -17,9 +14,14 @@ export const saveAuthSession = (token: string) => {
 };
 
 export const useAuthentication = () => {
+    const navigate = useNavigate();
     
     const token = localStorage.getItem(AUTH_TOKEN_KEY);
     const storedUser = localStorage.getItem(AUTH_USER_KEY);
+
+    if (!token || !storedUser) {
+      navigate(AppRoutes.LOGIN);
+    }
 
     const user = storedUser ? JSON.parse(storedUser) : null;
 
@@ -28,5 +30,7 @@ export const useAuthentication = () => {
     
     const isAuthenticated = !!token;
 
+    console.log({ isAuthenticated, token, username, id, saveAuthSession });
+    
     return { isAuthenticated, token, username, id, saveAuthSession };
 }

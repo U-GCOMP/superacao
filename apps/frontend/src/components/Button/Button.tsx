@@ -8,6 +8,7 @@ interface ButtonProps {
   disabled?: boolean;
   buttonStyle?: 'primary' | 'secondary' | 'terciary';
   compact?: boolean;
+  className?: string;
 }
 
 export const Button = ({
@@ -17,10 +18,11 @@ export const Button = ({
   disabled = false,
   buttonStyle = 'primary',
   compact = false,
+  className
 }: ButtonProps) => {
   return (
     <button
-      className={`${styles.button} ${styles[buttonStyle]}`}
+      className={`${className || ''} ${styles.button} ${styles[buttonStyle]}`}
       onClick={onClick}
       type={type}
       disabled={disabled}
