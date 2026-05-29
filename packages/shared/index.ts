@@ -18,5 +18,7 @@ export * from './src/dtos/user/register-user-rating.dto';
 export * from './src/dtos/event/fetch-event-list-item.dto';
 export * from './src/dtos/event/register-event.dto';
 export * from './src/dtos/event/fetch-event-ratings.dto';
+export * from './src/dtos/event/fetch-event-details.dto';
+export * from './src/dtos/event/subscribe-to-event.dto';
 
 export * from './src/models/user.model';

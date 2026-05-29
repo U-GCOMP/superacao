@@ -25,6 +25,8 @@ import {
   FetchEventRatingsEventRequestDTO,
   FetchEventRatingsEventRequestSchema,
   FetchEventRatingsEventResponseDTO,
+  SubscribeToEventRequestSchema,
+  SubscribeToEventResponseDTO,
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -126,5 +128,19 @@ export class EventController {
     const validQuery = FetchEventRatingsEventRequestSchema.parse(query);
 
     return await this.eventsService.fetchEventRatings(validQuery.eventId);
+  }
+
+  @Post('subscribe')
+  @UseGuards(AuthGuard)
+  @UsePipes(new ZodValidationPipe(SubscribeToEventRequestSchema))
+  async subscribeToEvent(
+    @Request() req: AuthenticatedRequest,
+    @Body() { eventId }: { eventId: string },
+  ): Promise<SubscribeToEventResponseDTO> {
+    const userId = Number(req.user.sub);
+
+    const response = await this.eventsService.subscribeEvent(eventId, userId);
+
+    return response;
   }
 }
