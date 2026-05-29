@@ -1,19 +1,25 @@
 import {
   Injectable,
-  UnauthorizedException,
+  ForbiddenException,
   ConflictException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
+import { UserRatingsRepository } from './userRatings.repository';
 
 import {
   FetchUserProfileResponseSchema,
   FetchUserProfileResponseDTO,
   FetchEventListItemResponseDTO,
+  RegisterUserRatingResponseSchema,
+  RegisterUserRatingResponseDTO,
 } from '@project/shared';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly userRatingsRepository: UserRatingsRepository,
+  ) {}
 
   async updateUsername(newUsername: string, id: number): Promise<string> {
     const user = await this.userRepository.getUserByID(id);
@@ -108,6 +114,7 @@ export class UserService {
       };
     });
 
+    // NOTE: Hand`t made repository at the time, so it is what it is
     const userRatings = (user.ratings_received || [])
       .filter((review) => review.author !== null && review.author !== undefined)
       .map((review) => ({
@@ -138,5 +145,36 @@ export class UserService {
     return FetchUserProfileResponseSchema.parse(profileData);
   }
 
-  // TODO: Falta função para adicionar user rating, mas ficou disparando erro pra lá e pra cá e me encheu o saco
+  async createUserRating(
+    authorId: number,
+    targetId: number,
+    rating: number,
+    comment?: string,
+  ): Promise<RegisterUserRatingResponseDTO> {
+    if (authorId === targetId) {
+      throw new ForbiddenException('Você não pode avaliar a si mesmo');
+    }
+
+    if (rating < 0 || rating > 5) {
+      throw new ConflictException(
+        'A avaliação deve ser um valor inteiro entre 0 e 5',
+      );
+    }
+
+    await this.userRatingsRepository.createUserRating(
+      authorId,
+      targetId,
+      rating,
+      comment,
+    );
+
+    const response = {
+      target_id: targetId,
+      author_id: authorId,
+      rating: rating,
+      comment: comment,
+    };
+
+    return RegisterUserRatingResponseSchema.parse(response);
+  }
 }
