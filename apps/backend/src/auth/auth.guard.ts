@@ -4,24 +4,38 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { Request } from 'express';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
+import type { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+
     const token = this.extractTokenFromHeader(request);
+
     if (!token) {
+      console.log('Token nao existe?');
+      console.log(token);
+
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token);
-      request['user'] = payload;
-    } catch {
-      throw new UnauthorizedException();
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token);
+      console.log(payload);
+
+      request.user = payload;
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        throw new UnauthorizedException(
+          'Sua sessão expirou. Por favor, faça login novamente.',
+        );
+      }
+      throw error;
     }
     return true;
   }
