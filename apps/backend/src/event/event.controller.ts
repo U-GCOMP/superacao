@@ -10,7 +10,6 @@ import {
   UsePipes,
   Request,
   UseInterceptors,
-  UploadedFile,
   NotFoundException,
   Res,
   StreamableFile,
@@ -97,12 +96,9 @@ export class EventController {
   async registerEvent(
     @Request() req: AuthenticatedRequest,
     @Body() body: RegisterEventRequestDTO,
-    @UploadedFile() image?: Express.Multer.File,
   ): Promise<RegisterEventResponseDTO> {
-    // Always validating without the image, since Zod expects a File instance rather than an Express.Multer.File
     const validation = RegisterEventRequestSchema.safeParse({
       ...body,
-      image: undefined,
     });
 
     if (!validation.success) {
@@ -118,7 +114,7 @@ export class EventController {
       throw new ForbiddenException('User not found');
     }
 
-    const id = await this.eventsService.registerEvent(body, owner, image);
+    const id = await this.eventsService.registerEvent(body, owner);
 
     return {
       token: id,

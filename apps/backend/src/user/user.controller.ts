@@ -4,9 +4,11 @@ import {
   HttpCode,
   Patch,
   Get,
-  Param,
-  UsePipes,
+  Post,
   UseGuards,
+  Param,
+  Query,
+  UsePipes,
   Request,
   ParseIntPipe,
 } from '@nestjs/common';
@@ -39,6 +41,12 @@ import {
 } from '@project/shared/src/dtos/user/disable-user.dto';
 
 import { type FetchUserProfileResponseDTO } from '@project/shared/src/dtos/user/fetch-user-profile.dto';
+
+import {
+  type RegisterUserRatingRequestDTO,
+  RegisterUserRatingRequestSchema,
+  RegisterUserRatingResponseDTO,
+} from '@project/shared/src/dtos/user/register-user-rating.dto';
 
 @Controller('user')
 export class UserController {
@@ -115,5 +123,26 @@ export class UserController {
     @Param('id', ParseIntPipe) id: number,
   ): Promise<FetchUserProfileResponseDTO> {
     return this.userService.fetchUserProfile(id);
+  }
+
+  @Post(':targetId/rate')
+  @UseGuards(AuthGuard)
+  @HttpCode(201)
+  @UsePipes(new ZodValidationPipe(RegisterUserRatingRequestSchema))
+  async createUserRating(
+    @Param('targetId', ParseIntPipe) targetId: number,
+    @Body() { rating, comment }: RegisterUserRatingRequestDTO,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<RegisterUserRatingResponseDTO> {
+    const authorId = Number(req.user.sub);
+
+    const response = await this.userService.createUserRating(
+      authorId,
+      targetId,
+      rating,
+      comment ?? undefined,
+    );
+
+    return response;
   }
 }
