@@ -1,6 +1,6 @@
 import {
   Injectable,
-  UnauthorizedException,
+  ForbiddenException,
   ConflictException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
@@ -152,7 +152,7 @@ export class UserService {
     comment?: string,
   ): Promise<RegisterUserRatingResponseDTO> {
     if (authorId === targetId) {
-      throw new UnauthorizedException('Você não pode avaliar a si mesmo');
+      throw new ForbiddenException('Você não pode avaliar a si mesmo');
     }
 
     if (rating < 0 || rating > 5) {
