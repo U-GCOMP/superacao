@@ -11,6 +11,9 @@ import { useAuthentication } from '../../hooks/useAuthentication.hook';
 import { deactivateEventAction } from '../../features/event/api/deactivate-event-action';
 
 export const EventDetails = () => {
+  const { id } = useParams();
+  const { id: loggedUserId } = useAuthentication();
+  
   const [event, setEvent] = useState<FetchEventDetailsResponseDTO | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,12 +23,13 @@ export const EventDetails = () => {
   const [isDeactivating, setIsDeactivating] = useState(false);
 
   const { id } = useParams();
+  const isOwner = event?.organizer.id === loggedUserId;
 
   const { isAuthenticated, userId } = useAuthentication();
 
-  const isOwner = isAuthenticated && event && userId 
-    ? String(event.organizer.id) === String(userId) 
-    : false;
+  // const isOwner = isAuthenticated && event && userId 
+  //  ? String(event.organizer.id) === String(userId) 
+  //  : false;
 
   useEffect(() => {
     const fetchEvent = async (id: string) => {

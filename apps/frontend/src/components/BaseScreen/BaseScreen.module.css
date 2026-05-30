@@ -5,5 +5,8 @@
 
 .content {
     display: grid;
-    padding: 2rem;
+    
+    &[data-has-padding="true"] {
+        padding: 2rem;
+    }
 }

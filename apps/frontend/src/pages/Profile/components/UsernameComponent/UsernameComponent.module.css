@@ -1,0 +1,58 @@
+.usernameContainer {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+}
+
+.displayRow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+}
+
+.usernameTitle {
+    color: #04805C;
+    margin-bottom: 0.25rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.editor {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.usernameInput {
+    flex: 1;
+    min-width: 0;
+
+    & > span {
+        color: #04805C;
+        font-weight: 600;
+    }
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    justify-content: end;
+}
+
+.editIconButton {
+    --text-color: #04805C !important;
+    --button-border-color: #04805C !important;
+}
+
+.cancelButton {
+    --text-color: #7E7E7E !important;
+    --button-border-color: #7E7E7E !important;
+}
+
+.saveButton {
+    --text-color: #04805C !important;
+    --button-border-color: #04805C !important;
+}

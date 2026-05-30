@@ -1,16 +1,17 @@
 import styles from "./BaseScreen.module.css"
 import { Footer } from "../Footer/Footer"
-import { Navbar } from "../NavBar/NavBar";
+import { Navbar } from "../Navbar/NavBar";
 
 interface BaseScreenProps {
+    hasPadding?: boolean;
     children: React.ReactNode;
 }
 
-export const BaseScreen = ({ children }: BaseScreenProps) => {
+export const BaseScreen = ({ hasPadding = true, children }: BaseScreenProps) => {
     return (
         <main className={styles.main}>
             <Navbar />
-            <section className={styles.content}>
+            <section className={styles.content} data-has-padding={hasPadding}>
                 {children}
             </section>
             <Footer />

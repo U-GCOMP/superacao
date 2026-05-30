@@ -1,20 +1,36 @@
-export const useAuthentication = () => {
-  const token = localStorage.getItem('@Project:token');
-  const isAuthenticated = !!token;
-  let userId = null;
+import { AuthTokenPayload } from "@project/shared";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { AppRoutes } from "../router/routes";
 
-  if (token) {
-    try {
-      const payloadBase64 = token.split('.')[1];
-      
-      const decodedPayload = JSON.parse(atob(payloadBase64));
+export const AUTH_TOKEN_KEY = '@Project:token';
+export const AUTH_USER_KEY = '@Project:user';
 
-      userId = decodedPayload.sub;
-      
-    } catch (error) {
-      console.error('Falha ao decodificar o token JWT:', error);
-    }
-  }
+export const saveAuthSession = (token: string) => {
+  const payload = jwtDecode<AuthTokenPayload>(token);
 
-  return { isAuthenticated, token, userId };
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
+  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(payload));
 };
+
+export const useAuthentication = () => {
+    const navigate = useNavigate();
+    
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    const storedUser = localStorage.getItem(AUTH_USER_KEY);
+
+    if (!token || !storedUser) {
+      navigate(AppRoutes.LOGIN);
+    }
+
+    const user = storedUser ? JSON.parse(storedUser) : null;
+
+    const username = user?.username ?? null;
+    const id = user?.sub ?? null;
+    
+    const isAuthenticated = !!token;
+
+    console.log({ isAuthenticated, token, username, id, saveAuthSession });
+    
+    return { isAuthenticated, token, username, id, saveAuthSession };
+}

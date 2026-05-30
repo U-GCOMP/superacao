@@ -1,0 +1,36 @@
+.container {
+    display: grid;
+    grid-template-rows: min-content 2px min-content;
+    gap: 1rem;
+
+    justify-items: center;
+    text-align: center;
+}
+
+.value {
+    font-size: 3rem;
+    font-weight: 600;
+    color: #3A3232;
+    line-height: 1cap;
+}
+
+.valueSpan {
+    font-size: 2rem;
+    color: #7E7E7E;
+}
+
+.label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #3A3232;
+}
+
+.labelSpan {
+    font-size: 0.875rem;
+    color: #7E7E7E;
+}
+
+.divider {
+    background-color: #04805C;
+    width: 100%;
+}

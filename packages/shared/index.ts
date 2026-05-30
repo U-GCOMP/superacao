@@ -4,6 +4,7 @@ export * from './src/dtos/auth/register.dto';
 export * from './src/dtos/auth/confirm-code.dto';
 export * from './src/dtos/auth/redefine-password-email.dto';
 export * from './src/dtos/auth/redefine-password.dto';
+export * from './src/dtos/auth/auth-token.dto';
 
 // User module DTOs
 export * from './src/dtos/user/update-username.dto';
