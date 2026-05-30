@@ -48,23 +48,6 @@
     grid-template-columns: repeat(4, 12%);
 }
 
-.bioContainer {
-    display: grid;
-    
-    & > h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #04805C;
-    }
-
-    & > p {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #3A3232;
-        line-height: 1.2rem;
-    }
-}
-
 .eventSection {
     display: grid;
     gap: 1rem;

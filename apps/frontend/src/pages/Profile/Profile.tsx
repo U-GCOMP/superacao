@@ -12,6 +12,7 @@ import { AppRoutes } from '../../router/routes';
 import { AppError, HttpClient } from '../../lib/http-client';
 import { AvatarComponent } from './components/AvatarComponent/AvatarComponent';
 import { DeactivateAccountButton } from './components/DeactivateAccountButton/DeactivateAccountButton';
+import { BioComponent } from './components/BioComponent/BioComponent';
 
 export const Profile = () => {
     const navigate = useNavigate();
@@ -48,6 +49,32 @@ export const Profile = () => {
         fetchProfileData();
     }, [id]);
 
+    const onAvatarUpdated = (imageURL: string) => {
+        setProfileData((currentProfile) => {
+            if (!currentProfile) {
+                return currentProfile;
+            }
+
+            return {
+                ...currentProfile,
+                imageUrl: imageURL,
+            };
+        });
+    }
+
+    const onBioUpdated = (bio: string) => {
+        setProfileData((currentProfile) => {
+            if (!currentProfile) {
+                return currentProfile;
+            }
+
+            return {
+                ...currentProfile,
+                bio,
+            };
+        });
+    };
+
     if (isLoading) {
         return (
             <BaseScreen>
@@ -83,18 +110,7 @@ export const Profile = () => {
                                 imageUrl={profileData.imageUrl}
                                 isOwnProfile={isOwnProfile}
                                 userId={loggedUserId ? Number(loggedUserId) : null}
-                                onImageUpdated={(imageURL) => {
-                                    setProfileData((currentProfile) => {
-                                        if (!currentProfile) {
-                                            return currentProfile;
-                                        }
-
-                                        return {
-                                            ...currentProfile,
-                                            imageUrl: imageURL,
-                                        };
-                                    });
-                                }}
+                                onImageUpdated={onAvatarUpdated}
                                 onError={(message) => setErrorMessage(message)}
                             />
                             <RatingStars rating={profileData.rating} />
@@ -104,10 +120,13 @@ export const Profile = () => {
                         <StatsDisplay label='Eventos participados' value={profileData.events_participated_count.toString()} />
                         <StatsDisplay label='Eventos organizados' value={profileData.events_organized_count.toString()} />
                         <StatsDisplay label='Nota' labelSpan={` (${profileData.number_ratings} avaliações)`} value={profileData.rating.toString()} valueSpan='/5' />
-                        <div className={styles.bioContainer}>
-                            <h3>Bio:</h3>
-                            <p>{profileData.bio}</p>
-                        </div>
+                        <BioComponent
+                            bio={profileData.bio}
+                            isOwner={isOwnProfile}
+                            userId={loggedUserId ? Number(loggedUserId) : null}
+                            onBioUpdated={onBioUpdated}
+                            onError={(message) => setErrorMessage(message)}
+                        />
                     </div>
                 </section>
                 <section className={`${styles.section} ${styles.eventSection}`}>

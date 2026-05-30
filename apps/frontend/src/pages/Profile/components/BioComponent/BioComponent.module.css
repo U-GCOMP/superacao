@@ -1,0 +1,76 @@
+.bioContainer {
+	display: grid;
+	gap: 0.75rem;
+	align-content: start;
+
+	& > h3 {
+		font-size: 1.5rem;
+		font-weight: 600;
+		color: #04805C;
+	}
+
+	& > p {
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: #3A3232;
+		line-height: 1.2rem;
+	}
+}
+
+.emptyBioMessage {
+	font-style: italic;
+}
+
+.editButton {
+    --text-color: #04805C !important;
+    --button-border-color: #04805C !important;
+}
+
+.editor {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.editorLabel {
+	display: grid;
+	gap: 0.5rem;
+
+	& > span {
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: #04805C;
+	}
+}
+
+.textarea {
+	width: 100%;
+	min-height: 8rem;
+	resize: vertical;
+	border: 2px solid #C0D8D8;
+	border-radius: 1rem;
+	padding: 1rem;
+	font: inherit;
+	color: #3A3232;
+	box-sizing: border-box;
+	outline: none;
+    resize: none;
+
+	&:focus {
+		border-color: #04805C;
+	}
+}
+
+.actions {
+	display: grid;
+    grid-auto-flow: column;
+	gap: 0.75rem;
+}
+
+.cancelButton {
+    --text-color: #7E7E7E !important;
+    --button-border-color: #7E7E7E !important;
+}
+
+.saveButton {
+    --button-bg: #04805C !important;
+}
