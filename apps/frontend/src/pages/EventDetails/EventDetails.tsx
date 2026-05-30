@@ -22,14 +22,7 @@ export const EventDetails = () => {
   const [deactivateInput, setDeactivateInput] = useState('');
   const [isDeactivating, setIsDeactivating] = useState(false);
 
-  const { id } = useParams();
   const isOwner = event?.organizer.id === loggedUserId;
-
-  const { isAuthenticated, userId } = useAuthentication();
-
-  // const isOwner = isAuthenticated && event && userId 
-  //  ? String(event.organizer.id) === String(userId) 
-  //  : false;
 
   useEffect(() => {
     const fetchEvent = async (id: string) => {
