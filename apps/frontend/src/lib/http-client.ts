@@ -58,73 +58,30 @@ export class HttpClient {
 
     private baseUrl: string = 'http://localhost:3000';
 
-    async get<T>(endpoint: string, token?: string): Promise<T> {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token && {
-                    Authorization: `Bearer ${token}`
-                }),
-            }
+   
+    async get<T>(endpoint: string): Promise<T> {
+       const response = await fetch(`${this.baseUrl}${endpoint}`, {
+           headers: this._commonHeaders()
         });
+        return this._handleResponse<T>(response);
+    }
 
+    async post<T>(endpoint: string, body: unknown): Promise<T> {
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+           method: 'POST',
+           headers: this._commonHeaders(),
+           body: JSON.stringify(body)
+        });
+        if (response.status === 401) {
+            HttpClient.clearAuthSession();
+        }
         if (!response.ok) {
-            const error = await response.json();
-
-            throw new HttpError(
-                response.status,
-                error,
-                response.statusText
-            );
-    //async get<T>(endpoint: string): Promise<T> {
-      //  const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        //    headers: this._commonHeaders()
-        //});
-        //return this._handleResponse<T>(response);
-    //}
-
-    //async post<T>(endpoint: string, body: unknown): Promise<T> {
-     //   const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      //      method: 'POST',
-       //     headers: this._commonHeaders(),
-        //    body: JSON.stringify(body)
-       // });
-       // if (response.status === 401) {
-        //    HttpClient.clearAuthSession();
-       // }
-       // if (!response.ok) {
-        //    const error = await response.json() as AppError;
-         //   throw new AppError(error.message, error.error, error.statusCode);
+            const error = await response.json() as AppError;
+            throw new AppError(error.message, error.error, error.statusCode);
         }
         return response.json();
     }
-
-    async post<T>(endpoint: string, body: unknown, token?: string): Promise<T> {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token && {
-                    Authorization: `Bearer ${token}`
-                })
-            },
-            body: JSON.stringify(body)
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-
-            throw new HttpError(
-                response.status,
-                error,
-                response.statusText
-            );
-            
-        }
-        return response.json();
-    }
-
+    
     async patch<T>(endpoint: string, body: unknown): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'PATCH',

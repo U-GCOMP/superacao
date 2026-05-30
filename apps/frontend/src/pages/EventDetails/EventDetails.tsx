@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { useAuthentication } from '../../hooks/useAuthentication.hook';
 import { AppRoutes } from '../../router/routes';
 import { eventSubscribeAction } from '../../features/event/api/event-subscribe-action';
-import { HttpError } from '../../lib/http-client';
+import { AppError } from '../../lib/http-client';
 import { checkEventSubscriptionAction } from '../../features/event/api/check-event-subscription-action';
 import { checkEventOwnershipAction } from '../../features/event/api/check-event-ownership-action';
 import { deactivateEventAction } from '../../features/event/api/deactivate-event-action';
@@ -33,11 +33,6 @@ export const EventDetails = () => {
   const isOwner = event?.organizer.id === loggedUserId;
 
   const subscribeFn = async () => {
-    if (!isAuthenticated || !token) {
-      navigate(AppRoutes.LOGIN);
-      return;
-    }
-
     if (isSubscribed) {
       alert('Já inscrito no evento');
       return;
@@ -48,13 +43,13 @@ export const EventDetails = () => {
     }
 
     try {
-      const subscription = await eventSubscribeAction(token, id);
+      const subscription = await eventSubscribeAction(id);
 
       setIsSubscribed(true);
       console.log(subscription);
     } catch (error) {
-      if (error instanceof HttpError) {
-        if (error.status === 409) {
+      if (error instanceof AppError) {
+        if (error.statusCode === 409) {
           alert('Já inscrito no evento');
         }
         setErrorMessage(error.message);
@@ -67,16 +62,16 @@ export const EventDetails = () => {
   useEffect(() => {
     const checkSubscription = async (): Promise<void> => {
       try {
-        if (!token || !id) {
+        if (!id) {
           setIsSubscribed(false);
           return;
         }
 
-        const subscription = await checkEventSubscriptionAction(token, id);
+        const subscription = await checkEventSubscriptionAction(id);
 
         setIsSubscribed(subscription.subscribed);
       } catch (error) {
-        if (error instanceof HttpError) {
+        if (error instanceof AppError) {
           setErrorMessage(error.message);
         }
       }
@@ -89,7 +84,7 @@ export const EventDetails = () => {
         const eventData = await fetchEventDetailsAction(id);
         setEvent(eventData);
       } catch (error) {
-        if (error instanceof HttpError) {
+        if (error instanceof AppError) {
           setErrorMessage(error.message);
         } else {
           setErrorMessage('Unexpected error');
@@ -103,9 +98,8 @@ export const EventDetails = () => {
     if (id) {
       fetchEvent(id);
       checkSubscription();
-      checkOwnership();
     }
-  }, [id, isAuthenticated, token]);
+  }, [id]);
 
   const handleConfirmDeactivation = async () => {
     if (!id || deactivateInput !== 'Desativar') return;
@@ -223,18 +217,15 @@ export const EventDetails = () => {
           />
           <div className={styles.subscribeBtn}>
             <Button
-              text={isSubscribed ? 'Inscrito' : 'Quero me inscrever!'}
               buttonStyle="terciary"
               disabled={
                 isOwner ||
-                event?.status === 'COMPLETED' ||
-                event?.status === 'CANCELED' ||
+                isCompleted ||
+                isCanceled ||
                 isSubscribed
               }
               onClick={subscribeFn}
-              // text={isCanceled || isCompleted ? "Inscrições Encerradas" : "Quero me inscrever!"}
-              // buttonStyle="terciary"
-              // disabled={isOwner || isCompleted || isCanceled}
+              text={isCanceled || isCompleted ? "Inscrições Encerradas" : isSubscribed ? "Inscrito" : "Quero me inscrever!"}
             />
           </div>
         </div>

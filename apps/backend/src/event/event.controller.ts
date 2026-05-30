@@ -15,7 +15,7 @@ import {
   StreamableFile,
   BadRequestException,
   ParseIntPipe,
-  Patch
+  Patch,
   UploadedFile,
 } from '@nestjs/common';
 import { EventService } from './event.service';
@@ -140,8 +140,7 @@ export class EventController {
 
     const ownerId = Number(req['user'].sub);
 
-    const id = await this.eventsService.registerEvent(body, ownerId, image);
-    // const id = await this.eventsService.registerEvent(validation.data, owner);
+    const id = await this.eventsService.registerEvent(body, ownerId, file);
 
     return {
       token: id,
