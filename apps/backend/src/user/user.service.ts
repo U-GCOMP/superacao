@@ -14,12 +14,18 @@ import {
   RegisterUserRatingResponseSchema,
   RegisterUserRatingResponseDTO,
 } from '@project/shared';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import { mkdir, writeFile } from 'fs/promises';
+import { randomUUID } from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly userRatingsRepository: UserRatingsRepository,
+    private readonly configService: ConfigService,
   ) {}
 
   async updateUsername(newUsername: string, id: number): Promise<string> {
@@ -36,18 +42,51 @@ export class UserService {
     return 'Success';
   }
 
-  async updateImage(newImageURL: string, id: number): Promise<string> {
+  async createImageUrl(image: Express.Multer.File): Promise<string> {
+    const imagesPath = this.configService.get<string>('IMAGES_PATH_USERS');
+
+    if (!imagesPath) {
+      throw new Error('IMAGES_PATH_USERS is not defined');
+    }
+
+    if (!existsSync(imagesPath)) {
+      await mkdir(imagesPath, { recursive: true });
+    }
+
+    const mimeExtensions: Record<string, string> = {
+      'image/jpeg': '.jpg',
+      'image/png': '.png',
+      'image/webp': '.webp',
+    };
+
+    const extension = mimeExtensions[image.mimetype];
+
+    if (!extension) {
+      throw new Error('Unsupported image type');
+    }
+
+    const fileName = `${randomUUID()}${extension}`;
+    const fullPath = join(imagesPath, fileName);
+
+    await writeFile(fullPath, image.buffer);
+
+    return fileName;
+  }
+
+  async updateImage(file: Express.Multer.File, id: number): Promise<string> {
     const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
       throw new NotFoundException('Esse usuário não existe.');
     }
 
-    user.imageUrl = newImageURL;
+    const fileName = await this.createImageUrl(file);
+
+    user.imageUrl = fileName;
 
     await this.userRepository.saveUser(user);
 
-    return 'Success';
+    return fileName;
   }
 
   async updateBio(newBio: string, id: number): Promise<string> {
@@ -133,7 +172,8 @@ export class UserService {
       id: user.id,
       username: user.username,
       bio: user.bio ?? '',
-      imageUrl: user.imageUrl,
+      // prettier-ignore
+      imageUrl: user.imageUrl ? (user.imageUrl.startsWith('https://') ? user.imageUrl : `http://localhost:3000/users/image/${user.imageUrl}`) : null, //Note: Deals with both standard image coming from API (which has https as prefix) and with images uploaded by user (which have the necessity to put prefix)
       events_organized_count: organizedEvents.length,
       events_participated_count: participatedEvents.length,
       rating: averageRating,

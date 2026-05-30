@@ -16,7 +16,7 @@ export const FetchEventListQueryParametersSchema = z.object({
 
 export const FetchEventListItemResponseSchema = z.object({
     eventId: z.string().nonempty('ID do evento é requerido'),
-    imageUrl: z.url('URL de imagem inválido'),
+    imageUrl: z.string(), //Note: Rapha, had to change this because was too restrictive
     title: z.string().nonempty('Título é requerido'),
     description: z.string().nonempty('Descrição é requerida'),
     volunteersCount: z.number().min(0, 'Contagem de voluntários não pode ser negativa'),

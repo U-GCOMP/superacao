@@ -8,7 +8,7 @@ export const registerEventAction = async (_: unknown, formData: FormData) => {
   const startDate = formData.get('startDate');
   const endDate = formData.get('endDate');
   const startTime = formData.get('startTime');
-  const imageURL = formData.get('imageURL');
+  const image = formData.get('image');
 
   const validation = RegisterEventRequestSchema.safeParse({ 
     title, 
@@ -18,7 +18,7 @@ export const registerEventAction = async (_: unknown, formData: FormData) => {
     startDate, 
     endDate, 
     startTime, 
-    imageURL: typeof imageURL === 'string' && imageURL.trim() !== '' ? imageURL : undefined
+    image: image instanceof File && image.size > 0 ? image : undefined
   });
 
   if (!validation.success) {

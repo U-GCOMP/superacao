@@ -8,7 +8,18 @@ export const RegisterEventRequestSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Formato de tempo inválido, deve ser (HH:mm)'),
-  imageURL: z.string().optional(), 
+  image: z.custom<unknown>((val) => val && typeof val === 'object')
+    .refine((file) => {
+      const f = file as { size?: number; buffer?: { length: number } };
+      const size = f?.size ?? f?.buffer?.length;
+      return size ? size <= 5 * 1024 * 1024 : false;
+    }, 'A imagem precisa ser menor que 5MB')
+    .refine((file) => {
+      const f = file as { mimetype?: string; type?: string };
+      const type = f?.mimetype ?? f?.type;
+      return type ? ['image/jpeg', 'image/png', 'image/webp'].includes(type) : false;
+    }, 'Formato não suportado')
+    .optional(),
 });
 
 export const RegisterEventResponseSchema = z.object({
