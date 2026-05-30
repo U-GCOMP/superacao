@@ -14,6 +14,8 @@ import { AvatarComponent } from './components/AvatarComponent/AvatarComponent';
 import { DeactivateAccountButton } from './components/DeactivateAccountButton/DeactivateAccountButton';
 import { BioComponent } from './components/BioComponent/BioComponent';
 import { UsernameComponent } from './components/UsernameComponent/UsernameComponent';
+import { LogoutButton } from './components/LogoutButton/LogoutButton';
+import { CreateEventButton } from './components/CreateEventButton/CreateEventButton';
 
 export const Profile = () => {
     const navigate = useNavigate();
@@ -118,6 +120,12 @@ export const Profile = () => {
                                 userId={loggedUserId ? Number(loggedUserId) : null}
                                 onUsernameUpdated={onUsernameUpdated}
                                 onError={(message) => setErrorMessage(message)}
+                            />
+                            <LogoutButton
+                                isOwnProfile={isOwnProfile}
+                            />
+                            <CreateEventButton
+                                isOwnProfile={isOwnProfile}
                             />
                             <DeactivateAccountButton
                                 isOwnProfile={isOwnProfile}
