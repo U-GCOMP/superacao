@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  DeleteDateColumn,
+} from 'typeorm';
 
 import { UserRatings } from '../../user/entities/user-ratings.entity';
 import { Event } from '../../event/entities/event.entity';
@@ -22,8 +28,8 @@ export class Users {
   @Column({ nullable: true })
   bio?: string;
 
-  @Column({ default: false })
-  is_deleted?: boolean;
+  @DeleteDateColumn({ nullable: true })
+  deleted_at?: Date;
 
   @Column({ type: 'real', default: 0 })
   rating_sum!: number;

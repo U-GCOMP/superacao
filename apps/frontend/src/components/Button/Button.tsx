@@ -2,31 +2,38 @@ import { ButtonHTMLAttributes } from 'react';
 import styles from './Button.module.css';
 
 interface ButtonProps {
-  text: string;
+  text?: string;
+  children?: React.ReactNode;
   onClick?: () => void;
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   disabled?: boolean;
-  borderRadius?: string; 
-  buttonStyle?: 'primary' | 'secondary' | 'terciary';
+  buttonStyle?: 'primary' | 'secondary' | 'terciary' | 'tertiary-icon';
+  compact?: boolean;
+  ariaLabel?: string;
+  className?: string;
 }
 
 export const Button = ({
   text,
+  children,
   onClick,
   type = 'button',
   disabled = false,
-  borderRadius, 
   buttonStyle = 'primary',
+  compact = false,
+  ariaLabel,
+  className
 }: ButtonProps) => {
   return (
     <button
-      className={`${styles.button} ${styles[buttonStyle]}`}
+      className={`${className || ''} ${styles.button} ${styles[buttonStyle]}`}
       onClick={onClick}
       type={type}
       disabled={disabled}
-      style={{ borderRadius }} 
+      data-compact={compact}
+      aria-label={ariaLabel}
     >
-      <span>{text}</span>
+      {children || <span>{text}</span>}
     </button>
   );
 };

@@ -6,6 +6,9 @@ interface TextInputProps {
   type?: HTMLInputTypeAttribute;
   label: string;
   required?: boolean;
+  value?: string;
+  onChange?: (value: string) => void;
+  className?: string;
 }
 
 export const TextInput = ({
@@ -13,11 +16,14 @@ export const TextInput = ({
   type = 'text',
   label,
   required = false,
+  value,
+  onChange,
+  className,
 }: TextInputProps) => {
   const inputId = useId();
 
   return (
-    <label htmlFor={inputId} className={styles.label}>
+    <label htmlFor={inputId} className={`${styles.label} ${className || ''}`}>
       <span>{label}</span>
       <input
         className={styles.input}
@@ -26,6 +32,8 @@ export const TextInput = ({
         autoComplete="on"
         type={type}
         required={required}
+        value={value}
+        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
         // The placeholder with a space is necessary to make the label animation work
         placeholder=" "
       />

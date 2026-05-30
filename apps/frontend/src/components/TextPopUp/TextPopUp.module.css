@@ -48,30 +48,7 @@
   gap: 1rem;
 }
 
-.button {
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.5rem;
-  font-weight: bold;
-  cursor: pointer;
-  border: none;
-  transition: opacity 0.2s;
-}
-
 .cancelButton {
-  background-color: var(--code-bg);
+  --button-bg: var(--code-bg) !important;
   color: var(--text);
-}
-
-.confirmButton {
-  background-color: var(--accent); 
-  color: white;
-}
-
-.confirmButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.button:hover:not(:disabled) {
-  opacity: 0.8;
 }

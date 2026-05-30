@@ -1,30 +1,36 @@
 import styles from './EventDetails.module.css';
 import { BaseScreen } from '../../components/BaseScreen/BaseScreen';
+import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 import { Button } from '../../components/Button/Button';
 import { Pill } from '../../components/Pill/Pill';
 import { FetchEventDetailsResponseDTO } from '@project/shared';
 import { useEffect, useState } from 'react';
 import { fetchEventDetailsAction } from '../../features/event/api/fetch-event-details-action';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuthentication } from '../../hooks/useAuthentication.hook';
 import { AppRoutes } from '../../router/routes';
 import { eventSubscribeAction } from '../../features/event/api/event-subscribe-action';
 import { HttpError } from '../../lib/http-client';
 import { checkEventSubscriptionAction } from '../../features/event/api/check-event-subscription-action';
 import { checkEventOwnershipAction } from '../../features/event/api/check-event-ownership-action';
+import { deactivateEventAction } from '../../features/event/api/deactivate-event-action';
 
 export const EventDetails = () => {
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const { id: loggedUserId } = useAuthentication();
+  
 
   const [event, setEvent] = useState<FetchEventDetailsResponseDTO | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [isOwner, setIsOwner] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const { isAuthenticated, token } = useAuthentication();
 
-  const { id } = useParams();
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deactivateInput, setDeactivateInput] = useState('');
+  const [isDeactivating, setIsDeactivating] = useState(false);
+
+  const isOwner = event?.organizer.id === loggedUserId;
 
   const subscribeFn = async () => {
     if (!isAuthenticated || !token) {
@@ -76,31 +82,12 @@ export const EventDetails = () => {
       }
     };
 
-    const checkOwnership = async (): Promise<void> => {
-      try {
-        if (!token || !id) {
-          setIsOwner(false);
-          return;
-        }
-
-        const ownership = await checkEventOwnershipAction(token, id);
-
-        setIsOwner(ownership.owns);
-      } catch (error) {
-        if (error instanceof HttpError) {
-          setErrorMessage(error.message);
-        }
-      }
-    };
-
     const fetchEvent = async (id: string) => {
       try {
         setIsLoading(true);
         setErrorMessage(null);
-
-        const event = await fetchEventDetailsAction(id);
-
-        setEvent(event);
+        const eventData = await fetchEventDetailsAction(id);
+        setEvent(eventData);
       } catch (error) {
         if (error instanceof HttpError) {
           setErrorMessage(error.message);
@@ -120,6 +107,33 @@ export const EventDetails = () => {
     }
   }, [id, isAuthenticated, token]);
 
+  const handleConfirmDeactivation = async () => {
+    if (!id || deactivateInput !== 'Desativar') return;
+
+    try {
+      setIsDeactivating(true);
+      
+      await deactivateEventAction(id);
+
+      setEvent((prevEvent) => 
+        prevEvent ? { ...prevEvent, status: 'CANCELED' } : null
+      );
+      
+      setIsModalOpen(false);
+      setDeactivateInput('');
+
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Falha ao desativar o evento.');
+    } finally {
+      setIsDeactivating(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setDeactivateInput('');
+  };
+
   if (isLoading) {
     return (
       <BaseScreen>
@@ -136,6 +150,9 @@ export const EventDetails = () => {
     );
   }
 
+  const isCanceled = event.status === 'CANCELED';
+  const isCompleted = event.status === 'COMPLETED';
+
   return (
     <BaseScreen>
       <div className={styles.container}>
@@ -150,6 +167,13 @@ export const EventDetails = () => {
                   year: 'numeric',
                 })}`}
               </h4>
+              {isCanceled && (
+                <span className={styles.canceledBadge}>EVENTO CANCELADO</span>
+              )}
+
+              {isCompleted && (
+                <span className={styles.completedBadge}>EVENTO CONCLUÍDO</span>
+              )}
             </div>
 
             <div className={styles.eventContent}>
@@ -175,15 +199,28 @@ export const EventDetails = () => {
 
             {isOwner && (
               <div className={styles.buttons}>
-                <Button text="Editar evento" buttonStyle="secondary" />
-                <Button text="Desativar evento" buttonStyle="terciary" />
+                <Button text="Editar evento" buttonStyle="secondary" disabled={isCanceled || isCompleted} />
+                <Button 
+                  text="Desativar evento" 
+                  buttonStyle="terciary" 
+                  onClick={() => setIsModalOpen(true)} 
+                  disabled={isCanceled || isCompleted} 
+                />
               </div>
             )}
           </div>
         </div>
 
         <div className={styles.rightContent}>
-          <img src={event.imageUrl} />
+          <img 
+            src={event.imageUrl} 
+            alt={`Capa do evento ${event.title}`}
+            style={{ 
+              filter: isCanceled ? 'grayscale(100%)' : 'none',
+              transition: 'filter 0.3s ease',
+              objectFit: 'cover'
+            }} 
+          />
           <div className={styles.subscribeBtn}>
             <Button
               text={isSubscribed ? 'Inscrito' : 'Quero me inscrever!'}
@@ -195,10 +232,26 @@ export const EventDetails = () => {
                 isSubscribed
               }
               onClick={subscribeFn}
+              // text={isCanceled || isCompleted ? "Inscrições Encerradas" : "Quero me inscrever!"}
+              // buttonStyle="terciary"
+              // disabled={isOwner || isCompleted || isCanceled}
             />
           </div>
         </div>
       </div>
+
+      <TextPopUp 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmDeactivation}
+        title="Desativar Evento"
+        description="Atenção: Esta ação não pode ser desfeita. Novas inscrições serão bloqueadas imediatamente."
+        confirmText="Desativar"
+        value={deactivateInput}
+        onChange={setDeactivateInput}
+        labelCancel="Cancelar"
+        labelConfirm={isDeactivating ? "Desativando..." : "Confirmar"}
+      />
     </BaseScreen>
   );
 };

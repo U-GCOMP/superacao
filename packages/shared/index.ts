@@ -4,6 +4,7 @@ export * from './src/dtos/auth/register.dto';
 export * from './src/dtos/auth/confirm-code.dto';
 export * from './src/dtos/auth/redefine-password-email.dto';
 export * from './src/dtos/auth/redefine-password.dto';
+export * from './src/dtos/auth/auth-token.dto';
 
 // User module DTOs
 export * from './src/dtos/user/update-username.dto';
@@ -22,5 +23,6 @@ export * from './src/dtos/event/fetch-event-details.dto';
 export * from './src/dtos/event/subscribe-to-event.dto';
 export * from './src/dtos/event/event-subscription.dto';
 export * from './src/dtos/event/event-ownership.dto';
+export * from './src/dtos/event/deactivate-event.dto';
 
 export * from './src/models/user.model';

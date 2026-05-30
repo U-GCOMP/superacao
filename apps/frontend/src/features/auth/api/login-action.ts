@@ -1,4 +1,5 @@
 import { LoginResponseDTO, LoginRequestSchema } from '@project/shared';
+import { saveAuthSession } from '../../../hooks/useAuthentication.hook';
 
 export const loginAction = async (_: unknown, formData: FormData) => {
   const email = formData.get('email') as string;
@@ -36,8 +37,8 @@ export const loginAction = async (_: unknown, formData: FormData) => {
     }
 
     const data: LoginResponseDTO = await response.json();
-    
-    localStorage.setItem('@Project:token', data.token);
+
+    saveAuthSession(data.token);
 
     return { message: 'Login realizado com sucesso!', success: true };
     

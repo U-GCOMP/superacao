@@ -75,3 +75,25 @@
   --terciary-font-weight: bold;
   width: 100%;
 }
+
+.canceledBadge {
+  display: inline-block;
+  margin-top: 8px;
+  color: #DC2626;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 4px 8px;
+  background-color: #FEE2E2;
+  border-radius: 4px;
+}
+
+.completedBadge {
+  display: inline-block;
+  margin-top: 8px;
+  color: #15803D;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 4px 8px;
+  background-color: #DCFCE7;
+  border-radius: 4px;
+}

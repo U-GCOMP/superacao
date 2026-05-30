@@ -1,4 +1,21 @@
 import { RegisterResponseDTO, RegisterRequestSchema } from '@project/shared';
+import { jwtDecode } from 'jwt-decode';
+
+interface AuthTokenPayload {
+  sub: number;
+  username: string;
+  email: string;
+}
+
+const AUTH_TOKEN_KEY = '@Project:token';
+const AUTH_USER_KEY = '@Project:user';
+
+const saveAuthSession = (token: string) => {
+  const payload = jwtDecode<AuthTokenPayload>(token);
+
+  localStorage.setItem(AUTH_TOKEN_KEY, token);
+  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(payload));
+};
 
 export const registerAction = async (_: unknown, formData: FormData) => {
   const username = formData.get('username') as string;
@@ -39,8 +56,8 @@ export const registerAction = async (_: unknown, formData: FormData) => {
     }
 
     const data: RegisterResponseDTO = await response.json();
-    
-    localStorage.setItem('@Project:token', data.token);
+
+    saveAuthSession(data.token);
 
     return { message: 'Cadastro realizado com sucesso!', success: true };
   } catch (_) {

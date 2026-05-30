@@ -15,6 +15,8 @@ import {
   StreamableFile,
   BadRequestException,
   ParseIntPipe,
+  Patch
+  UploadedFile,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import {
@@ -30,6 +32,8 @@ import {
   SubscribeToEventResponseDTO,
   EventSubscriptionResponseDTO,
   EventOwnershipResponseDTO,
+  DeactivateEventParamDTO,
+  DeactivateEventParamSchema
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -94,10 +98,10 @@ export class EventController {
     @Param('name') name: string,
     @Res({ passthrough: true }) res: Response,
   ): StreamableFile {
-    const imagesPath = this.configService.get<string>('IMAGES_PATH');
+    const imagesPath = this.configService.get<string>('IMAGES_PATH_EVENTS');
 
     if (!imagesPath) {
-      throw new Error('IMAGES_PATH is not defined');
+      throw new Error('IMAGES_PATH_EVENTS is not defined');
     }
 
     const fullPath = join(imagesPath, name);
@@ -119,10 +123,12 @@ export class EventController {
   @UseInterceptors(FileInterceptor('image'))
   async registerEvent(
     @Request() req: AuthenticatedRequest,
+    @UploadedFile() file: Express.Multer.File,
     @Body() body: RegisterEventRequestDTO,
   ): Promise<RegisterEventResponseDTO> {
     const validation = RegisterEventRequestSchema.safeParse({
       ...body,
+      image: file,
     });
 
     if (!validation.success) {
@@ -135,6 +141,7 @@ export class EventController {
     const ownerId = Number(req['user'].sub);
 
     const id = await this.eventsService.registerEvent(body, ownerId, image);
+    // const id = await this.eventsService.registerEvent(validation.data, owner);
 
     return {
       token: id,
@@ -162,5 +169,22 @@ export class EventController {
     const response = await this.eventsService.subscribeEvent(eventId, userId);
 
     return response;
+  }
+
+  @Patch(':eventId/deactivate')
+  @UseGuards(AuthGuard)
+  @UsePipes(new ZodValidationPipe(DeactivateEventParamSchema))
+  async deactivateEvent(
+    @Request() req: AuthenticatedRequest,
+    @Param() params: DeactivateEventParamDTO, 
+  ) {
+    const userId = Number(req.user.sub);
+
+    await this.eventsService.deactivateEvent(params.eventId, userId);
+
+    return {
+      success: true,
+      message: 'Evento desativado com sucesso.',
+    };
   }
 }
