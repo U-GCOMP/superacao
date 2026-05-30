@@ -2,6 +2,7 @@ import { Button } from '../../../../components/Button/Button';
 import styles from './LogoutButton.module.css';
 import { AUTH_TOKEN_KEY, AUTH_USER_KEY } from '../../../../hooks/useAuthentication.hook'
 import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../../../router/routes'
 
 interface LogoutButtonProps {
     isOwnProfile: boolean;
@@ -20,7 +21,7 @@ export const LogoutButton = ({ isOwnProfile }: LogoutButtonProps) => {
             localStorage.removeItem(AUTH_TOKEN_KEY);
             localStorage.removeItem(AUTH_USER_KEY);
 
-            navigate('/login');
+            navigate(AppRoutes.LOGIN);
         } catch (error) {
             console.error('Erro ao fazer logout:', error);
         }

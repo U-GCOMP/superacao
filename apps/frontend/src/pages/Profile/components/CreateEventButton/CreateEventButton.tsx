@@ -1,6 +1,7 @@
 import { Button } from '../../../../components/Button/Button';
 import styles from './CreateEventButton.module.css';
 import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../../../router/routes'
 
 interface CreateEventButtonProps {
     isOwnProfile: boolean;
@@ -17,7 +18,7 @@ export const CreateEventButton = ({
     }
 
     const handleCreateEvent = () => {
-        navigate('/cadastrar-evento');
+        navigate(AppRoutes.REGISTER_EVENT);
     };
 
     return (
