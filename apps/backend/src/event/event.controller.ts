@@ -15,6 +15,7 @@ import {
   StreamableFile,
   BadRequestException,
   Patch
+  UploadedFile,
 } from '@nestjs/common';
 import { EventService } from './event.service';
 import {
@@ -73,10 +74,10 @@ export class EventController {
     @Param('name') name: string,
     @Res({ passthrough: true }) res: Response,
   ): StreamableFile {
-    const imagesPath = this.configService.get<string>('IMAGES_PATH');
+    const imagesPath = this.configService.get<string>('IMAGES_PATH_EVENTS');
 
     if (!imagesPath) {
-      throw new Error('IMAGES_PATH is not defined');
+      throw new Error('IMAGES_PATH_EVENTS is not defined');
     }
 
     const fullPath = join(imagesPath, name);
@@ -98,10 +99,12 @@ export class EventController {
   @UseInterceptors(FileInterceptor('image'))
   async registerEvent(
     @Request() req: AuthenticatedRequest,
+    @UploadedFile() file: Express.Multer.File,
     @Body() body: RegisterEventRequestDTO,
   ): Promise<RegisterEventResponseDTO> {
     const validation = RegisterEventRequestSchema.safeParse({
       ...body,
+      image: file,
     });
 
     if (!validation.success) {
@@ -117,7 +120,7 @@ export class EventController {
       throw new ForbiddenException('User not found');
     }
 
-    const id = await this.eventsService.registerEvent(body, owner);
+    const id = await this.eventsService.registerEvent(validation.data, owner);
 
     return {
       token: id,

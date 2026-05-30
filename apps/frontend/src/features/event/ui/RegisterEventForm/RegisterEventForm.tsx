@@ -1,11 +1,12 @@
 import { useActionState } from 'react';
-import styles from '../event.module.css';
+import styles from './RegisterEventForm.module.css';
 import { registerEventAction } from '../../api/register-event-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { TextArea } from '../../../../components/TextArea/TextArea';
 import { Button } from '../../../../components/Button/Button';
 import { DateInput } from '../../../../components/DateInput/DateInput';
 import { TimeInput } from '../../../../components/TimeInput/TimeInput';
+import { ImageInput } from '../../../../components/ImageInput/ImageInput';
 
 export const RegisterEventForm = () => {
   const [state, formAction, isPending] = useActionState(registerEventAction, {
@@ -16,7 +17,7 @@ export const RegisterEventForm = () => {
   return (
     <main className={styles.main}>
       <form action={formAction} className={styles.form}>
-        <TextInput name="imageURL" type="text" label="URL imagem" />
+        <ImageInput name="image" />
 
         <TextInput name="title" type="text" label="Título" required />
 
