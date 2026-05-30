@@ -2,6 +2,7 @@ import {
   Injectable,
   ForbiddenException,
   ConflictException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { UserRatingsRepository } from './userRatings.repository';
@@ -25,7 +26,7 @@ export class UserService {
     const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
-      throw new ConflictException('Esse usuário não existe.');
+      throw new NotFoundException('Esse usuário não existe.');
     }
 
     user.username = newUsername;
@@ -39,7 +40,7 @@ export class UserService {
     const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
-      throw new ConflictException('Esse usuário não existe.');
+      throw new NotFoundException('Esse usuário não existe.');
     }
 
     user.imageUrl = newImageURL;
@@ -53,7 +54,7 @@ export class UserService {
     const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
-      throw new ConflictException('Esse usuário não existe.');
+      throw new NotFoundException('Esse usuário não existe.');
     }
 
     user.bio = newBio;
@@ -67,7 +68,7 @@ export class UserService {
     const user = await this.userRepository.getUserByID(id);
 
     if (!user) {
-      throw new ConflictException('Esse usuário não existe.');
+      throw new NotFoundException('Esse usuário não existe.');
     }
 
     user.deleted_at = new Date();
@@ -81,7 +82,7 @@ export class UserService {
     const user = await this.userRepository.getUserWithEventsByID(id);
 
     if (!user) {
-      throw new ConflictException('Esse usuário não existe.');
+      throw new NotFoundException('Esse usuário não existe.');
     }
 
     const organizedEvents: FetchEventListItemResponseDTO[] = (
