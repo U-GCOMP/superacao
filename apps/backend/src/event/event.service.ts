@@ -26,7 +26,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { randomUUID } from 'crypto';
 import { join } from 'path';
-import { writeFile } from 'fs/promises';
+import { mkdir, writeFile } from 'fs/promises';
+import { existsSync } from 'fs';
 
 @Injectable()
 export class EventService {
@@ -44,7 +45,10 @@ export class EventService {
 
     return events.map((event) => ({
       eventId: event.id,
-      imageUrl: event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg',
+      imageUrl:
+        event.imageUrl && !event.imageUrl.startsWith('http')
+          ? `http://localhost:3000/events/image/${event.imageUrl}`
+          : (event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg'), //Rapha, had to alter here from your original implementation, in onder to have actual url application URL that browser understands, otherwise even with imageURL stored inside DB wouldn`t load browser
       title: event.title,
       description: event.description ?? '',
       volunteersCount: event.volunteers_count,
@@ -69,7 +73,10 @@ export class EventService {
 
     return {
       id: event.id,
-      imageUrl: event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg',
+      imageUrl:
+        event.imageUrl && !event.imageUrl.startsWith('http')
+          ? `http://localhost:3000/events/image/${event.imageUrl}`
+          : (event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg'), //Zé or Rapha, had to alter here from your original implementation, in onder to have actual url application URL that browser understands, otherwise even with imageURL stored inside DB wouldn`t load browser
       title: event.title,
       description: event.description ?? '',
       volunteersCount: event.volunteers_count,
@@ -84,10 +91,14 @@ export class EventService {
   }
 
   async createImageUrl(image: Express.Multer.File): Promise<string> {
-    const imagesPath = this.configService.get<string>('IMAGES_PATH');
+    const imagesPath = this.configService.get<string>('IMAGES_PATH_EVENTS');
 
     if (!imagesPath) {
-      throw new Error('IMAGES_PATH is not defined');
+      throw new Error('IMAGES_PATH_EVENTS is not defined');
+    }
+
+    if (!existsSync(imagesPath)) {
+      await mkdir(imagesPath, { recursive: true });
     }
 
     const mimeExtensions: Record<string, string> = {
@@ -122,8 +133,10 @@ export class EventService {
     }
 
     let imageUrl = 'https://i.ibb.co/pvnYzhb4/fundo.jpg';
-    if (params.imageURL) {
-      imageUrl = params.imageURL;
+    if (params.image) {
+      imageUrl = await this.createImageUrl(
+        params.image as unknown as Express.Multer.File,
+      );
     }
 
     const event = await this.eventsRepository.registerEvent(
