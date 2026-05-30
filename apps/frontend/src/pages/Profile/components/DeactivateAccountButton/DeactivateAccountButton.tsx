@@ -17,6 +17,7 @@ export const DeactivateAccountButton = ({
     onError,
 }: DeactivateAccountButtonProps) => {
     const [isDeactivatePopUpOpen, setIsDeactivatePopUpOpen] = useState(false);
+    const [deactivateInput, setDeactivateInput] = useState(''); 
 
     if (!isOwnProfile) {
         return null;
@@ -25,6 +26,7 @@ export const DeactivateAccountButton = ({
     const deactivateAccount = async () => {
         try {
             setIsDeactivatePopUpOpen(false);
+            setDeactivateInput('');
             await deactivateAccountAction();
 
             alert('Conta desativada com sucesso!\nVocê será redirecionado para a página de login.');
@@ -38,16 +40,23 @@ export const DeactivateAccountButton = ({
         }
     };
 
+    const handleCloseModal = () => {
+        setIsDeactivatePopUpOpen(false);
+        setDeactivateInput('');
+    };
+
     return (
         <>
             {isDeactivatePopUpOpen && (
                 <TextPopUp
                     isOpen={isDeactivatePopUpOpen}
-                    onClose={() => setIsDeactivatePopUpOpen(false)}
+                    onClose={handleCloseModal}
                     onConfirm={deactivateAccount}
                     confirmText='Desativar'
                     title='Você tem certeza que quer desativar sua conta?'
                     description='Essa ação é irreversível, você perderá o acesso a seus dados, eventos e sua conta não será mais visível para outros usuários.'
+                    value={deactivateInput}
+                    onChange={setDeactivateInput}
                 />
             )}
             <div className={styles.buttonWrapper}>
