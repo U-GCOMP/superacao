@@ -28,12 +28,9 @@ export const TextPopUp = ({
   labelConfirm = 'Confirmar' 
 }: TextPopUpProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  
-  const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {
     const setupState = () => {
-      setInputValue('');
       inputRef.current?.focus();
     }
     
