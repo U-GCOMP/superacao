@@ -79,7 +79,6 @@ export class AuthService {
       password: hashedPassword,
       bio: bio ?? undefined,
       imageUrl: avatarUrl,
-      is_deleted: false,
     });
 
     this.mailService

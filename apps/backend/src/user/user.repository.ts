@@ -15,8 +15,9 @@ export class UserRepository {
   }
 
   async saveUser(userData: Partial<Users>): Promise<Users> {
-    const User = this.typeormRepo.create(userData);
-    return this.typeormRepo.save(User);
+    const user = this.typeormRepo.create(userData);
+
+    return this.typeormRepo.save(user);
   }
 
   async getUserWithEventsByID(id: number): Promise<Users | null> {
@@ -26,12 +27,7 @@ export class UserRepository {
       .leftJoinAndSelect('user.events_participated', 'events_participated')
       .leftJoinAndSelect('events_participated.event', 'event')
       .leftJoinAndSelect('user.ratings_received', 'ratings_received')
-      .leftJoinAndSelect(
-        'ratings_received.author',
-        'author',
-        'author.is_deleted = :isDeleted',
-        { isDeleted: false },
-      )
+      .leftJoinAndSelect('ratings_received.author', 'author')
       .where('user.id = :id', { id })
       .getOne();
   }

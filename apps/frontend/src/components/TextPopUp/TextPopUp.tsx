@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './TextPopUp.module.css';
+import { Button } from '../Button/Button';
 
 interface TextPopUpProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  title: string;           // Título personalizável
-  description: string;     // Texto explicativo
-  confirmText: string;     // Texto que o usuário deve digitar (ex: "Desativar")
-  labelCancel?: string;    // Texto do botão cancelar (opcional, default 'Cancelar')
-  labelConfirm?: string;   // Texto do botão confirmar (opcional, default 'Confirmar')
+  title: string;
+  description: string;
+  confirmText: string;
+  labelCancel?: string;
+  labelConfirm?: string;
 }
 
 export const TextPopUp = ({ 
@@ -22,7 +23,20 @@ export const TextPopUp = ({
   labelCancel = 'Cancelar', 
   labelConfirm = 'Confirmar' 
 }: TextPopUpProps) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  
   const [inputValue, setInputValue] = useState('');
+
+  useEffect(() => {
+    const setupState = () => {
+      setInputValue('');
+      inputRef.current?.focus();
+    }
+    
+    if (isOpen) {
+      setupState();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -30,14 +44,18 @@ export const TextPopUp = ({
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.modal}>
+      <form action={onConfirm} className={styles.modal}>
         <h2 className={styles.title}>{title}</h2>
         
         <p className={styles.description}>
-          {description} (Escreva <strong>{confirmText}</strong> para confirmar)
+          {description}
+          <br />
+          <br />
+          (Escreva <strong>{confirmText}</strong> para confirmar)
         </p>
 
         <input
+          ref={inputRef}
           type="text"
           className={styles.input}
           placeholder={`Escreva '${confirmText}'`}
@@ -46,18 +64,15 @@ export const TextPopUp = ({
         />
 
         <div className={styles.buttonGroup}>
-          <button className={`${styles.button} ${styles.cancelButton}`} onClick={onClose}>
-            {labelCancel}
-          </button>
-          <button 
-            className={`${styles.button} ${styles.confirmButton}`} 
-            onClick={onConfirm}
+          <Button className={styles.cancelButton} text={labelCancel} onClick={onClose} />
+          <Button 
+            className={styles.confirmButton} 
+            text={labelConfirm}
             disabled={!isConfirmEnabled}
-          >
-            {labelConfirm}
-          </button>
+            type='submit'
+          />
         </div>
-      </div>
+      </form>
     </div>
   );
 };

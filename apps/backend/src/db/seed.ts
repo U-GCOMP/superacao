@@ -84,7 +84,7 @@ async function bootstrap() {
         volunteers_max: 10,
         owner: savedUsers[0],
         status: 'COMPLETED' as const,
-      }
+      },
     ];
     const savedEvents = await eventRepo.save(eventsData);
 
@@ -117,7 +117,7 @@ async function bootstrap() {
         category_id: 1,
         rating: 5,
         comment: 'Evento maravilhoso, muito organizado!',
-      }
+      },
     ]);
 
     console.log('Criando Avaliações de Usuários...');
@@ -129,7 +129,7 @@ async function bootstrap() {
         author: savedUsers[0],
         rating: 5,
         comment: 'Voluntário extremamente prestativo.',
-      }
+      },
     ]);
 
     console.log('Seed finalizada com sucesso');
@@ -140,4 +140,4 @@ async function bootstrap() {
   }
 }
 
-bootstrap();
+void bootstrap();

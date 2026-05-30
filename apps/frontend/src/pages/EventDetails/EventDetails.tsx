@@ -6,18 +6,17 @@ import { FetchEventDetailsResponseDTO } from '@project/shared';
 import { useEffect, useState } from 'react';
 import { fetchEventDetailsAction } from '../../features/event/api/fetch-event-details-action';
 import { useParams } from 'react-router-dom';
+import { useAuthentication } from '../../hooks/useAuthentication.hook';
 
 export const EventDetails = () => {
+  const { id } = useParams();
+  const { id: loggedUserId } = useAuthentication();
+  
   const [event, setEvent] = useState<FetchEventDetailsResponseDTO | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // TODO: Implement authorization checks:
-  // 1. Verify whether the user is authenticated.
-  // 2. If authenticated, verify whether the user owns the current event.
-  const [isOwner, _] = useState(false);
-
-  const { id } = useParams();
+  const isOwner = event?.organizer.id === loggedUserId;
 
   useEffect(() => {
     const fetchEvent = async (id: string) => {
