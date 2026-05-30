@@ -1,5 +1,6 @@
 .button {
   --button-bg: var(--accent);
+  --button-border-color: var(--button-bg);
   --text-color: white;
 
   height: 2.5rem;
@@ -17,6 +18,7 @@
   border-radius: 1000px;
 
   background-color: var(--button-bg);
+  border: 1px solid var(--button-border-color);
 
   color: var(--text-color);
   font-size: 1rem;
@@ -28,6 +30,8 @@
 
   &:disabled {
     cursor: not-allowed;
+    background-color: color-mix(in srgb, var(--button-bg) 60%, var(--bg));
+    border-color: color-mix(in srgb, var(--button-border-color) 60%, var(--bg));
   }
 
   & > span {
@@ -50,9 +54,9 @@
   &.terciary {
     --button-bg: var(--terciary-bg, #ffffff);
     --text-color: var(--terciary-text, #d83018);
-    --border-color: var(--terciary-border, #d83018);
+    --button-border-color: var(--terciary-border, #d83018);
     --font-weight: var(--terciary-font-weight, normal);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--button-border-color);
     font-weight: var(--font-weight);
 
     &:not(:disabled):hover {
