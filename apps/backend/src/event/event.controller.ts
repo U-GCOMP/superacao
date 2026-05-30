@@ -14,7 +14,8 @@ import {
   Res,
   StreamableFile,
   BadRequestException,
-  Patch
+  ParseIntPipe,
+  Patch,
   UploadedFile,
 } from '@nestjs/common';
 import { EventService } from './event.service';
@@ -29,6 +30,8 @@ import {
   FetchEventRatingsEventResponseDTO,
   SubscribeToEventRequestSchema,
   SubscribeToEventResponseDTO,
+  EventSubscriptionResponseDTO,
+  EventOwnershipResponseDTO,
   DeactivateEventParamDTO,
   DeactivateEventParamSchema
 } from '@project/shared';
@@ -53,7 +56,6 @@ import z from 'zod';
 export class EventController {
   constructor(
     private readonly eventsService: EventService,
-    private readonly authRepository: AuthRepository,
     private readonly configService: ConfigService,
   ) {}
 
@@ -67,6 +69,28 @@ export class EventController {
   @UsePipes(new ZodValidationPipe(FetchEventDetailsRequestSchema))
   async fetchEventDetails(@Param() params: FetchEventDetailsRequestDTO) {
     return this.eventsService.fetchEventDetails(params);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':eventId/subscription')
+  async eventSubscription(
+    @Param('eventId') eventId: string,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<EventSubscriptionResponseDTO> {
+    const userId = Number(req.user.sub);
+
+    return this.eventsService.eventSubscription(userId, eventId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get(':eventId/ownership')
+  async eventOwnership(
+    @Param('eventId') eventId: string,
+    @Request() req: AuthenticatedRequest,
+  ): Promise<EventOwnershipResponseDTO> {
+    const userId = Number(req.user.sub);
+
+    return this.eventsService.eventOwnership(userId, eventId);
   }
 
   @Get('image/:name')
@@ -114,13 +138,9 @@ export class EventController {
       });
     }
 
-    const owner = await this.authRepository.getUserByEmail(req['user'].email);
+    const ownerId = Number(req['user'].sub);
 
-    if (!owner) {
-      throw new ForbiddenException('User not found');
-    }
-
-    const id = await this.eventsService.registerEvent(validation.data, owner);
+    const id = await this.eventsService.registerEvent(body, ownerId, file);
 
     return {
       token: id,

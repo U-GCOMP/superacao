@@ -8,23 +8,75 @@ import { useEffect, useState } from 'react';
 import { fetchEventDetailsAction } from '../../features/event/api/fetch-event-details-action';
 import { useParams } from 'react-router-dom';
 import { useAuthentication } from '../../hooks/useAuthentication.hook';
+import { AppRoutes } from '../../router/routes';
+import { eventSubscribeAction } from '../../features/event/api/event-subscribe-action';
+import { AppError } from '../../lib/http-client';
+import { checkEventSubscriptionAction } from '../../features/event/api/check-event-subscription-action';
+import { checkEventOwnershipAction } from '../../features/event/api/check-event-ownership-action';
 import { deactivateEventAction } from '../../features/event/api/deactivate-event-action';
 
 export const EventDetails = () => {
   const { id } = useParams();
   const { id: loggedUserId } = useAuthentication();
   
+
   const [event, setEvent] = useState<FetchEventDetailsResponseDTO | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deactivateInput, setDeactivateInput] = useState('');
   const [isDeactivating, setIsDeactivating] = useState(false);
 
   const isOwner = event?.organizer.id === loggedUserId;
 
+  const subscribeFn = async () => {
+    if (isSubscribed) {
+      alert('Já inscrito no evento');
+      return;
+    }
+
+    if (!id) {
+      return;
+    }
+
+    try {
+      const subscription = await eventSubscribeAction(id);
+
+      setIsSubscribed(true);
+      console.log(subscription);
+    } catch (error) {
+      if (error instanceof AppError) {
+        if (error.statusCode === 409) {
+          alert('Já inscrito no evento');
+        }
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage('Erro desconhecido');
+      }
+    }
+  };
+
   useEffect(() => {
+    const checkSubscription = async (): Promise<void> => {
+      try {
+        if (!id) {
+          setIsSubscribed(false);
+          return;
+        }
+
+        const subscription = await checkEventSubscriptionAction(id);
+
+        setIsSubscribed(subscription.subscribed);
+      } catch (error) {
+        if (error instanceof AppError) {
+          setErrorMessage(error.message);
+        }
+      }
+    };
+
     const fetchEvent = async (id: string) => {
       try {
         setIsLoading(true);
@@ -32,7 +84,7 @@ export const EventDetails = () => {
         const eventData = await fetchEventDetailsAction(id);
         setEvent(eventData);
       } catch (error) {
-        if (error instanceof Error) {
+        if (error instanceof AppError) {
           setErrorMessage(error.message);
         } else {
           setErrorMessage('Unexpected error');
@@ -45,6 +97,7 @@ export const EventDetails = () => {
 
     if (id) {
       fetchEvent(id);
+      checkSubscription();
     }
   }, [id]);
 
@@ -164,9 +217,15 @@ export const EventDetails = () => {
           />
           <div className={styles.subscribeBtn}>
             <Button
-              text={isCanceled || isCompleted ? "Inscrições Encerradas" : "Quero me inscrever!"}
               buttonStyle="terciary"
-              disabled={isOwner || isCompleted || isCanceled}
+              disabled={
+                isOwner ||
+                isCompleted ||
+                isCanceled ||
+                isSubscribed
+              }
+              onClick={subscribeFn}
+              text={isCanceled || isCompleted ? "Inscrições Encerradas" : isSubscribed ? "Inscrito" : "Quero me inscrever!"}
             />
           </div>
         </div>

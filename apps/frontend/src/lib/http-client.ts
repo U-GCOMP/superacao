@@ -58,18 +58,19 @@ export class HttpClient {
 
     private baseUrl: string = 'http://localhost:3000';
 
+   
     async get<T>(endpoint: string): Promise<T> {
-        const response = await fetch(`${this.baseUrl}${endpoint}`, {
-            headers: this._commonHeaders()
+       const response = await fetch(`${this.baseUrl}${endpoint}`, {
+           headers: this._commonHeaders()
         });
         return this._handleResponse<T>(response);
     }
 
     async post<T>(endpoint: string, body: unknown): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
-            method: 'POST',
-            headers: this._commonHeaders(),
-            body: JSON.stringify(body)
+           method: 'POST',
+           headers: this._commonHeaders(),
+           body: JSON.stringify(body)
         });
         if (response.status === 401) {
             HttpClient.clearAuthSession();
@@ -80,7 +81,7 @@ export class HttpClient {
         }
         return response.json();
     }
-
+    
     async patch<T>(endpoint: string, body: unknown): Promise<T> {
         const response = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'PATCH',
@@ -94,6 +95,7 @@ export class HttpClient {
             const error = await response.json() as AppError;
             throw new AppError(error.message, error.error, error.statusCode);
         }
+
         return response.json();
     }
 }
