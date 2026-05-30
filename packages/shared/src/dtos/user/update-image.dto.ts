@@ -13,7 +13,6 @@ export const UpdateImageRequestSchema = z.object({
       return type ? ['image/jpeg', 'image/png', 'image/webp'].includes(type) : false;
     }, 'Formato não suportado')
     .optional(),
-  id: z.number().int(),
 });
 
 export const UpdateImageResponseSchema = z.object({

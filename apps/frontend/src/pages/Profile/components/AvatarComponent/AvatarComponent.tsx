@@ -13,7 +13,6 @@ interface AvatarComponentProps {
 export const AvatarComponent = ({
     imageUrl,
     isOwnProfile,
-    userId,
     onImageUpdated,
     onError,
 }: AvatarComponentProps) => {
@@ -32,13 +31,21 @@ export const AvatarComponent = ({
     ) => {
         const file = event.target.files?.[0];
 
-        if (!file || !userId) {
+        if (!file) {
             return;
         }
 
+        const formData = new FormData();
+        formData.append('image', file);
+
         try {
-            const response = await patchProfilePictureAction(file, userId);
-            onImageUpdated(response.imageURL);
+            const result = await patchProfilePictureAction(formData);
+
+            if (result.success && result.data) {
+                onImageUpdated(result.data.imageUrl); 
+            } else {
+                onError?.(result.message);
+            }
         } catch (error) {
             const message = error instanceof Error
                 ? error.message

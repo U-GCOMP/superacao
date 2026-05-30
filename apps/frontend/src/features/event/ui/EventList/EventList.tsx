@@ -93,18 +93,20 @@ export const EventList = () => {
                 {isLoading && <p>Carregando...</p>}
                 {isEmpty && <p>Nenhum evento encontrado.</p>}
                 {events?.map((event, index) => {
-                    const isCanceled = event.status === 'CANCELED';
+                const isCanceled = event.status === 'CANCELED';
 
-                    return (
+                return (
                     <div
-                        style={{ 
-                            filter: isCanceled ? 'grayscale(100%)' : 'none',
-                            transition: 'filter 0.3s ease'
-                        }}
+                    key={`event-wrapper-${event.eventId || index}`}
+                    style={{ 
+                        filter: isCanceled ? 'grayscale(100%)' : 'none',
+                        transition: 'filter 0.3s ease',
+                        display: 'grid',
+                    }}
                     >
-                        <EventCardComponent key={`event-${index}`} {...event} />
+                    <EventCardComponent {...event} />
                     </div>
-                    )
+                );
                 })}
             </div>
         </section>

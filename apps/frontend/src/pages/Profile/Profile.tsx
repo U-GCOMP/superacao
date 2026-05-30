@@ -127,7 +127,7 @@ export const Profile = () => {
                         </div>
                         <div className={styles.rightContent}>
                             <AvatarComponent
-                                imageUrl={profileData.imageUrl}
+                                imageUrl={profileData.imageUrl ? (profileData.imageUrl.startsWith('http://') || profileData.imageUrl.startsWith('https://') ? profileData.imageUrl : `http://localhost:3000/users/image/${profileData.imageUrl}`) : ''}
                                 isOwnProfile={isOwnProfile}
                                 userId={loggedUserId ? Number(loggedUserId) : null}
                                 onImageUpdated={onAvatarUpdated}

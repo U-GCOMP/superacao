@@ -5,6 +5,8 @@ import { DatabaseModule } from './db/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { MailModule } from './mail/mail.module';
 import { EventModule } from './event/event.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -14,6 +16,10 @@ import { EventModule } from './event/event.module';
     DatabaseModule,
     MailModule,
     EventModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads', 'users'),
+      serveRoot: '/users/image',
+    }),
   ],
 })
 export class AppModule {}

@@ -1,38 +1,53 @@
-import { UpdateImageRequestDTO, UpdateImageResponseDTO } from '@project/shared';
-import { HttpClient } from '../../../lib/http-client';
+import { UpdateImageResponseDTO, UpdateImageRequestSchema } from '@project/shared';
 
-const fileToDataUrl = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
+export const patchProfilePictureAction = async (formData: FormData) => {
+  const image = formData.get('image');
 
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        resolve(reader.result);
-        return;
-      }
-
-      reject(new Error('Não foi possível ler a imagem selecionada.'));
-    };
-
-    reader.onerror = () => {
-      reject(new Error('Não foi possível ler a imagem selecionada.'));
-    };
-
-    reader.readAsDataURL(file);
+  const validation = UpdateImageRequestSchema.safeParse({
+    image: image instanceof File && image.size > 0 ? image : undefined,
   });
-};
 
-export const patchProfilePictureAction = async (
-  file: File,
-  id: number,
-): Promise<UpdateImageResponseDTO> => {
-  const httpClient = HttpClient.getInstance();
-  const imageURL = await fileToDataUrl(file);
+  if (!validation.success) {
+    return {
+      message: validation.error.issues[0].message,
+      success: false,
+    };
+  }
 
-  const request: UpdateImageRequestDTO = {
-    id,
-    imageURL,
-  };
+  try {
+    const token = localStorage.getItem('@Project:token');
 
-  return httpClient.patch<UpdateImageResponseDTO>('/user/update-image', request);
+    const response = await fetch('http://localhost:3000/user/update-image', {
+      method: 'PATCH',
+      headers: {
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+      body: formData, 
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      const errorMessage = Array.isArray(errorData.message)
+        ? errorData.message[0]
+        : errorData.message;
+
+      return { 
+        message: errorMessage || 'Erro ao atualizar foto de perfil.', 
+        success: false 
+      };
+    }
+
+    const data: UpdateImageResponseDTO = await response.json();
+
+    return {
+      message: 'Foto de perfil atualizada com sucesso!',
+      success: true,
+      data, 
+    };
+  } catch (_) {
+    return { 
+      message: 'Erro de conexão com o servidor.', 
+      success: false 
+    };
+  }
 };
