@@ -12,7 +12,7 @@ import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 import { deactivateAccountAction } from './api/deactivate-account-action';
 import { useNavigate } from 'react-router-dom';
 import { AppRoutes } from '../../router/routes';
-import { AppError } from '../../lib/http-client';
+import { AppError, HttpClient } from '../../lib/http-client';
 
 export const Profile = () => {
     const navigate = useNavigate();
@@ -31,9 +31,15 @@ export const Profile = () => {
                 const result = await fetchUserProfileAction({id: id!});
                 setProfileData(result);
             } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message || 'Erro ao carregar perfil');
+                if (error instanceof AppError) {
+                    if (error.statusCode === 404) {
+                        HttpClient.clearAuthSession();
+                        
+                    } else {
+                        setErrorMessage(error.message);
+                    }
                 }
+                setErrorMessage((error as Error).message || 'Erro ao carregar perfil');
             } finally {
                 setIsLoading(false);
             }

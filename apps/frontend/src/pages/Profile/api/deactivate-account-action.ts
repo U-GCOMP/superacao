@@ -5,7 +5,7 @@ export const deactivateAccountAction = async () => {
     const httpClient = HttpClient.getInstance();
 
     const response = await httpClient.patch<DisableUserResponseDTO>('/user/disable', {});
-    httpClient.clearAuthSession();
+    HttpClient.clearAuthSession();
 
     return response;
 }

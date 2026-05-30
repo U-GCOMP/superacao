@@ -17,24 +17,28 @@ export class HttpClient {
 
     private constructor() {}
 
-    private _token: string | null = localStorage.getItem(AUTH_TOKEN_KEY);
-
-    public clearAuthSession() {
+    static clearAuthSession() {
         localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(AUTH_USER_KEY);
     }
 
+    private _getToken() {
+        return localStorage.getItem(AUTH_TOKEN_KEY);
+    }
+
     private _commonHeaders() {
+        const token = this._getToken();
+
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
-            'Authorization': this._token ? `Bearer ${this._token}` : '',
+            'Authorization': token ? `Bearer ${token}` : '',
         };
         return headers;
     }
 
     private async _handleResponse<T>(response: Response): Promise<T> {
         if (response.status === 401) {
-            this.clearAuthSession();
+            HttpClient.clearAuthSession();
         }
 
         if (!response.ok) {
@@ -68,7 +72,7 @@ export class HttpClient {
             body: JSON.stringify(body)
         });
         if (response.status === 401) {
-            this.clearAuthSession();
+            HttpClient.clearAuthSession();
         }
         if (!response.ok) {
             const error = await response.json() as AppError;
@@ -84,7 +88,7 @@ export class HttpClient {
             body: JSON.stringify(body)
         });
         if (response.status === 401) {
-            this.clearAuthSession();
+            HttpClient.clearAuthSession();
         }
         if (!response.ok) {
             const error = await response.json() as AppError;
