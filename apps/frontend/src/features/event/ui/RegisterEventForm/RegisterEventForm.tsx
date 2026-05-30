@@ -1,5 +1,5 @@
 import { useActionState } from 'react';
-import styles from '../event.module.css';
+import styles from './RegisterEventForm.module.css';
 import { registerEventAction } from '../../api/register-event-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
 import { TextArea } from '../../../../components/TextArea/TextArea';
