@@ -1,7 +1,6 @@
 .container {
     position: relative;
     
-    height: 17.5rem;
     width: 100%;
 
     overflow: hidden;
@@ -89,6 +88,11 @@
     scroll-snap-align: start;
 }
 
+.card:has(> .cardContent):hover .cardContent {
+  --card-info-opacity: 1;
+  --card-info-text-offset: 0;
+}
+
 .cardContent {
     --card-info-opacity: 0;
     --card-info-text-offset: 0.5rem;
@@ -98,17 +102,12 @@
     height: 100%;
     overflow: hidden;
 
-    &:hover {
-        --card-info-opacity: 1;
-        --card-info-text-offset: 0;
-    }
-
     & > img {
         grid-row: 1/-1;
         grid-column: 1/-1;
         display: block;
         width: 100%;
-        height: 100%;
+        aspect-ratio: 16 / 9;
         object-fit: cover;
     }
 
