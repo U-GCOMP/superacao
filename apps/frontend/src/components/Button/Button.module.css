@@ -51,7 +51,7 @@
     --text-color: #04805c;
   }
 
-  &.terciary {
+  &.terciary, &.tertiary-icon {
     --button-bg: var(--terciary-bg, #ffffff);
     --text-color: var(--terciary-text, #d83018);
     --button-border-color: var(--terciary-border, #d83018);
@@ -63,5 +63,11 @@
       background-color: var(--text-color);
       color: var(--button-bg);
     }
+  }
+
+  &.tertiary-icon {
+    padding: 0.5rem;
+    aspect-ratio: 1 / 1;
+    justify-content: center;
   }
 }

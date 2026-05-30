@@ -13,6 +13,7 @@ import { AppError, HttpClient } from '../../lib/http-client';
 import { AvatarComponent } from './components/AvatarComponent/AvatarComponent';
 import { DeactivateAccountButton } from './components/DeactivateAccountButton/DeactivateAccountButton';
 import { BioComponent } from './components/BioComponent/BioComponent';
+import { UsernameComponent } from './components/UsernameComponent/UsernameComponent';
 
 export const Profile = () => {
     const navigate = useNavigate();
@@ -75,6 +76,19 @@ export const Profile = () => {
         });
     };
 
+    const onUsernameUpdated = (username: string) => {
+        setProfileData((currentProfile) => {
+            if (!currentProfile) {
+                return currentProfile;
+            }
+
+            return {
+                ...currentProfile,
+                username,
+            };
+        });
+    };
+
     if (isLoading) {
         return (
             <BaseScreen>
@@ -98,7 +112,13 @@ export const Profile = () => {
                     <div className={styles.headerDivider}></div>
                     <div className={styles.header}>
                         <div className={styles.leftContent}>
-                            <h2>{profileData.username}</h2>
+                            <UsernameComponent
+                                username={profileData.username}
+                                isOwner={isOwnProfile}
+                                userId={loggedUserId ? Number(loggedUserId) : null}
+                                onUsernameUpdated={onUsernameUpdated}
+                                onError={(message) => setErrorMessage(message)}
+                            />
                             <DeactivateAccountButton
                                 isOwnProfile={isOwnProfile}
                                 onSuccess={() => navigate(AppRoutes.LOGIN)}
