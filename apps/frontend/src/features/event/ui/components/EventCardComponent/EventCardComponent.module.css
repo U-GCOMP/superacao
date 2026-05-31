@@ -3,6 +3,10 @@
     
     background-color: #C0D8D8;
     border-radius: 1rem;
+
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
 }
 
 .image {
