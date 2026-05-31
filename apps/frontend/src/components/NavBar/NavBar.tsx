@@ -19,13 +19,13 @@ export const Navbar = ({ navItems }: NavbarProps) => {
   
   const defaultNavItems: NavItem[] = getDefaultNavItems(isAuthenticated);
   const itemsToRender = navItems && navItems.length > 0 ? navItems : defaultNavItems;
-  
+
   return (
     <nav className={styles.navbar}>
-      <div className={styles.logoContainer}>
+      <Link to="/" className={styles.logoContainer}>
         <img src={logo} alt="SuperAção Logo" className={styles.logo} />
         <span className={styles.brandName}>SuperAção</span>
-      </div>
+      </Link>
 
       <div className={styles.links}>
         {itemsToRender.map((item, index) => {
@@ -49,7 +49,6 @@ export const Navbar = ({ navItems }: NavbarProps) => {
 function getDefaultNavItems(isAuthenticated: boolean): NavItem[] {
   const defaultNavItems = [
     { label: 'Eventos', route: AppRoutes.EVENTS },
-    { label: 'Meus Eventos', route: AppRoutes.MY_EVENTS },
   ];
 
   if (isAuthenticated)

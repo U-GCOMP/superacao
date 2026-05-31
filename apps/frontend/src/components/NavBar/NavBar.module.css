@@ -23,6 +23,18 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  --link-accent-color: inherit;
+  --link-bar-color: transparent;
+}
+
+.logoContainer:hover,
+.logoContainer:focus,
+.logoContainer:visited,
+.logoContainer:active {
+  text-decoration: none;
 }
 
 .logo {
