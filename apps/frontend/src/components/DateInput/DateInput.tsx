@@ -5,12 +5,14 @@ interface DateInputProps {
   name: string;
   label: string;
   required?: boolean;
+  defaultValue?: string;
 }
 
 export const DateInput = ({
   name,
   label,
   required = false,
+  defaultValue,
 }: DateInputProps) => {
   const inputId = useId();
 
@@ -23,6 +25,7 @@ export const DateInput = ({
           name={name}
           type="date"
           required={required}
+          defaultValue={defaultValue}
           placeholder=" "
         />
       </label>

@@ -5,12 +5,14 @@ interface TimeInputProps {
   name: string;
   label: string;
   required?: boolean;
+  defaultValue?: string;
 }
 
 export const TimeInput = ({
   name,
   label,
   required = false,
+  defaultValue,
 }: TimeInputProps) => {
   const inputId = useId();
 
@@ -24,6 +26,7 @@ export const TimeInput = ({
           name={name}
           type="time"
           required={required}
+          defaultValue={defaultValue}
           placeholder=" " 
         />
       </label>

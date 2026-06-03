@@ -6,6 +6,7 @@ interface TextAreaProps {
   label: string;
   required?: boolean;
   rows?: number; 
+  defaultValue?: string;
 }
 
 export const TextArea = ({
@@ -13,6 +14,7 @@ export const TextArea = ({
   label,
   required = false,
   rows = 4,
+  defaultValue,
 }: TextAreaProps) => {
   const inputId = useId();
 
@@ -25,6 +27,7 @@ export const TextArea = ({
         name={name}
         required={required}
         rows={rows}
+        defaultValue={defaultValue}
         placeholder=" "
       />
     </label>

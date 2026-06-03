@@ -1,4 +1,4 @@
-import { RegisterEventResponseDTO, RegisterEventRequestSchema } from '@project/shared';
+import { RegisterEventRequestSchema } from '@project/shared';
 
 export const registerEventAction = async (_: unknown, formData: FormData) => {
   const title = formData.get('title');
@@ -36,7 +36,7 @@ export const registerEventAction = async (_: unknown, formData: FormData) => {
       headers: {
         ...(token && { 'Authorization': `Bearer ${token}` }),
       },
-      body: formData, // Had to change from json to send entire formData mostly because of image
+      body: formData,
     });
 
     if (!response.ok) {
@@ -49,8 +49,6 @@ export const registerEventAction = async (_: unknown, formData: FormData) => {
       return { message: errorMessage || 'Erro ao realizar o cadastro do evento.', success: false };
     }
 
-    const data: RegisterEventResponseDTO = await response.json();
-    
     return { message: 'Evento cadastrado com sucesso!', success: true };
   } catch (_) {
     return { message: 'Erro de conexão com o servidor.', success: false };

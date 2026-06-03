@@ -7,7 +7,9 @@ export const FetchEventDetailsRequestSchema = z.object({
 export const FetchEventDetailsResponseSchema = z.object({
     id: z.string().nonempty('ID do evento é requerido'),
     title: z.string().nonempty('Título é requerido'),
+    place: z.string().nonempty('Local é requerido'),
     date: z.coerce.date(),
+    subscriptionDeadlineDate: z.coerce.date(),
     description: z.string().nonempty('Descrição é requerida'),
     organizer: z.object({
         id: z.number().int().positive('O ID do organizador deve ser um inteiro positivo'),

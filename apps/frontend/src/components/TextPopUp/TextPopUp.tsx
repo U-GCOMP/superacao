@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import styles from './TextPopUp.module.css';
 import { Button } from '../Button/Button';
+import { Modal } from '../Modal/Modal';
 
 interface TextPopUpProps {
   isOpen: boolean;
@@ -29,29 +30,21 @@ export const TextPopUp = ({
 }: TextPopUpProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    const setupState = () => {
-      inputRef.current?.focus();
-    }
-    
-    if (isOpen) {
-      setupState();
-    }
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   const isConfirmEnabled = value === confirmText;
 
   return (
-    <div className={styles.overlay}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={title}
+      description={description}
+      maxWidth="400px"
+      initialFocusRef={inputRef}
+    >
       <form action={onConfirm} className={styles.modal}>
-        <h2 className={styles.title}>{title}</h2>
-        
-        <p className={styles.description}>
-          {description}
-          <br />
-          <br />
+        <p className={styles.confirmHint}>
           (Escreva <strong>{confirmText}</strong> para confirmar)
         </p>
 
@@ -74,6 +67,6 @@ export const TextPopUp = ({
           />
         </div>
       </form>
-    </div>
+    </Modal>
   );
 };
