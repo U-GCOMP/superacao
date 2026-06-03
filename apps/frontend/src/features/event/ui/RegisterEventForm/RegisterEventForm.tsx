@@ -1,4 +1,4 @@
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import styles from './RegisterEventForm.module.css';
 import { registerEventAction } from '../../api/register-event-action';
 import { TextInput } from '../../../../components/TextInput/TextInput';
@@ -7,12 +7,24 @@ import { Button } from '../../../../components/Button/Button';
 import { DateInput } from '../../../../components/DateInput/DateInput';
 import { TimeInput } from '../../../../components/TimeInput/TimeInput';
 import { ImageInput } from '../../../../components/ImageInput/ImageInput';
+import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../../../router/routes';
 
 export const RegisterEventForm = () => {
+  const navigate = useNavigate();
+  
   const [state, formAction, isPending] = useActionState(registerEventAction, {
     message: '',
     success: false,
   });
+
+  useEffect(() => {
+    const goToProfile = () => navigate(AppRoutes.PROFILE);
+    
+    if (state.success) {
+      setTimeout(goToProfile, 2000);
+    }
+  }, [state.success, navigate]);
 
   return (
     <main className={styles.main}>
