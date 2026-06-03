@@ -3,9 +3,6 @@ import {
   Controller,
   HttpCode,
   Post,
-  Get,
-  UseGuards,
-  Request,
   UnauthorizedException,
   Headers,
 } from '@nestjs/common';
@@ -21,22 +18,10 @@ import {
   RedefinePasswordResponseDTO,
 } from '@project/shared';
 import { RegisterRequestSchema, RegisterResponseDTO } from '@project/shared';
-import { AuthGuard } from './auth.guard';
-import type { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
-import { JwtResetPasswordPayload } from './interfaces/jwt-reset-password-payload.interface';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  //REMOVE: Example
-  @Get('hello')
-  @HttpCode(200)
-  @UseGuards(AuthGuard)
-  sayHello(@Request() req: AuthenticatedRequest) {
-    console.log(req['user'].email);
-    return this.authService.sayHello();
-  }
 
   @Post('recoverPassword')
   async recoverPassword(

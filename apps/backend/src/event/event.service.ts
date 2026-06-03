@@ -24,7 +24,6 @@ import {
   SubscribeToEventResponseSchema,
   SubscribeToEventResponseDTO,
 } from '@project/shared/src/dtos/event/subscribe-to-event.dto';
-import { Users } from '../auth/entities/user.entity';
 import { ConfigService } from '@nestjs/config';
 
 import { randomUUID } from 'crypto';
@@ -85,6 +84,8 @@ export class EventService {
       title: event.title,
       description: event.description ?? '',
       volunteersCount: event.volunteers_count,
+      place: event.place,
+      subscriptionDeadlineDate: event.volunteers_subscription_deadline_date,
       maxVolunteers: event.volunteers_max,
       status: event.status,
       date: event.date,
@@ -130,7 +131,6 @@ export class EventService {
   async registerEvent(
     params: RegisterEventRequestDTO,
     ownerId: number,
-    image: Express.Multer.File | undefined,
   ): Promise<string> {
     if (params.startDate >= params.endDate) {
       throw new BadRequestException(
@@ -247,12 +247,10 @@ export class EventService {
       owns,
     };
   }
-  
-  async deactivateEvent(
-    eventId: string,
-    userId: number,
-  ): Promise<void> {
-    const event = await this.eventsRepository.findEventByIdWithOrganizerData(eventId);
+
+  async deactivateEvent(eventId: string, userId: number): Promise<void> {
+    const event =
+      await this.eventsRepository.findEventByIdWithOrganizerData(eventId);
 
     // Nao eh para cair em nenhum desses if, pois o front ja vai tratar isso,
     // i.e. o botao soh vai aparecer se o user for o dono e se o evento nao estiver
@@ -262,15 +260,19 @@ export class EventService {
     }
 
     if (event.owner.id !== userId) {
-      throw new ForbiddenException('Você não tem permissão para desativar este evento. Apenas o organizador pode realizar esta ação.');
+      throw new ForbiddenException(
+        'Você não tem permissão para desativar este evento. Apenas o organizador pode realizar esta ação.',
+      );
     }
 
     if (event.status === 'CANCELED') {
       throw new ConflictException('Este evento já está cancelado.');
     }
-    
+
     if (event.status === 'COMPLETED') {
-      throw new ConflictException('Não é possível cancelar um evento que já foi concluído.');
+      throw new ConflictException(
+        'Não é possível cancelar um evento que já foi concluído.',
+      );
     }
 
     await this.eventsRepository.saveEvent({
