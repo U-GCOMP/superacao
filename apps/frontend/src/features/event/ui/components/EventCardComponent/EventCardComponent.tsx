@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, generatePath } from "react-router-dom";
 import styles from "./EventCardComponent.module.css";
 import { FetchEventListItemResponseDTO } from "@project/shared";
 import { DateFormatter } from "../../../../../utils/date-formater";
+import { AppRoutes } from "../../../../../router/routes";
 
 export const EventCardComponent = ({eventId, imageUrl, title, description, volunteersCount, maxVolunteers, status, date}: FetchEventListItemResponseDTO) => {
     const getStatusText = () => {
@@ -33,7 +34,7 @@ export const EventCardComponent = ({eventId, imageUrl, title, description, volun
                         <span>Data:</span> {DateFormatter.formatToBrazilianDate(date)}
                     </p>
                 </div>
-                <Link to={`/eventos/${eventId}`}>Ver mais</Link>
+                <Link to={generatePath(AppRoutes.DETAIL_EVENT, { id: eventId })}>Ver mais</Link>
             </div>
         </div>
     )

@@ -82,7 +82,15 @@
 
     background-color: #C0D8D8;
 
+    border: none;
     border-radius: 1rem;
+
+    padding: 0; 
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
     overflow: hidden;
 
     scroll-snap-align: start;
