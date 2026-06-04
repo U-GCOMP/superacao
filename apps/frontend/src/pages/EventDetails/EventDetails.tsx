@@ -1,6 +1,5 @@
 import styles from './EventDetails.module.css';
 import { BaseScreen } from '../../components/BaseScreen/BaseScreen';
-import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 import { Button } from '../../components/Button/Button';
 import { Pill } from '../../components/Pill/Pill';
 import { FetchEventDetailsResponseDTO } from '@project/shared';
@@ -8,12 +7,12 @@ import { useEffect, useState } from 'react';
 import { fetchEventDetailsAction } from '../../features/event/api/fetch-event-details-action';
 import { useParams } from 'react-router-dom';
 import { useAuthentication } from '../../hooks/useAuthentication.hook';
-import { AppRoutes } from '../../router/routes';
 import { eventSubscribeAction } from '../../features/event/api/event-subscribe-action';
 import { AppError } from '../../lib/http-client';
 import { checkEventSubscriptionAction } from '../../features/event/api/check-event-subscription-action';
-import { checkEventOwnershipAction } from '../../features/event/api/check-event-ownership-action';
 import { deactivateEventAction } from '../../features/event/api/deactivate-event-action';
+import { EventEditModal } from '../../features/event/ui/components/EventEditModal/EventEditModal';
+import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 
 export const EventDetails = () => {
   const { id } = useParams();
@@ -29,6 +28,7 @@ export const EventDetails = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deactivateInput, setDeactivateInput] = useState('');
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const isOwner = event?.organizer.id === loggedUserId;
 
@@ -43,10 +43,9 @@ export const EventDetails = () => {
     }
 
     try {
-      const subscription = await eventSubscribeAction(id);
+      await eventSubscribeAction(id);
 
       setIsSubscribed(true);
-      console.log(subscription);
     } catch (error) {
       if (error instanceof AppError) {
         if (error.statusCode === 409) {
@@ -128,6 +127,11 @@ export const EventDetails = () => {
     setDeactivateInput('');
   };
 
+  const handleSavedEvent = (updatedEvent: FetchEventDetailsResponseDTO) => {
+    setEvent(updatedEvent);
+    setIsEditing(false);
+  };
+
   if (isLoading) {
     return (
       <BaseScreen>
@@ -175,7 +179,11 @@ export const EventDetails = () => {
             </div>
 
             <div className={styles.eventFooter}>
-              <span>Organizador:</span> <a href="#">{event.organizer.name}</a>
+              <span>Local:</span> <span>{event.place}</span>
+            </div>
+
+            <div className={styles.eventFooter}>
+              <span>Organizador:</span> <span>{event.organizer.name}</span>
             </div>
           </div>
 
@@ -193,7 +201,12 @@ export const EventDetails = () => {
 
             {isOwner && (
               <div className={styles.buttons}>
-                <Button text="Editar evento" buttonStyle="secondary" disabled={isCanceled || isCompleted} />
+                <Button 
+                  text="Editar evento" 
+                  buttonStyle="secondary" 
+                  onClick={() => setIsEditing(true)} 
+                  disabled={isCanceled || isCompleted}
+                />
                 <Button 
                   text="Desativar evento" 
                   buttonStyle="terciary" 
@@ -231,7 +244,14 @@ export const EventDetails = () => {
         </div>
       </div>
 
-      <TextPopUp 
+      <EventEditModal
+        isOpen={isEditing}
+        event={event}
+        onClose={() => setIsEditing(false)}
+        onSaved={handleSavedEvent}
+      />
+
+      <TextPopUp
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onConfirm={handleConfirmDeactivation}
@@ -241,7 +261,7 @@ export const EventDetails = () => {
         value={deactivateInput}
         onChange={setDeactivateInput}
         labelCancel="Cancelar"
-        labelConfirm={isDeactivating ? "Desativando..." : "Confirmar"}
+        labelConfirm={isDeactivating ? 'Desativando...' : 'Confirmar'}
       />
     </BaseScreen>
   );

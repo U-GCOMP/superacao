@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  ForbiddenException,
   Get,
   Param,
   Post,
@@ -14,7 +13,6 @@ import {
   Res,
   StreamableFile,
   BadRequestException,
-  ParseIntPipe,
   Patch,
   UploadedFile,
 } from '@nestjs/common';
@@ -33,7 +31,7 @@ import {
   EventSubscriptionResponseDTO,
   EventOwnershipResponseDTO,
   DeactivateEventParamDTO,
-  DeactivateEventParamSchema
+  DeactivateEventParamSchema,
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -42,7 +40,6 @@ import {
 } from '@project/shared/src/dtos/event/fetch-event-details.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
-import { AuthRepository } from '../auth/auth.repository';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { existsSync, createReadStream } from 'fs';
 import { join } from 'path';
@@ -140,7 +137,7 @@ export class EventController {
 
     const ownerId = Number(req['user'].sub);
 
-    const id = await this.eventsService.registerEvent(body, ownerId, file);
+    const id = await this.eventsService.registerEvent(body, ownerId);
 
     return {
       token: id,
@@ -175,7 +172,7 @@ export class EventController {
   @UsePipes(new ZodValidationPipe(DeactivateEventParamSchema))
   async deactivateEvent(
     @Request() req: AuthenticatedRequest,
-    @Param() params: DeactivateEventParamDTO, 
+    @Param() params: DeactivateEventParamDTO,
   ) {
     const userId = Number(req.user.sub);
 

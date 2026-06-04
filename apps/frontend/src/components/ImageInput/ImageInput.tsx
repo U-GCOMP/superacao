@@ -3,11 +3,13 @@ import styles from './ImageInput.module.css';
 
 interface ImageInputProps {
   name: string;
+  initialImageUrl?: string;
+  onFileChange?: (file?: File) => void;
 }
 
-export const ImageInput = ({ name }: ImageInputProps) => {
+export const ImageInput = ({ name, initialImageUrl, onFileChange }: ImageInputProps) => {
   const inputId = useId();
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(() => initialImageUrl ?? null);
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -18,7 +20,12 @@ export const ImageInput = ({ name }: ImageInputProps) => {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+      onFileChange?.(file);
+      return;
     }
+
+    setPreview(initialImageUrl ?? null);
+    onFileChange?.(undefined);
   };
 
   return (

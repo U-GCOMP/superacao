@@ -1,0 +1,34 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 1rem;
+}
+
+.dialog {
+  background-color: var(--bg);
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 60vw;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.title {
+  margin: 0 0 1rem;
+  color: var(--text-h);
+  font-size: 1.5rem;
+}
+
+.description {
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}

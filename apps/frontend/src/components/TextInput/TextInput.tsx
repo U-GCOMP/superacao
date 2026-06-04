@@ -7,6 +7,7 @@ interface TextInputProps {
   label: string;
   required?: boolean;
   value?: string;
+  defaultValue?: string;
   onChange?: (value: string) => void;
   className?: string;
 }
@@ -17,6 +18,7 @@ export const TextInput = ({
   label,
   required = false,
   value,
+  defaultValue,
   onChange,
   className,
 }: TextInputProps) => {
@@ -33,6 +35,7 @@ export const TextInput = ({
         type={type}
         required={required}
         value={value}
+        defaultValue={defaultValue}
         onChange={onChange ? (event) => onChange(event.target.value) : undefined}
         // The placeholder with a space is necessary to make the label animation work
         placeholder=" "

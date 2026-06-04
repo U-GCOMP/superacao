@@ -2,6 +2,8 @@ import { FetchEventListItemResponseDTO } from '@project/shared';
 import styles from './EventCarousel.module.css';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCarousel } from '../../../../../hooks/useCarousel.hook';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { AppRoutes } from '../../../../../router/routes';
 
 interface EventCarouselProps {
     events: FetchEventListItemResponseDTO[];
@@ -40,8 +42,10 @@ export const EventCarousel = ({ events }: EventCarouselProps) => {
 }
 
 const EventCarouselItem = ({ event }: { event: FetchEventListItemResponseDTO }) => {
+    const navigate = useNavigate();
+    
     return (
-        <div className={styles.card}>
+        <button className={styles.card} onClick={() => navigate(generatePath(AppRoutes.DETAIL_EVENT, { id: event.eventId }))}>
             <div className={styles.cardContent}>
                 <img src={event.imageUrl} alt="" role='presentation' />
                 <div className={styles.cardInfo}>
@@ -51,6 +55,6 @@ const EventCarouselItem = ({ event }: { event: FetchEventListItemResponseDTO }) 
             <div className={styles.cardFooter}>
                 <span>{event.title}</span>
             </div>
-        </div>
+        </button>
     )
 }

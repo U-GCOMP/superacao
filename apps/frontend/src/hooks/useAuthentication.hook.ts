@@ -30,7 +30,5 @@ export const useAuthentication = () => {
     
     const isAuthenticated = !!token;
 
-    console.log({ isAuthenticated, token, username, id, saveAuthSession });
-    
     return { isAuthenticated, token, username, id, saveAuthSession };
 }

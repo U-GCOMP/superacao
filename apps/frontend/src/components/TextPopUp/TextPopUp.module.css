@@ -1,31 +1,8 @@
-.overlay {
-  position: fixed;
-  inset: 0; 
-  background-color: rgba(0, 0, 0, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  padding: 1rem;
-}
-
 .modal {
-  background-color: var(--bg);
-  padding: 2rem;
-  border-radius: 1rem;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  max-width: 400px;
   width: 100%;
 }
 
-.title {
-  margin: 0 0 1rem;
-  color: var(--text-h);
-  font-size: 1.5rem;
-}
-
-.description {
+.confirmHint {
   color: var(--text);
   margin-bottom: 1.5rem;
   line-height: 1.4;
