@@ -73,7 +73,7 @@ export class EventRepository {
   async findEventByIdWithOrganizerData(eventId: string): Promise<Event | null> {
     return this.ormRepository.findOne({
       where: { id: eventId },
-      relations: ['owner'],
+      relations: ['owner', 'ratings', 'ratings.author'],
     });
   }
 

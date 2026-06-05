@@ -75,6 +75,62 @@ export class EventService {
 
     console.debug(event);
 
+    const ratingsGroupedByAuthor: Record<
+      string,
+      {
+        id: string;
+        userName: string;
+        comment: string;
+        sum: number;
+        count: number;
+      }
+    > = {};
+
+    if (event.ratings && event.ratings.length > 0) {
+      event.ratings.forEach((entry) => {
+        const authorKey = String(entry.author_id);
+
+        if (!ratingsGroupedByAuthor[authorKey]) {
+          ratingsGroupedByAuthor[authorKey] = {
+            id: entry.id,
+            userName: entry.author.username,
+            comment: entry.comment || '',
+            sum: 0,
+            count: 0,
+          };
+        }
+
+        ratingsGroupedByAuthor[authorKey].sum += entry.rating;
+        ratingsGroupedByAuthor[authorKey].count += 1;
+
+        if (entry.comment && !ratingsGroupedByAuthor[authorKey].comment) {
+          ratingsGroupedByAuthor[authorKey].comment = entry.comment;
+        }
+      });
+    }
+
+    const formattedRatings = Object.values(ratingsGroupedByAuthor).map(
+      (group) => ({
+        id: group.id,
+        userName: group.userName,
+        comment: group.comment,
+        score:
+          group.count > 0 ? Number((group.sum / group.count).toFixed(1)) : 1,
+      }),
+    );
+
+    const totalUsersWhoVoted = formattedRatings.length;
+
+    const averageScore =
+      totalUsersWhoVoted > 0
+        ? formattedRatings.reduce((acc, item) => acc + item.score, 0) /
+          totalUsersWhoVoted
+        : 0;
+
+    const balancedRatingSum = Number(
+      (averageScore * totalUsersWhoVoted).toFixed(2),
+    );
+
     return {
       id: event.id,
       imageUrl:
@@ -93,6 +149,9 @@ export class EventService {
         id: event.owner.id,
         name: event.owner.username,
       },
+      rating_sum: balancedRatingSum,
+      rating_count: totalUsersWhoVoted,
+      ratings: formattedRatings,
     };
   }
 

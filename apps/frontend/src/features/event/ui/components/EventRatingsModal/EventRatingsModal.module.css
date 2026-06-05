@@ -1,0 +1,138 @@
+.modal {
+  max-width: 760px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  color: #3A3232;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden; 
+}
+
+.ratingsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 320px; 
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.ratingsList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ratingsList::-webkit-scrollbar-thumb {
+  background-color: var(--border, #CBD5E1);
+  border-radius: 3px;
+}
+
+.ratingCard {
+  background-color: #C0D8D8; 
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.userName {
+  font-weight: 600;
+  color: #3A3232;
+  font-size: 1.1rem;
+}
+
+.comment {
+  margin: 0;
+  color: #7E7E7E;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.ratingForm {
+  background-color: #FDFCEE; 
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border: 1px solid #E5E7EB;
+}
+
+.formContent {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.formLeft {
+  flex: 1.2;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+}
+
+.formLeft textarea {
+  background-color: transparent;
+}
+
+.formRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 280px;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.ratingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submitButton {
+  background-color: #F07848; 
+  color: #FFFFFF;
+  border: none;
+  padding: 0.625rem 1.5rem;
+  border-radius: 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #D96434; 
+}
+
+.submitButton:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

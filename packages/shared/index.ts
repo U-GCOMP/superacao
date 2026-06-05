@@ -24,5 +24,6 @@ export * from './src/dtos/event/subscribe-to-event.dto';
 export * from './src/dtos/event/event-subscription.dto';
 export * from './src/dtos/event/event-ownership.dto';
 export * from './src/dtos/event/deactivate-event.dto';
+export * from './src/dtos/event/register-event-rating.dto';
 
 export * from './src/models/user.model';

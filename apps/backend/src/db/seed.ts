@@ -107,8 +107,7 @@ async function bootstrap() {
     savedEvents[1].volunteers_count = 2;
     await eventRepo.save(savedEvents[1]);
 
-    console.log('Criando Avaliações de Eventos...');
-    await eventRatingsRepo.save([
+    const ratingsMockData = [
       {
         event_id: savedEvents[1].id,
         author_id: savedUsers[1].id,
@@ -118,7 +117,77 @@ async function bootstrap() {
         rating: 5,
         comment: 'Evento maravilhoso, muito organizado!',
       },
-    ]);
+      {
+        event_id: savedEvents[1].id,
+        author_id: savedUsers[1].id,
+        event: savedEvents[1],
+        author: savedUsers[1],
+        category_id: 2,
+        rating: 4,
+        comment: '',
+      },
+      {
+        event_id: savedEvents[1].id,
+        author_id: savedUsers[1].id,
+        event: savedEvents[1],
+        author: savedUsers[1],
+        category_id: 3,
+        rating: 5,
+        comment: '',
+      },
+      {
+        event_id: savedEvents[1].id,
+        author_id: savedUsers[1].id,
+        event: savedEvents[1],
+        author: savedUsers[1],
+        category_id: 4,
+        rating: 4,
+        comment: '',
+      },
+
+      {
+        event_id: savedEvents[1].id,
+        author_id: savedUsers[2].id,
+        event: savedEvents[1],
+        author: savedUsers[2],
+        category_id: 1,
+        rating: 4,
+        comment: 'Gostei bastante da iniciativa, estão de parabéns. Leitor de light novel merece tudo de pior nesse mundo.',
+      },
+      {
+        event_id: savedEvents[1].id,
+        author_id: savedUsers[2].id,
+        event: savedEvents[1],
+        author: savedUsers[2],
+        category_id: 2,
+        rating: 5,
+        comment: '',
+      },
+      {
+        event_id: savedEvents[1].id,
+        author_id: savedUsers[2].id,
+        event: savedEvents[1],
+        author: savedUsers[2],
+        category_id: 3,
+        rating: 3,
+        comment: '',
+      },
+      {
+        event_id: savedEvents[1].id,
+        author_id: savedUsers[2].id,
+        event: savedEvents[1],
+        author: savedUsers[2],
+        category_id: 4,
+        rating: 4,
+        comment: '',
+      },
+    ];
+
+    await eventRatingsRepo.save(ratingsMockData);
+
+    savedEvents[1].rating_sum = 34;
+    savedEvents[1].rating_count = 8;
+    await eventRepo.save(savedEvents[1]);
 
     console.log('Criando Avaliações de Usuários...');
     await userRatingsRepo.save([

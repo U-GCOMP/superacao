@@ -1,0 +1,39 @@
+.starsContainer {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.starButton {
+  width: 1.5rem;  
+  aspect-ratio: 1;
+  padding: 0;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+
+  clip-path: polygon(50% 0,
+    calc(50%*(1 + sin(.4turn))) calc(50%*(1 - cos(.4turn))),
+    calc(50%*(1 - sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+    calc(50%*(1 + sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+    calc(50%*(1 - sin(.4turn))) calc(50%*(1 - cos(.4turn))) 
+  );
+
+  &[data-fill-type="filled"] {
+    background-color: #F07848;
+  }
+
+  &[data-fill-type="partial"] {
+    --fill-percentage: 50%;
+    background: linear-gradient(to right, #F07848 var(--fill-percentage), #C0D8D8 var(--fill-percentage));
+  }
+
+  &[data-fill-type="empty"] {
+    background-color: #C0D8D8;
+  }
+}
+
+.starButton:active {
+  transform: scale(0.9);
+}

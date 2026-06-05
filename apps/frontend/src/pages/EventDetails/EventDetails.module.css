@@ -97,3 +97,28 @@
   background-color: #DCFCE7;
   border-radius: 4px;
 }
+
+.ratingsTriggerContainer {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  cursor: pointer;
+  border-radius: 0.375rem;
+  user-select: none;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.ratingsTriggerContainer:hover {
+  opacity: 0.8;
+}
+
+.ratingsTriggerContainer:active {
+  transform: scale(0.98);
+}
+
+.votesText {
+  color: #7E7E7E; 
+  font-size: 0.95rem;
+  font-weight: 500;
+}

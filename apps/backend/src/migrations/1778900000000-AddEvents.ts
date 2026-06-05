@@ -23,7 +23,7 @@ export class AddEvents1778900000000 implements MigrationInterface {
         "volunteers_subscription_deadline_date" TIMESTAMP NOT NULL,
         "volunteers_max" integer NOT NULL DEFAULT 0,
         "volunteers_count" integer NOT NULL DEFAULT 0,
-        "rating_sum" integer NOT NULL DEFAULT 0,
+        "rating_sum" real NOT NULL DEFAULT 0,
         "rating_count" integer NOT NULL DEFAULT 0,
         "imageUrl" character varying,
         "created_at" TIMESTAMP NOT NULL DEFAULT now(),
