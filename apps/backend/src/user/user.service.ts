@@ -196,9 +196,9 @@ export class UserService {
       throw new ForbiddenException('Você não pode avaliar a si mesmo');
     }
 
-    if (rating < 0 || rating > 5) {
+    if (rating < 1 || rating > 5) {
       throw new ConflictException(
-        'A avaliação deve ser um valor inteiro entre 0 e 5',
+        'A avaliação deve ser um valor inteiro entre 1 e 5',
       );
     }
 
