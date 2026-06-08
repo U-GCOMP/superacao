@@ -10,4 +10,5 @@ export const AppRoutes = {
     MY_EVENTS: '/meus-eventos',
     PROFILE: '/meu-perfil',
     USER_NOT_FOUND: '/usuario-nao-encontrado', 
+    LEARN_MORE: '/saiba-mais', 
 }

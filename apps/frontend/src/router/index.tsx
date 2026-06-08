@@ -12,6 +12,7 @@ import { AppRoutes } from './routes';
 import { EventDetails } from '../pages/EventDetails/EventDetails';
 import { Profile } from '../pages/Profile/Profile';
 import { protectedRouteLoader } from './loaders/protected-route-loader';
+import { LearnMore } from '../pages/LearnMore/LearnMore';
 
 export const router = createBrowserRouter([
   {
@@ -59,5 +60,9 @@ export const router = createBrowserRouter([
     path: AppRoutes.PROFILE,
     element: <Profile />,
     loader: protectedRouteLoader,
-  }
+  },
+  {
+    path: AppRoutes.LEARN_MORE,
+    element: <LearnMore />,
+  },
 ]);

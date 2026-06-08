@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/icons/Logo SuperAção.svg';
 import styles from './Footer.module.css';
+import { AppRoutes } from '../../router/routes';
 
 interface FooterItem {
   label: string;
@@ -13,8 +15,10 @@ interface FooterProps {
 }
 
 export const Footer = ({ footerItems }: FooterProps) => {
+  const navigate = useNavigate();
+
   const defaultFooterItems: FooterItem[] = [
-    { label: 'Saiba Mais', onClick: () => {}},
+    { label: 'Saiba Mais', onClick: () => { navigate(AppRoutes.LEARN_MORE) }},
     { label: 'Email', onClick: () => {}},
   ];
 
