@@ -152,7 +152,8 @@ async function bootstrap() {
         author: savedUsers[2],
         category_id: 1,
         rating: 4,
-        comment: 'Gostei bastante da iniciativa, estão de parabéns. Leitor de light novel merece tudo de pior nesse mundo.',
+        comment:
+          'Gostei bastante da iniciativa, estão de parabéns. Leitor de light novel merece tudo de pior nesse mundo.',
       },
       {
         event_id: savedEvents[1].id,
@@ -199,7 +200,23 @@ async function bootstrap() {
         rating: 5,
         comment: 'Voluntário extremamente prestativo.',
       },
+      {
+        target_id: savedUsers[2].id,
+        author_id: savedUsers[1].id,
+        target: savedUsers[2],
+        author: savedUsers[1],
+        rating: 4,
+        comment: 'Organizadora dedicada. Light novel é minha caceta!',
+      },
     ]);
+
+    savedUsers[1].rating_sum = 5;
+    savedUsers[1].rating_count = 1;
+    await userRepo.save(savedUsers[1]);
+
+    savedUsers[2].rating_sum = 4;
+    savedUsers[2].rating_count = 1;
+    await userRepo.save(savedUsers[2]);
 
     console.log('Seed finalizada com sucesso');
   } catch (error) {

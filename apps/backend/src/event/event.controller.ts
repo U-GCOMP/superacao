@@ -23,9 +23,6 @@ import {
   RegisterEventRequestDTO,
   RegisterEventRequestSchema,
   RegisterEventResponseDTO,
-  FetchEventRatingsEventRequestDTO,
-  FetchEventRatingsEventRequestSchema,
-  FetchEventRatingsEventResponseDTO,
   SubscribeToEventRequestSchema,
   SubscribeToEventResponseDTO,
   EventSubscriptionResponseDTO,
@@ -142,15 +139,6 @@ export class EventController {
     return {
       token: id,
     };
-  }
-
-  @Get()
-  async fetch(
-    @Query() query: FetchEventRatingsEventRequestDTO,
-  ): Promise<FetchEventRatingsEventResponseDTO[]> {
-    const validQuery = FetchEventRatingsEventRequestSchema.parse(query);
-
-    return await this.eventsService.fetchEventRatings(validQuery.eventId);
   }
 
   @Post('subscribe')

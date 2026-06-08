@@ -12,7 +12,6 @@ import {
   FetchEventListQueryParametersDTO,
   FetchEventListItemResponseDTO,
   RegisterEventRequestDTO,
-  FetchEventRatingsEventResponseDTO,
   EventSubscriptionResponseDTO,
   EventOwnershipResponseDTO,
 } from '@project/shared';
@@ -115,7 +114,7 @@ export class EventService {
         userName: group.userName,
         comment: group.comment,
         score:
-          group.count > 0 ? Number((group.sum / group.count).toFixed(1)) : 1,
+          group.count > 0 ? Number((group.sum / group.count).toFixed(2)) : 1,
       }),
     );
 
@@ -216,20 +215,6 @@ export class EventService {
       imageUrl,
     );
     return event.id;
-  }
-
-  async fetchEventRatings(
-    event_id: string,
-  ): Promise<FetchEventRatingsEventResponseDTO[]> {
-    const eventRatings =
-      await this.eventRatingRepository.fetchEventRatings(event_id);
-
-    return eventRatings.map((rating) => ({
-      authorId: rating.author_id,
-      categoryId: rating.category_id,
-      rating: rating.rating,
-      comment: rating.comment || '',
-    }));
   }
 
   async subscribeEvent(

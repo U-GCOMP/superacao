@@ -31,4 +31,11 @@ export class UserRepository {
       .where('user.id = :id', { id })
       .getOne();
   }
+
+  // NOTE: Since user is gonna be getting ratings from many users at a time, better to let ORM/database deal with concurrency
+  async incrementUserRating(id: number, rating: number): Promise<void> {
+    await this.typeormRepo.increment({ id }, 'rating_sum', rating);
+
+    await this.typeormRepo.increment({ id }, 'rating_count', 1);
+  }
 }
