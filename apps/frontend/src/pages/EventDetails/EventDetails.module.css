@@ -58,6 +58,7 @@
 
   margin-left: 2rem;
   width: 30%;
+  gap: 1rem;
 }
 
 .rightContent > img {
@@ -96,4 +97,8 @@
   padding: 4px 8px;
   background-color: #DCFCE7;
   border-radius: 4px;
+}
+
+.histogram {
+  margin-top: 6rem;
 }

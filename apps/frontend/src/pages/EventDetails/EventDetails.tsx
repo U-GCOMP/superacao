@@ -13,6 +13,16 @@ import { checkEventSubscriptionAction } from '../../features/event/api/check-eve
 import { deactivateEventAction } from '../../features/event/api/deactivate-event-action';
 import { EventEditModal } from '../../features/event/ui/components/EventEditModal/EventEditModal';
 import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
+import { RatingHistogram } from '../../components/RatingHistogram/RatingHistogram';
+
+// Mock data
+const ratingData = [3, 4.5, 2, 5];
+const ratingLabels = [
+  'Critério 1',
+  'Critério 2',
+  'Critério 3',
+  'Critério 4',
+];
 
 export const EventDetails = () => {
   const { id } = useParams();
@@ -243,6 +253,14 @@ export const EventDetails = () => {
           </div>
         </div>
       </div>
+
+      <div className={styles.histogram}>
+        <RatingHistogram
+          ratingData={ratingData}
+          ratingLabels={ratingLabels}
+        />
+      </div>
+
 
       <EventEditModal
         isOpen={isEditing}
