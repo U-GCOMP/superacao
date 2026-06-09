@@ -14,31 +14,54 @@ import { deactivateEventAction } from '../../features/event/api/deactivate-event
 import { EventEditModal } from '../../features/event/ui/components/EventEditModal/EventEditModal';
 import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 import { RatingHistogram } from '../../components/RatingHistogram/RatingHistogram';
+import { WordCloudChart } from '../../components/WordCloudChart/WordCloudChart';
 
 // Mock data
 const ratingData = [3, 4.5, 2, 5];
-const ratingLabels = [
-  'Critério 1',
-  'Critério 2',
-  'Critério 3',
-  'Critério 4',
+const ratingLabels = ['Critério 1', 'Critério 2', 'Critério 3', 'Critério 4'];
+
+const wordsData: [string, number][] = [
+  ['organização', 120],
+  ['excelente', 110],
+  ['participação', 95],
+  ['evento', 90],
+  ['aprendizado', 85],
+  ['conteúdo', 80],
+  ['palestra', 75],
+  ['interessante', 70],
+  ['dinâmico', 65],
+  ['instrutores', 60],
+  ['experiência', 58],
+  ['ótimo', 55],
+  ['informativo', 50],
+  ['didático', 48],
+  ['engajamento', 45],
+  ['interação', 42],
+  ['recomendado', 40],
+  ['conhecimento', 38],
+  ['qualidade', 35],
+  ['motivador', 32],
+  ['inspirador', 30],
+  ['produtivo', 28],
+  ['acolhedor', 25],
+  ['pontualidade', 22],
+  ['criativo', 20],
 ];
 
 export const EventDetails = () => {
   const { id } = useParams();
   const { id: loggedUserId } = useAuthentication();
-  
 
   const [event, setEvent] = useState<FetchEventDetailsResponseDTO | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
 
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deactivateInput, setDeactivateInput] = useState('');
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isFinished, setIsFinished] = useState(true);
 
   const isOwner = event?.organizer.id === loggedUserId;
 
@@ -115,18 +138,19 @@ export const EventDetails = () => {
 
     try {
       setIsDeactivating(true);
-      
+
       await deactivateEventAction(id);
 
-      setEvent((prevEvent) => 
-        prevEvent ? { ...prevEvent, status: 'CANCELED' } : null
+      setEvent((prevEvent) =>
+        prevEvent ? { ...prevEvent, status: 'CANCELED' } : null,
       );
-      
+
       setIsModalOpen(false);
       setDeactivateInput('');
-
     } catch (error) {
-      alert(error instanceof Error ? error.message : 'Falha ao desativar o evento.');
+      alert(
+        error instanceof Error ? error.message : 'Falha ao desativar o evento.',
+      );
     } finally {
       setIsDeactivating(false);
     }
@@ -211,17 +235,17 @@ export const EventDetails = () => {
 
             {isOwner && (
               <div className={styles.buttons}>
-                <Button 
-                  text="Editar evento" 
-                  buttonStyle="secondary" 
-                  onClick={() => setIsEditing(true)} 
+                <Button
+                  text="Editar evento"
+                  buttonStyle="secondary"
+                  onClick={() => setIsEditing(true)}
                   disabled={isCanceled || isCompleted}
                 />
-                <Button 
-                  text="Desativar evento" 
-                  buttonStyle="terciary" 
-                  onClick={() => setIsModalOpen(true)} 
-                  disabled={isCanceled || isCompleted} 
+                <Button
+                  text="Desativar evento"
+                  buttonStyle="terciary"
+                  onClick={() => setIsModalOpen(true)}
+                  disabled={isCanceled || isCompleted}
                 />
               </div>
             )}
@@ -229,38 +253,48 @@ export const EventDetails = () => {
         </div>
 
         <div className={styles.rightContent}>
-          <img 
-            src={event.imageUrl} 
+          <img
+            src={event.imageUrl}
             alt={`Capa do evento ${event.title}`}
-            style={{ 
+            style={{
               filter: isCanceled ? 'grayscale(100%)' : 'none',
               transition: 'filter 0.3s ease',
-              objectFit: 'cover'
-            }} 
+              objectFit: 'cover',
+            }}
           />
           <div className={styles.subscribeBtn}>
             <Button
               buttonStyle="terciary"
-              disabled={
-                isOwner ||
-                isCompleted ||
-                isCanceled ||
-                isSubscribed
-              }
+              disabled={isOwner || isCompleted || isCanceled || isSubscribed}
               onClick={subscribeFn}
-              text={isCanceled || isCompleted ? "Inscrições Encerradas" : isSubscribed ? "Inscrito" : "Quero me inscrever!"}
+              text={
+                isCanceled || isCompleted
+                  ? 'Inscrições Encerradas'
+                  : isSubscribed
+                    ? 'Inscrito'
+                    : 'Quero me inscrever!'
+              }
             />
           </div>
         </div>
       </div>
 
-      <div className={styles.histogram}>
-        <RatingHistogram
-          ratingData={ratingData}
-          ratingLabels={ratingLabels}
-        />
-      </div>
+      {isFinished && isOwner && (
+        <div>
+          <div className={styles.histogram}>
+            <h1>Histograma de avaliações</h1>
+            <RatingHistogram
+              ratingData={ratingData}
+              ratingLabels={ratingLabels}
+            />
+          </div>
 
+          <div className={styles.wordCloud}>
+            <h1>Nuvem de palavras</h1>
+            <WordCloudChart data={wordsData} />
+          </div>
+        </div>
+      )}
 
       <EventEditModal
         isOpen={isEditing}

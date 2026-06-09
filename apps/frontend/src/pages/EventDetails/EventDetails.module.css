@@ -102,3 +102,16 @@
 .histogram {
   margin-top: 6rem;
 }
+
+.histogram > h1 {
+  margin-bottom: 1rem;
+}
+
+.wordCloud {
+  margin-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.wordCloud > h1 {
+  margin-bottom: 1rem;
+}
