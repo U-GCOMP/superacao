@@ -74,3 +74,23 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+.footerItem {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+
+  & > a {
+    --link-accent-color: #FDFCEE;
+    --link-bar-color: var(--accent);
+  }
+}
+
+.footerItem.highlighted {
+  background-color: #FDFCEE;
+  color: #3A3232;
+
+  & > a {
+    --link-accent-color: var(--accent);
+    --link-bar-color: white;
+  }
+}

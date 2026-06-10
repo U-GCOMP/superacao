@@ -1,11 +1,10 @@
+import { Link, useLocation } from 'react-router-dom';
 import logo from '../../assets/icons/Logo SuperAção.svg';
 import styles from './Footer.module.css';
 
 interface FooterItem {
   label: string;
-  onClick: () => void;
-  isPrimary?: boolean;
-  borderRadius?: number;
+  route: string;
 }
 
 interface FooterProps {
@@ -13,12 +12,18 @@ interface FooterProps {
 }
 
 export const Footer = ({ footerItems }: FooterProps) => {
+  const location = useLocation();
+
   const defaultFooterItems: FooterItem[] = [
-    { label: 'Saiba Mais', onClick: () => {}},
-    { label: 'Email', onClick: () => {}},
+    {
+      label: 'Saiba Mais',
+      route: '/saiba-mais',
+    },
+    { label: 'Email', route: '' },
   ];
 
-  const itemsToRender = footerItems && footerItems.length > 0 ? footerItems : defaultFooterItems;
+  const itemsToRender =
+    footerItems && footerItems.length > 0 ? footerItems : defaultFooterItems;
 
   return (
     <footer className={styles.footer}>
@@ -28,23 +33,17 @@ export const Footer = ({ footerItems }: FooterProps) => {
       </div>
 
       <div className={styles.links}>
-        {itemsToRender.map((item, index) => (
-          <div key={index} className={styles.footerItem}>
-            {item.isPrimary ? (
-              <button 
-                className={styles.primaryButton} 
-                onClick={item.onClick}
-                style={{ borderRadius: item.borderRadius }}
-              >
+        {itemsToRender.map((item, index) => {
+          const isHighlighted = location.pathname === item.route;
+
+          return (
+            <div key={index} className={styles.footerItem + (isHighlighted ? ` ${styles.highlighted}` : '')}>
+              <Link to={item.route}>
                 {item.label}
-              </button>
-            ) : (
-              <button className={styles.textButton} onClick={item.onClick}>
-                {item.label}
-              </button>
-            )}
-          </div>
-        ))}
+              </Link>
+            </div>
+          );
+        })}
       </div>
     </footer>
   );

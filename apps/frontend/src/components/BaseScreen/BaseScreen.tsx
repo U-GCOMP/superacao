@@ -1,6 +1,6 @@
 import styles from "./BaseScreen.module.css"
 import { Footer } from "../Footer/Footer"
-import { Navbar } from "../Navbar/NavBar";
+import { Navbar } from "../NavBar/NavBar";
 
 interface BaseScreenProps {
     hasPadding?: boolean;
