@@ -1,4 +1,4 @@
-import styles from './TextArea.module.css'; // Pode copiar o CSS do TextInput e ajustar
+import styles from './TextArea.module.css'; 
 import { useId } from 'react';
 
 interface TextAreaProps {
