@@ -58,7 +58,7 @@ export class Event {
   @Column({ type: 'int', default: 0 })
   volunteers_count!: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'float', default: 0 })
   rating_sum!: number;
 
   @Column({ type: 'int', default: 0 })

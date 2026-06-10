@@ -29,7 +29,7 @@ export class EventRatings {
   author!: Users;
 
   @Column()
-  category_id!: number;
+  category_id!: number; //NOTE: Swag, see tables diagram on documentation in order to properly implement these categories
 
   @Column()
   rating!: number;

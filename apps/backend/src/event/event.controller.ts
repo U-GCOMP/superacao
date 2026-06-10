@@ -1,5 +1,6 @@
 import {
   Body,
+  Put,
   Controller,
   Get,
   Param,
@@ -23,9 +24,6 @@ import {
   RegisterEventRequestDTO,
   RegisterEventRequestSchema,
   RegisterEventResponseDTO,
-  FetchEventRatingsEventRequestDTO,
-  FetchEventRatingsEventRequestSchema,
-  FetchEventRatingsEventResponseDTO,
   SubscribeToEventRequestSchema,
   SubscribeToEventResponseDTO,
   EventSubscriptionResponseDTO,
@@ -115,6 +113,7 @@ export class EventController {
 
     return new StreamableFile(file);
   }
+
   @UseGuards(AuthGuard)
   @Post('register')
   @UseInterceptors(FileInterceptor('image'))
@@ -137,20 +136,41 @@ export class EventController {
 
     const ownerId = Number(req['user'].sub);
 
-    const id = await this.eventsService.registerEvent(body, ownerId);
+    const id = await this.eventsService.registerEvent(body, ownerId, file);
 
     return {
       token: id,
     };
   }
 
-  @Get()
-  async fetch(
-    @Query() query: FetchEventRatingsEventRequestDTO,
-  ): Promise<FetchEventRatingsEventResponseDTO[]> {
-    const validQuery = FetchEventRatingsEventRequestSchema.parse(query);
+  @UseGuards(AuthGuard)
+  @Put(':eventId')
+  @UseInterceptors(FileInterceptor('image'))
+  async updateEvent(
+    @Param('eventId') eventId: string,
+    @Request() req: AuthenticatedRequest,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: RegisterEventRequestDTO,
+  ): Promise<RegisterEventResponseDTO> {
+    const validation = RegisterEventRequestSchema.safeParse({
+      ...body,
+      image: file,
+    });
 
-    return await this.eventsService.fetchEventRatings(validQuery.eventId);
+    if (!validation.success) {
+      throw new BadRequestException({
+        message: 'Validation failed',
+        errors: z.treeifyError(validation.error),
+      });
+    }
+
+    const ownerId = Number(req['user'].sub);
+
+    const id = await this.eventsService.updateEvent(body, ownerId, eventId, file);
+
+    return {
+      token: id,
+    };
   }
 
   @Post('subscribe')

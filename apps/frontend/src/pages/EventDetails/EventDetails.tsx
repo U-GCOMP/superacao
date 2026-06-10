@@ -15,6 +15,10 @@ import { EventEditModal } from '../../features/event/ui/components/EventEditModa
 import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 import { RatingHistogram } from '../../components/RatingHistogram/RatingHistogram';
 import { WordCloudChart } from '../../components/WordCloudChart/WordCloudChart';
+import { EventRatingsModal } from '../../features/event/ui/components/EventRatingsModal/EventRatingsModal';
+import { RatingStars } from '../../components/RatingStars/RatingStars';
+import { registerEventRatingAction } from '../../features/event/api/register-event-rating-action';
+import { Link } from 'react-router-dom';
 
 // Mock data
 const ratingData = [3, 4.5, 2, 5];
@@ -61,6 +65,7 @@ export const EventDetails = () => {
   const [deactivateInput, setDeactivateInput] = useState('');
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isRatingsOpen, setIsRatingsOpen] = useState(false);
 
   const isOwner = event?.organizer.id === loggedUserId;
 
@@ -184,6 +189,35 @@ export const EventDetails = () => {
   const isCanceled = event.status === 'CANCELED';
   const isCompleted = event.status === 'COMPLETED';
 
+  const averageRating = event.rating_count > 0 ? event.rating_sum / event.rating_count : 0;
+
+  const handleAddRating = async (formData: FormData) => {
+    if (!id || !loggedUserId) {
+      return { 
+        success: false, 
+        message: 'Usuário não autenticado ou evento inválido.' 
+      };
+    }
+
+    try {
+      await registerEventRatingAction(id, loggedUserId, formData);
+
+      const updatedEvent = await fetchEventDetailsAction(id);
+      setEvent(updatedEvent);
+
+      return { success: true };
+    } catch (error) {
+      if (error instanceof AppError) {
+        return { success: false, message: error.message };
+      }
+      
+      return { 
+        success: false, 
+        message: 'Ocorreu um erro inesperado ao salvar sua avaliação.' 
+      };
+    }
+  };
+
   return (
     <BaseScreen>
       <div className={styles.container}>
@@ -216,21 +250,40 @@ export const EventDetails = () => {
             </div>
 
             <div className={styles.eventFooter}>
-              <span>Organizador:</span> <span>{event.organizer.name}</span>
+              <span>Organizador:</span> <Link to={`/perfil/${event.organizer.id}`} className={styles.userNameLink}>
+                  {event.organizer.name}
+                </Link>
             </div>
           </div>
 
           <div className={styles.leftBottomContent}>
-            <div className={styles.pills}>
-              <Pill
-                text={`Faltam ${event.maxVolunteers - event.volunteersCount} voluntários`}
-                pillStyle="primary"
-              />
-              <Pill
-                text={`${event.volunteersCount} voluntários inscritos`}
-                pillStyle="secondary"
-              />
-            </div>
+            {isCompleted && (
+              <div 
+                className={styles.ratingsTriggerContainer} 
+                onClick={() => setIsRatingsOpen(true)}
+                role="button"
+                tabIndex={0}
+                aria-label="Ver avaliações do evento"
+              >
+                <RatingStars rating={averageRating} />
+                <span className={styles.votesText}>
+                  ({event.rating_count} {event.rating_count === 1 ? 'voto' : 'votos'})
+                </span>
+              </div>
+            )}
+
+            {!isCompleted && (
+              <div className={styles.pills}>
+                <Pill
+                  text={`Faltam ${event.maxVolunteers - event.volunteersCount} voluntários`}
+                  pillStyle="primary"
+                />
+                <Pill
+                  text={`${event.volunteersCount} voluntários inscritos`}
+                  pillStyle="secondary"
+                />
+              </div>
+            )}
 
             {isOwner && (
               <div className={styles.buttons}>
@@ -295,6 +348,14 @@ export const EventDetails = () => {
             </div>
           </div>
         </div>
+      {isRatingsOpen && (
+        <EventRatingsModal
+          isOpen={isRatingsOpen}
+          onClose={() => setIsRatingsOpen(false)}
+          eventName={event.title}
+          ratings={event.ratings || []} 
+          onAddRating={handleAddRating}
+        />
       )}
 
       <EventEditModal

@@ -124,6 +124,8 @@ export class UserService {
       throw new NotFoundException('Esse usuário não existe.');
     }
 
+    console.debug(user);
+
     const organizedEvents: FetchEventListItemResponseDTO[] = (
       user.events_organized || []
     ).map((event) => ({
@@ -154,18 +156,21 @@ export class UserService {
       };
     });
 
-    // NOTE: Hand`t made repository at the time, so it is what it is
-    const userRatings = (user.ratings_received || [])
-      .filter((review) => review.author !== null && review.author !== undefined)
-      .map((review) => ({
-        author_username: review.author.username,
-        rating: review.rating,
-        comment: review.comment ?? '',
-      }));
+    const userRatings = (user.ratings_received || []).flatMap((review) => {
+      if (!review.author) return [];
+
+      return [
+        {
+          author_username: review.author.username,
+          rating: review.rating,
+          comment: review.comment ?? '',
+        },
+      ];
+    });
 
     const averageRating =
       user.rating_count && user.rating_count > 0
-        ? Number((user.rating_sum / user.rating_count).toFixed(1))
+        ? Number((user.rating_sum / user.rating_count).toFixed(2))
         : 0;
 
     const profileData = {
@@ -196,11 +201,13 @@ export class UserService {
       throw new ForbiddenException('Você não pode avaliar a si mesmo');
     }
 
-    if (rating < 0 || rating > 5) {
+    if (rating < 1 || rating > 5) {
       throw new ConflictException(
-        'A avaliação deve ser um valor inteiro entre 0 e 5',
+        'A avaliação deve ser um valor inteiro entre 1 e 5',
       );
     }
+
+    await this.userRepository.incrementUserRating(targetId, rating);
 
     await this.userRatingsRepository.createUserRating(
       authorId,

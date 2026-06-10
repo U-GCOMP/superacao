@@ -12,7 +12,6 @@ import {
   FetchEventListQueryParametersDTO,
   FetchEventListItemResponseDTO,
   RegisterEventRequestDTO,
-  FetchEventRatingsEventResponseDTO,
   EventSubscriptionResponseDTO,
   EventOwnershipResponseDTO,
 } from '@project/shared';
@@ -29,7 +28,7 @@ import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { join } from 'path';
 import { AuthRepository } from '../auth/auth.repository';
-import { mkdir, writeFile } from 'fs/promises';
+import { mkdir, writeFile, unlink } from 'fs/promises';
 import { existsSync } from 'fs';
 
 @Injectable()
@@ -75,6 +74,65 @@ export class EventService {
 
     console.debug(event);
 
+    const ratingsGroupedByAuthor: Record<
+      string,
+      {
+        id: string;
+        userId: string;
+        userName: string;
+        comment: string;
+        sum: number;
+        count: number;
+      }
+    > = {};
+
+    if (event.ratings && event.ratings.length > 0) {
+      event.ratings.forEach((entry) => {
+        const authorKey = String(entry.author_id);
+
+        if (!ratingsGroupedByAuthor[authorKey]) {
+          ratingsGroupedByAuthor[authorKey] = {
+            id: entry.id,
+            userId: authorKey,
+            userName: entry.author.username,
+            comment: entry.comment || '',
+            sum: 0,
+            count: 0,
+          };
+        }
+
+        ratingsGroupedByAuthor[authorKey].sum += entry.rating;
+        ratingsGroupedByAuthor[authorKey].count += 1;
+
+        if (entry.comment && !ratingsGroupedByAuthor[authorKey].comment) {
+          ratingsGroupedByAuthor[authorKey].comment = entry.comment;
+        }
+      });
+    }
+
+    const formattedRatings = Object.values(ratingsGroupedByAuthor).map(
+      (group) => ({
+        id: group.id,
+        userId: group.userId,
+        userName: group.userName,
+        comment: group.comment,
+        score:
+          group.count > 0 ? Number((group.sum / group.count).toFixed(2)) : 1,
+      }),
+    );
+
+    const totalUsersWhoVoted = formattedRatings.length;
+
+    const averageScore =
+      totalUsersWhoVoted > 0
+        ? formattedRatings.reduce((acc, item) => acc + item.score, 0) /
+          totalUsersWhoVoted
+        : 0;
+
+    const balancedRatingSum = Number(
+      (averageScore * totalUsersWhoVoted).toFixed(2),
+    );
+
     return {
       id: event.id,
       imageUrl:
@@ -93,7 +151,26 @@ export class EventService {
         id: event.owner.id,
         name: event.owner.username,
       },
+      rating_sum: balancedRatingSum,
+      rating_count: totalUsersWhoVoted,
+      ratings: formattedRatings,
     };
+  }
+
+  async deleteEventImage(filename: string): Promise<void> {
+    const imagesPath = this.configService.get<string>('IMAGES_PATH_EVENTS');
+
+    if (!imagesPath) {
+      throw new Error('IMAGES_PATH_EVENTS is not defined');
+    }
+
+    const fullPath = join(imagesPath, filename);
+
+    try {
+      await unlink(fullPath);
+    } catch {
+      console.debug("file doesn't exists");
+    }
   }
 
   async createImageUrl(image: Express.Multer.File): Promise<string> {
@@ -128,9 +205,78 @@ export class EventService {
     return fileName;
   }
 
+  async updateEvent(
+    params: RegisterEventRequestDTO,
+    ownerId: number,
+    eventId: string,
+    image: Express.Multer.File,
+  ): Promise<string> {
+    if (params.startDate >= params.endDate) {
+      throw new BadRequestException(
+        'A data de início deve ser anterior à data de término',
+      );
+    }
+
+    const owner = await this.authRepository.getUserById(ownerId);
+
+    if (!owner) {
+      throw new ForbiddenException('An event must have a owner');
+    }
+
+    const event =
+      await this.eventsRepository.getEventByIdWithOwnerInfo(eventId);
+
+    if (!event) {
+      throw new NotFoundException('Event not found');
+    }
+
+    if (ownerId !== event.owner.id) {
+      throw new ForbiddenException("The current user doesn't own this event");
+    }
+
+    let imageUrl = 'https://i.ibb.co/pvnYzhb4/fundo.jpg';
+    if (image) {
+      const prevImageUrl = event.imageUrl;
+      if (prevImageUrl) {
+        const pattern =
+          /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[a-zA-Z0-9]+)$/;
+        const match = prevImageUrl.match(pattern);
+        if (match?.[0]) {
+          await this.deleteEventImage(match[0]);
+        }
+      }
+      imageUrl = await this.createImageUrl(image);
+    }
+
+    if (params.maxSlots < event.volunteers_max) {
+      throw new BadRequestException(
+        'The maximum number of slots cannot be reduced.',
+      );
+    }
+
+    if (params.endDate < event.volunteers_subscription_deadline_date) {
+      throw new BadRequestException(
+        'The event end date cannot be moved to an earlier date.',
+      );
+    }
+
+    event.title = params.title;
+    event.description = params.description;
+    event.place = params.place;
+    event.volunteers_max = params.maxSlots;
+    event.date = params.startDate;
+    event.volunteers_subscription_deadline_date = params.endDate;
+    event.imageUrl = imageUrl;
+
+    await this.eventsRepository.saveEvent(event);
+
+    return event.id;
+  }
+
   async registerEvent(
     params: RegisterEventRequestDTO,
     ownerId: number,
+    image: Express.Multer.File,
   ): Promise<string> {
     if (params.startDate >= params.endDate) {
       throw new BadRequestException(
@@ -139,10 +285,8 @@ export class EventService {
     }
 
     let imageUrl = 'https://i.ibb.co/pvnYzhb4/fundo.jpg';
-    if (params.image) {
-      imageUrl = await this.createImageUrl(
-        params.image as unknown as Express.Multer.File,
-      );
+    if (image) {
+      imageUrl = await this.createImageUrl(image);
     }
 
     const owner = await this.authRepository.getUserById(ownerId);
@@ -157,20 +301,6 @@ export class EventService {
       imageUrl,
     );
     return event.id;
-  }
-
-  async fetchEventRatings(
-    event_id: string,
-  ): Promise<FetchEventRatingsEventResponseDTO[]> {
-    const eventRatings =
-      await this.eventRatingRepository.fetchEventRatings(event_id);
-
-    return eventRatings.map((rating) => ({
-      authorId: rating.author_id,
-      categoryId: rating.category_id,
-      rating: rating.rating,
-      comment: rating.comment || '',
-    }));
   }
 
   async subscribeEvent(
