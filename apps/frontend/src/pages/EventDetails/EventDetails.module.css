@@ -115,3 +115,9 @@
 .wordCloud > h1 {
   margin-bottom: 1rem;
 }
+
+.wordCloud > div {
+  margin: auto;
+  width: 60vw;
+  height: 60vh;
+}

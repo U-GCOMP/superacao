@@ -61,7 +61,6 @@ export const EventDetails = () => {
   const [deactivateInput, setDeactivateInput] = useState('');
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isFinished, setIsFinished] = useState(true);
 
   const isOwner = event?.organizer.id === loggedUserId;
 
@@ -279,7 +278,7 @@ export const EventDetails = () => {
         </div>
       </div>
 
-      {isFinished && isOwner && (
+      {isCompleted && isOwner && (
         <div>
           <div className={styles.histogram}>
             <h1>Histograma de avaliações</h1>
@@ -291,7 +290,9 @@ export const EventDetails = () => {
 
           <div className={styles.wordCloud}>
             <h1>Nuvem de palavras</h1>
-            <WordCloudChart data={wordsData} />
+            <div>
+              <WordCloudChart data={wordsData} />
+            </div>
           </div>
         </div>
       )}
