@@ -53,6 +53,10 @@ export const router = createBrowserRouter([
     element: <EventDetails />,
   },
   {
+    path: AppRoutes.USER_PROFILE, 
+    element: <Profile />,         
+  },
+  {
     path: AppRoutes.USER_NOT_FOUND,
     element: <UserNotFound />,
   },

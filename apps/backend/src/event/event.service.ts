@@ -78,6 +78,7 @@ export class EventService {
       string,
       {
         id: string;
+        userId: string;
         userName: string;
         comment: string;
         sum: number;
@@ -92,6 +93,7 @@ export class EventService {
         if (!ratingsGroupedByAuthor[authorKey]) {
           ratingsGroupedByAuthor[authorKey] = {
             id: entry.id,
+            userId: authorKey,
             userName: entry.author.username,
             comment: entry.comment || '',
             sum: 0,
@@ -111,6 +113,7 @@ export class EventService {
     const formattedRatings = Object.values(ratingsGroupedByAuthor).map(
       (group) => ({
         id: group.id,
+        userId: group.userId,
         userName: group.userName,
         comment: group.comment,
         score:

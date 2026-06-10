@@ -2,6 +2,7 @@ import z from "zod";
 
 const EventRatingSchema = z.object({
     id: z.string(),
+    userId: z.string(),
     userName: z.string().nonempty('Nome do usuário é requerido'),
     comment: z.string().optional().nullable(), 
     score: z.number().min(1).max(5), 

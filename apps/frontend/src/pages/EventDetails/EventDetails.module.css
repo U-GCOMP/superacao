@@ -122,3 +122,16 @@
   font-size: 0.95rem;
   font-weight: 500;
 }
+
+.userNameLink {
+  color: #04805c;            
+  text-decoration: none;     
+  font-weight: 400;          
+  transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.userNameLink:hover {
+  color: --accent;            
+  text-decoration: underline; 
+  cursor: pointer;
+}

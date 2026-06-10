@@ -16,6 +16,7 @@ import { TextPopUp } from '../../components/TextPopUp/TextPopUp';
 import { EventRatingsModal } from '../../features/event/ui/components/EventRatingsModal/EventRatingsModal';
 import { RatingStars } from '../../components/RatingStars/RatingStars';
 import { registerEventRatingAction } from '../../features/event/api/register-event-rating-action';
+import { Link } from 'react-router-dom';
 
 export const EventDetails = () => {
   const { id } = useParams();
@@ -216,7 +217,9 @@ export const EventDetails = () => {
             </div>
 
             <div className={styles.eventFooter}>
-              <span>Organizador:</span> <span>{event.organizer.name}</span>
+              <span>Organizador:</span> <Link to={`/perfil/${event.organizer.id}`} className={styles.userNameLink}>
+                  {event.organizer.name}
+                </Link>
             </div>
           </div>
 

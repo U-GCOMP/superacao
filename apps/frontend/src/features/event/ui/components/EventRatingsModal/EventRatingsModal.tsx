@@ -5,9 +5,11 @@ import { RatingStarsInput } from '../../../../../components/RatingStarsInput/Rat
 import { TextArea } from '../../../../../components/TextArea/TextArea';
 import { Button } from '../../../../../components/Button/Button';
 import styles from './EventRatingsModal.module.css';
+import { Link } from 'react-router-dom';
 
 interface RatingItem {
   id: string;
+  userId: string;
   userName: string;
   comment?: string | null;
   score: number;
@@ -71,7 +73,9 @@ export const EventRatingsModal = ({
           {ratings.map((item) => (
             <div key={item.id} className={styles.ratingCard}>
               <div className={styles.cardHeader}>
-                <span className={styles.userName}>{item.userName}</span>
+                <Link to={`/perfil/${item.userId}`} className={styles.userNameLink}>
+                  {item.userName}
+                </Link>
                 <RatingStars rating={item.score} />
               </div>
               <p className={styles.comment}>{item.comment}</p>

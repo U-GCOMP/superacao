@@ -9,6 +9,7 @@ export const AppRoutes = {
     DETAIL_EVENT: '/eventos/:id',
     MY_EVENTS: '/meus-eventos',
     PROFILE: '/meu-perfil',
+    USER_PROFILE: '/perfil/:id',
     USER_NOT_FOUND: '/usuario-nao-encontrado', 
     LEARN_MORE: '/saiba-mais', 
 }

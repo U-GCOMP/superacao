@@ -67,7 +67,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  border: 1px solid #E5E7EB;
+  border: 1px solid --border;
 }
 
 .formContent {
@@ -113,8 +113,8 @@
 }
 
 .submitButton {
-  background-color: #F07848; 
-  color: #FFFFFF;
+  background-color: --accent; 
+  color: --background;
   border: none;
   padding: 0.625rem 1.5rem;
   border-radius: 1.5rem;
@@ -125,7 +125,7 @@
 }
 
 .submitButton:hover:not(:disabled) {
-  background-color: #D96434; 
+  background-color: --accent; 
 }
 
 .submitButton:active:not(:disabled) {
