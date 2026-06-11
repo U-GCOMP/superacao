@@ -348,6 +348,8 @@ export const EventDetails = () => {
             </div>
           </div>
         </div>
+      )}
+      
       {isRatingsOpen && (
         <EventRatingsModal
           isOpen={isRatingsOpen}
