@@ -58,6 +58,7 @@
 
   margin-left: 2rem;
   width: 30%;
+  gap: 1rem;
 }
 
 .rightContent > img {
@@ -96,6 +97,29 @@
   padding: 4px 8px;
   background-color: #DCFCE7;
   border-radius: 4px;
+}
+
+.histogram {
+  margin-top: 6rem;
+}
+
+.histogram > h1 {
+  margin-bottom: 1rem;
+}
+
+.wordCloud {
+  margin-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.wordCloud > h1 {
+  margin-bottom: 1rem;
+}
+
+.wordCloud > div {
+  margin: auto;
+  width: 60vw;
+  height: 60vh;
 }
 
 .ratingsTriggerContainer {
