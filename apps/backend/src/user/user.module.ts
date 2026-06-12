@@ -6,9 +6,10 @@ import { UserRatingsRepository } from './userRatings.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from '../auth/entities/user.entity';
 import { UserRatings } from './entities/user-ratings.entity';
+import { EventModule } from '../event/event.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Users, UserRatings])],
+  imports: [TypeOrmModule.forFeature([Users, UserRatings]), EventModule],
   controllers: [UserController],
   providers: [UserService, UserRepository, UserRatingsRepository],
 })

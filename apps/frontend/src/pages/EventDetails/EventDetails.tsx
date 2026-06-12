@@ -250,9 +250,16 @@ export const EventDetails = () => {
             </div>
 
             <div className={styles.eventFooter}>
-              <span>Organizador:</span> <Link to={`/perfil/${event.organizer.id}`} className={styles.userNameLink}>
-                  {event.organizer.name}
-                </Link>
+              <span>Organizador:</span>{' '}
+                {event.organizer.id === 0 ? (
+                  <span className={styles.userNameLinkDeactivate}>
+                    {event.organizer.name}
+                  </span>
+                ) : (
+                  <Link to={`/perfil/${event.organizer.id}`} className={styles.userNameLink}>
+                    {event.organizer.name}
+                  </Link>
+                )}
             </div>
           </div>
 

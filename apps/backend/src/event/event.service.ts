@@ -88,6 +88,10 @@ export class EventService {
 
     if (event.ratings && event.ratings.length > 0) {
       event.ratings.forEach((entry) => {
+        if (!entry.author) {
+          return;
+        }
+
         const authorKey = String(entry.author_id);
 
         if (!ratingsGroupedByAuthor[authorKey]) {
@@ -133,6 +137,18 @@ export class EventService {
       (averageScore * totalUsersWhoVoted).toFixed(2),
     );
 
+    let organizerData = {
+      id: 0,
+      name: 'Usuário não encontrado',
+    };
+
+    if (event.owner) {
+      organizerData = {
+        id: event.owner.id,
+        name: event.owner.username ?? 'Usuário não encontrado',
+      };
+    }
+
     return {
       id: event.id,
       imageUrl:
@@ -147,10 +163,7 @@ export class EventService {
       maxVolunteers: event.volunteers_max,
       status: event.status,
       date: event.date,
-      organizer: {
-        id: event.owner.id,
-        name: event.owner.username,
-      },
+      organizer: organizerData,
       rating_sum: balancedRatingSum,
       rating_count: totalUsersWhoVoted,
       ratings: formattedRatings,
@@ -409,5 +422,50 @@ export class EventService {
       id: event.id,
       status: 'CANCELED',
     });
+  }
+
+  async deactivateAllDeactivatedUserEvents(userId: number): Promise<void> {
+    const events = await this.eventsRepository.getEventsByUserId(userId);
+
+    console.log('EVENTOS ENCONTRADOS PARA O USER:', events);
+
+    if (!events || events.length === 0) {
+      return;
+    }
+
+    const scheduledEvents = events.filter(
+      (event) => event.status === 'SCHEDULED',
+    );
+
+    if (scheduledEvents.length === 0) {
+      return;
+    }
+
+    for (const event of scheduledEvents) {
+      await this.eventsRepository.saveEvent({
+        id: event.id,
+        status: 'CANCELED',
+      });
+    }
+  }
+
+  async unsubscribeAllEventsDeactivatedUser(userId: number): Promise<void> {
+    const subscriptions =
+      (await this.eventVolunteersRepository.getSubscriptions(userId)) ?? [];
+
+    if (subscriptions.length === 0) return;
+
+    for (const sub of subscriptions) {
+      const event = await this.eventsRepository.getEventById(sub.event_id);
+
+      if (event && event.status === 'SCHEDULED') {
+        await this.eventsRepository.decrementVolunteersCount(event.id);
+
+        await this.eventVolunteersRepository.removeSingleSubscription(
+          event.id,
+          userId,
+        );
+      }
+    }
   }
 }
