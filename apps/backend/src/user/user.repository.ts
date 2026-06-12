@@ -27,15 +27,12 @@ export class UserRepository {
       .leftJoinAndSelect('user.events_participated', 'events_participated')
       .leftJoinAndSelect('events_participated.event', 'event')
       .leftJoinAndSelect('user.ratings_received', 'ratings_received')
-      .leftJoinAndSelect('ratings_received.author', 'author')
+      .leftJoinAndSelect(
+        'ratings_received.author',
+        'author',
+        'author.deleted_at IS NULL',
+      )
       .where('user.id = :id', { id })
       .getOne();
-  }
-
-  // NOTE: Since user is gonna be getting ratings from many users at a time, better to let ORM/database deal with concurrency
-  async incrementUserRating(id: number, rating: number): Promise<void> {
-    await this.typeormRepo.increment({ id }, 'rating_sum', rating);
-
-    await this.typeormRepo.increment({ id }, 'rating_count', 1);
   }
 }

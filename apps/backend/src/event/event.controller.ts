@@ -166,7 +166,12 @@ export class EventController {
 
     const ownerId = Number(req['user'].sub);
 
-    const id = await this.eventsService.updateEvent(body, ownerId, eventId, file);
+    const id = await this.eventsService.updateEvent(
+      body,
+      ownerId,
+      eventId,
+      file,
+    );
 
     return {
       token: id,

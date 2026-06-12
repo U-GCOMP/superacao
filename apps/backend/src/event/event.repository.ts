@@ -97,4 +97,18 @@ export class EventRepository {
     const event = this.ormRepository.create(eventData);
     return this.ormRepository.save(event);
   }
+
+  async getEventsByUserId(userId: number): Promise<Event[] | null> {
+    const events = await this.ormRepository.find({
+      where: {
+        owner: { id: userId },
+      },
+    });
+
+    return events.length > 0 ? events : null;
+  }
+
+  async decrementVolunteersCount(eventId: string): Promise<void> {
+    await this.ormRepository.decrement({ id: eventId }, 'volunteers_count', 1);
+  }
 }

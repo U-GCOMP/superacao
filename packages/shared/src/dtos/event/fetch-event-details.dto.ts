@@ -20,7 +20,7 @@ export const FetchEventDetailsResponseSchema = z.object({
     subscriptionDeadlineDate: z.coerce.date(),
     description: z.string().nonempty('Descrição é requerida'),
     organizer: z.object({
-        id: z.number().int().positive('O ID do organizador deve ser um inteiro positivo'),
+        id: z.number().int('O ID do organizador deve ser um inteiro'),
         name: z.string().nonempty('Nome do organizador é requerido'),
     }),
     volunteersCount: z.number().min(0, 'Contagem de voluntários não pode ser negativa'),

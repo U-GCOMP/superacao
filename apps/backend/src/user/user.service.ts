@@ -19,6 +19,7 @@ import { existsSync } from 'fs';
 import { mkdir, writeFile } from 'fs/promises';
 import { randomUUID } from 'crypto';
 import { ConfigService } from '@nestjs/config';
+import { EventService } from '../event/event.service';
 
 @Injectable()
 export class UserService {
@@ -26,6 +27,7 @@ export class UserService {
     private readonly userRepository: UserRepository,
     private readonly userRatingsRepository: UserRatingsRepository,
     private readonly configService: ConfigService,
+    private readonly eventService: EventService,
   ) {}
 
   async updateUsername(newUsername: string, id: number): Promise<string> {
@@ -110,6 +112,12 @@ export class UserService {
       throw new NotFoundException('Esse usuário não existe.');
     }
 
+    // NOTE: To turn all SCHEDULED events organized by user into CANCELED
+    await this.eventService.deactivateAllDeactivatedUserEvents(id);
+
+    // NOTE: To remove all subscriptions as volunteer on people`s events
+    await this.eventService.unsubscribeAllEventsDeactivatedUser(id);
+
     user.deleted_at = new Date();
 
     await this.userRepository.saveUser(user);
@@ -168,9 +176,16 @@ export class UserService {
       ];
     });
 
+    const activeRatingsCount = userRatings.length;
+
+    const totalActiveRatingSum = userRatings.reduce(
+      (acc, curr) => acc + curr.rating,
+      0,
+    );
+
     const averageRating =
-      user.rating_count && user.rating_count > 0
-        ? Number((user.rating_sum / user.rating_count).toFixed(2))
+      activeRatingsCount > 0
+        ? Number((totalActiveRatingSum / activeRatingsCount).toFixed(2))
         : 0;
 
     const profileData = {
@@ -182,7 +197,7 @@ export class UserService {
       events_organized_count: organizedEvents.length,
       events_participated_count: participatedEvents.length,
       rating: averageRating,
-      number_ratings: user.rating_count ?? 0,
+      number_ratings: activeRatingsCount,
       events_organized: organizedEvents,
       events_participated: participatedEvents,
       ratings: userRatings,
@@ -206,8 +221,6 @@ export class UserService {
         'A avaliação deve ser um valor inteiro entre 1 e 5',
       );
     }
-
-    await this.userRepository.incrementUserRating(targetId, rating);
 
     await this.userRatingsRepository.createUserRating(
       authorId,

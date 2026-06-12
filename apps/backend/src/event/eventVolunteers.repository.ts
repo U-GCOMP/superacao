@@ -28,4 +28,19 @@ export class EventVolunteersRepository {
       },
     });
   }
+
+  async getSubscriptions(userId: number): Promise<EventVolunteers[] | null> {
+    return this.typeormRepo.find({ where: { user_id: userId } });
+  }
+
+  // NOTE: Hard deleting msm, porque entidade não tem atributo para soft delete
+  async removeSingleSubscription(
+    eventId: string,
+    userId: number,
+  ): Promise<void> {
+    await this.typeormRepo.delete({
+      event_id: eventId,
+      user_id: userId,
+    });
+  }
 }
