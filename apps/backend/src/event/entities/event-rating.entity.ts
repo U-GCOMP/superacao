@@ -29,9 +29,9 @@ export class EventRatings {
   author!: Users;
 
   @Column()
-  category_id!: number; //NOTE: Swag, see tables diagram on documentation in order to properly implement these categories
+  category_id!: number;
 
-  @Column()
+  @Column({ type: 'real' })
   rating!: number;
 
   @Column({ nullable: true })

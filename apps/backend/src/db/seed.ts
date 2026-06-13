@@ -145,43 +145,44 @@ async function bootstrap() {
         comment: '',
       },
 
-      {
-        event_id: savedEvents[1].id,
-        author_id: savedUsers[2].id,
-        event: savedEvents[1],
-        author: savedUsers[2],
-        category_id: 1,
-        rating: 4,
-        comment:
-          'Gostei bastante da iniciativa, estão de parabéns. Leitor de light novel merece tudo de pior nesse mundo.',
-      },
-      {
-        event_id: savedEvents[1].id,
-        author_id: savedUsers[2].id,
-        event: savedEvents[1],
-        author: savedUsers[2],
-        category_id: 2,
-        rating: 5,
-        comment: '',
-      },
-      {
-        event_id: savedEvents[1].id,
-        author_id: savedUsers[2].id,
-        event: savedEvents[1],
-        author: savedUsers[2],
-        category_id: 3,
-        rating: 3,
-        comment: '',
-      },
-      {
-        event_id: savedEvents[1].id,
-        author_id: savedUsers[2].id,
-        event: savedEvents[1],
-        author: savedUsers[2],
-        category_id: 4,
-        rating: 4,
-        comment: '',
-      },
+      // Comentado para podermos testar a insercao da avaliacao atraves do perfil da maria
+      // {
+      //   event_id: savedEvents[1].id,
+      //   author_id: savedUsers[2].id,
+      //   event: savedEvents[1],
+      //   author: savedUsers[2],
+      //   category_id: 1,
+      //   rating: 4,
+      //   comment:
+      //     'Gostei bastante da iniciativa, estão de parabéns. Leitor de light novel merece tudo de pior nesse mundo.',
+      // },
+      // {
+      //   event_id: savedEvents[1].id,
+      //   author_id: savedUsers[2].id,
+      //   event: savedEvents[1],
+      //   author: savedUsers[2],
+      //   category_id: 2,
+      //   rating: 5,
+      //   comment: '',
+      // },
+      // {
+      //   event_id: savedEvents[1].id,
+      //   author_id: savedUsers[2].id,
+      //   event: savedEvents[1],
+      //   author: savedUsers[2],
+      //   category_id: 3,
+      //   rating: 3,
+      //   comment: '',
+      // },
+      // {
+      //   event_id: savedEvents[1].id,
+      //   author_id: savedUsers[2].id,
+      //   event: savedEvents[1],
+      //   author: savedUsers[2],
+      //   category_id: 4,
+      //   rating: 4,
+      //   comment: '',
+      // },
     ];
 
     await eventRatingsRepo.save(ratingsMockData);
