@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { EventRatings } from './entities/event-rating.entity';
 import { Users } from '../auth/entities/user.entity';
 import { RegisterEventRatingRequestDTO } from '@project/shared';
@@ -20,7 +20,10 @@ export class EventRatingsRepository {
       .getMany();
   }
 
-  async findUserRating(eventId: string, userId: number): Promise<EventRatings | null> {
+  async findUserRating(
+    eventId: string,
+    userId: number,
+  ): Promise<EventRatings | null> {
     return this.typeormRepo.findOne({
       where: {
         event_id: eventId,
@@ -45,7 +48,7 @@ export class EventRatingsRepository {
         author_id: params.author_id,
         category_id: 2,
         rating: params.punctuality_rating,
-        comment: safeComment, 
+        comment: safeComment,
       },
       {
         event_id: params.target_id,
@@ -64,7 +67,48 @@ export class EventRatingsRepository {
     ];
 
     const createdRatings = this.typeormRepo.create(ratingsToSave);
-    
+
     await this.typeormRepo.save(createdRatings);
+  }
+
+  async fetchRawMetricsByEvent(eventId: string): Promise<
+    {
+      categoryId: string | number;
+      average: string | number;
+    }[]
+  > {
+    return this.typeormRepo
+      .createQueryBuilder('rating')
+      .select('rating.category_id', 'categoryId')
+      .addSelect('AVG(rating.rating)', 'average')
+      .addSelect('COUNT(rating.id)', 'totalVotes')
+      .where('rating.event_id = :eventId', { eventId })
+      .groupBy('rating.category_id')
+      .getRawMany<{
+        categoryId: string | number;
+        average: string | number;
+      }>();
+  }
+
+  async fetchAllRatingCommentsByEventId(
+    eventId: string,
+    limit?: number,
+  ): Promise<{ comment: string }[]> {
+    const ratings = await this.typeormRepo.find({
+      where: {
+        event_id: eventId,
+        comment: Not(IsNull()),
+      },
+      select: {
+        comment: true,
+      },
+      take: limit,
+    });
+
+    const comments = ratings.map((rating) => ({
+      comment: rating.comment!,
+    }));
+
+    return comments;
   }
 }

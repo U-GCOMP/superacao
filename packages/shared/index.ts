@@ -24,5 +24,7 @@ export * from './src/dtos/event/event-subscription.dto';
 export * from './src/dtos/event/event-ownership.dto';
 export * from './src/dtos/event/deactivate-event.dto';
 export * from './src/dtos/event/register-event-rating.dto';
+export * from './src/dtos/event/fetch-event-histogram.dto';
+export * from './src/dtos/event/fetch-event-word-cloud.dto';
 
 export * from './src/models/user.model';

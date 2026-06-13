@@ -31,7 +31,10 @@ import {
   DeactivateEventParamDTO,
   DeactivateEventParamSchema,
   RegisterEventRatingRequestDTO,
-  RegisterEventRatingResponseDTO
+  RegisterEventRatingResponseDTO,
+  FetchEventWordCloudRequestDTO,
+  FetchEventWordCloudRequestSchema,
+  FetchEventWordCloudResponseDTO,
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -48,6 +51,10 @@ import type { Response } from 'express';
 import { lookup } from 'mime-types';
 
 import z from 'zod';
+import {
+  FetchEventHistogramRequestDTO,
+  FetchEventHistogramRequestSchema,
+} from '@project/shared/src/dtos/event/fetch-event-histogram.dto';
 
 @Controller('events')
 export class EventController {
@@ -227,5 +234,24 @@ export class EventController {
     };
 
     return this.eventsService.registerEventRating(payload);
+  }
+
+  @Get(':eventId/histogram')
+  @UsePipes(new ZodValidationPipe(FetchEventHistogramRequestSchema))
+  async fetchEventHistogram(@Param() params: FetchEventHistogramRequestDTO) {
+    const response = await this.eventsService.fetchEventHistogram(params);
+
+    return response;
+  }
+
+  @Get(':eventId/word-cloud')
+  @UsePipes(new ZodValidationPipe(FetchEventWordCloudRequestSchema))
+  async fetchEventWordCloud(
+    @Param() params: FetchEventWordCloudRequestDTO,
+  ): Promise<FetchEventWordCloudResponseDTO> {
+    const response: FetchEventWordCloudResponseDTO =
+      await this.eventsService.fetchEventMostCommentedWords(params);
+
+    return response;
   }
 }
