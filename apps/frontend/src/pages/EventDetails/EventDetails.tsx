@@ -241,7 +241,7 @@ export const EventDetails = () => {
       
       const formattedRatings = profile.ratings.map((rating, index) => ({
         id: String(index),
-        userId: 'unknown',
+        userId: String(rating.author_id),
         userName: rating.author_username,
         comment: rating.comment,
         score: rating.rating,
