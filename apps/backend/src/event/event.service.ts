@@ -17,6 +17,8 @@ import {
   RegisterEventRatingRequestDTO,
   RegisterEventRatingResponseDTO,
   RegisterEventRatingResponseSchema,
+  FetchEventHistogramResponseDTO,
+  FetchEventWordCloudResponseDTO,
 } from '@project/shared';
 import {
   FetchEventDetailsRequestDTO,
@@ -33,6 +35,8 @@ import { join } from 'path';
 import { AuthRepository } from '../auth/auth.repository';
 import { mkdir, writeFile, unlink } from 'fs/promises';
 import { existsSync } from 'fs';
+import { EventCategoriesEnum } from './enums/event-category.enum';
+import { WORD_CLOUD_BLACK_LIST } from './constants/word-cloud-black-list';
 
 @Injectable()
 export class EventService {
@@ -74,8 +78,6 @@ export class EventService {
     if (!event) {
       throw new NotFoundException('Event not found');
     }
-
-    console.debug(event);
 
     const ratingsGroupedByAuthor: Record<
       string,
@@ -170,7 +172,7 @@ export class EventService {
       imageUrl:
         event.imageUrl && !event.imageUrl.startsWith('http')
           ? `http://localhost:3000/events/image/${event.imageUrl}`
-          : (event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg'), //Zé or Rapha, had to alter here from your original implementation, in onder to have actual url application URL that browser understands, otherwise even with imageURL stored inside DB wouldn`t load browser
+          : (event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg'),
       title: event.title,
       description: event.description ?? '',
       volunteersCount: event.volunteers_count,
@@ -495,7 +497,9 @@ export class EventService {
     }
 
     if (event.status !== 'COMPLETED') {
-      throw new BadRequestException('Apenas eventos concluídos podem ser avaliados.');
+      throw new BadRequestException(
+        'Apenas eventos concluídos podem ser avaliados.',
+      );
     }
 
     const isParticipant = await this.eventsRepository.isUserParticipant(
@@ -504,14 +508,16 @@ export class EventService {
     );
 
     if (!isParticipant) {
-      throw new ForbiddenException('Apenas usuários que participaram do evento podem avaliá-lo.');
+      throw new ForbiddenException(
+        'Apenas usuários que participaram do evento podem avaliá-lo.',
+      );
     }
 
     const existingRating = await this.eventRatingRepository.findUserRating(
       params.target_id,
       params.author_id,
     );
-    
+
     if (existingRating) {
       throw new ConflictException('Você já avaliou este evento.');
     }
@@ -537,5 +543,75 @@ export class EventService {
       organizerId,
       volunteerId,
     );
+  }
+
+  async fetchEventHistogram(params: {
+    eventId: string;
+  }): Promise<FetchEventHistogramResponseDTO> {
+    const eventExists = await this.eventsRepository.eventExists(params.eventId);
+
+    if (!eventExists) {
+      throw new NotFoundException('O evento especificado não existe.');
+    }
+
+    const eventRawMetrics =
+      await this.eventRatingRepository.fetchRawMetricsByEvent(params.eventId);
+
+    const result: FetchEventHistogramResponseDTO = {
+      histogram: eventRawMetrics.map((metric) => {
+        const categoryId = Number(metric.categoryId);
+
+        const label = EventCategoriesEnum[categoryId] || 'Outros';
+        const value = parseFloat(Number(metric.average).toFixed(1));
+
+        return {
+          label,
+          value,
+        };
+      }),
+    };
+
+    return result;
+  }
+
+  async fetchEventMostCommentedWords(params: {
+    eventId: string;
+    limit?: number;
+  }): Promise<FetchEventWordCloudResponseDTO> {
+    const eventExists = await this.eventsRepository.eventExists(params.eventId);
+
+    if (!eventExists) {
+      throw new NotFoundException('O evento especificado não existe.');
+    }
+
+    const comments =
+      await this.eventRatingRepository.fetchAllRatingCommentsByEventId(
+        params.eventId,
+        params.limit,
+      );
+
+    const wordCounts: Record<string, number> = {};
+
+    for (const comment of comments) {
+      const cleanText = comment.comment
+        .toLowerCase()
+        .replace(/[.,/#!$%^&*;:{}=\-_`~()?"'\n\r]/g, ' ');
+
+      const words = cleanText.split(/\s+/);
+
+      for (const word of words) {
+        if (!word || word.length <= 2 || WORD_CLOUD_BLACK_LIST.has(word)) {
+          continue;
+        }
+
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+      }
+    }
+
+    const result: FetchEventWordCloudResponseDTO = Object.entries(wordCounts)
+      .sort(([, countA], [, countB]) => countB - countA)
+      .map(([word, count]) => ({ word, count }));
+
+    return result;
   }
 }

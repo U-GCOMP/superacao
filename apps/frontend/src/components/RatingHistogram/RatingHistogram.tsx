@@ -11,7 +11,7 @@ export const RatingHistogram = ({ ratingData, ratingLabels }: RatingHistogramPro
     <Box sx={{ width: '100%', height: 300 }}>
       <BarChart
         series={[
-          { data: ratingData, label: 'Stars', id: 'startId', color: '#fdb462' },
+          { data: ratingData, label: 'Nota', id: 'startId', color: '#fdb462' },
         ]}
         xAxis={[{ data: ratingLabels, height: 28 }]}
         yAxis={[{ width: 50 }]}

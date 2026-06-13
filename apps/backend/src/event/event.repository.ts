@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Event } from './entities/event.entity';
 import {
   FetchEventListQueryParametersDTO,
@@ -38,6 +38,13 @@ export class EventRepository {
     const saved = await this.ormRepository.save(event);
 
     return saved;
+  }
+
+  async eventExists(eventId: string): Promise<boolean> {
+    const count = await this.ormRepository.count({
+      where: { id: eventId, deleted_at: IsNull() },
+    });
+    return count > 0;
   }
 
   async findEvents(params: FetchEventListQueryParametersDTO): Promise<Event[]> {

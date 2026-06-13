@@ -2,7 +2,7 @@ import styles from './EventDetails.module.css';
 import { BaseScreen } from '../../components/BaseScreen/BaseScreen';
 import { Button } from '../../components/Button/Button';
 import { Pill } from '../../components/Pill/Pill';
-import { FetchEventDetailsResponseDTO } from '@project/shared';
+import { FetchEventDetailsResponseDTO, FetchEventHistogramResponseDTO, FetchEventWordCloudResponseDTO } from '@project/shared';
 import { useEffect, useState } from 'react';
 import { fetchEventDetailsAction } from '../../features/event/api/fetch-event-details-action';
 import { useParams } from 'react-router-dom';
@@ -22,46 +22,26 @@ import { Link } from 'react-router-dom';
 import { UserRatingsModal } from '../../features/user/ui/components/UserRatingsModal/UserRatingsModal';
 import { registerUserRatingAction } from '../../features/user/api/register-user-rating-action';
 import { fetchUserDetailsAction } from '../../pages/Profile/api/fetch-user-profile-action'
-
-// Mock data
-const ratingData = [3, 4.5, 2, 5];
-const ratingLabels = ['Critério 1', 'Critério 2', 'Critério 3', 'Critério 4'];
-
-const wordsData: [string, number][] = [
-  ['organização', 120],
-  ['excelente', 110],
-  ['participação', 95],
-  ['evento', 90],
-  ['aprendizado', 85],
-  ['conteúdo', 80],
-  ['palestra', 75],
-  ['interessante', 70],
-  ['dinâmico', 65],
-  ['instrutores', 60],
-  ['experiência', 58],
-  ['ótimo', 55],
-  ['informativo', 50],
-  ['didático', 48],
-  ['engajamento', 45],
-  ['interação', 42],
-  ['recomendado', 40],
-  ['conhecimento', 38],
-  ['qualidade', 35],
-  ['motivador', 32],
-  ['inspirador', 30],
-  ['produtivo', 28],
-  ['acolhedor', 25],
-  ['pontualidade', 22],
-  ['criativo', 20],
-];
+import { fetchEventHistogramAction } from '../../features/event/api/fetch-event-histogram-action';
+import { fetchEventWordCloudAction } from '../../features/event/api/fetch-event-word-cloud-action';
 
 export const EventDetails = () => {
   const { id } = useParams();
   const { id: loggedUserId } = useAuthentication();
 
   const [event, setEvent] = useState<FetchEventDetailsResponseDTO | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [eventErrorMessage, setEventErrorMessage] = useState<string | null>(null);
+  const [isLoadingEvent, setIsLoadingEvent] = useState(false);
+
+  const [histogram, setHistogram] = useState<FetchEventHistogramResponseDTO['histogram']>([]);
+  const histogramData = histogram.map(item => item.value);
+  const histogramLabels = histogram.map(item => item.label);
+  const [isHistogramError, setIsHistogramError] = useState<string | null>(null);
+  const [isHistogramLoading, setIsHistogramLoading] = useState(false);
+
+  const [wordCloudData, setWordCloudData] = useState<FetchEventWordCloudResponseDTO>([]);
+  const [isWordCloudError, setIsWordCloudError] = useState<string | null>(null);
+  const [isWordCloudLoading, setIsWordCloudLoading] = useState(false);
 
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -101,9 +81,9 @@ export const EventDetails = () => {
         if (error.statusCode === 409) {
           alert('Já inscrito no evento');
         }
-        setErrorMessage(error.message);
+        setEventErrorMessage(error.message);
       } else {
-        setErrorMessage('Erro desconhecido');
+        setEventErrorMessage('Erro desconhecido');
       }
     }
   };
@@ -121,26 +101,26 @@ export const EventDetails = () => {
         setIsSubscribed(subscription.subscribed);
       } catch (error) {
         if (error instanceof AppError) {
-          setErrorMessage(error.message);
+          setEventErrorMessage(error.message);
         }
       }
     };
 
     const fetchEvent = async (id: string) => {
       try {
-        setIsLoading(true);
-        setErrorMessage(null);
+        setIsLoadingEvent(true);
+        setEventErrorMessage(null);
         const eventData = await fetchEventDetailsAction(id);
         setEvent(eventData);
       } catch (error) {
         if (error instanceof AppError) {
-          setErrorMessage(error.message);
+          setEventErrorMessage(error.message);
         } else {
-          setErrorMessage('Unexpected error');
+          setEventErrorMessage('Unexpected error');
         }
         setEvent(null);
       } finally {
-        setIsLoading(false);
+        setIsLoadingEvent(false);
       }
     };
 
@@ -148,6 +128,55 @@ export const EventDetails = () => {
       fetchEvent(id);
       checkSubscription();
     }
+  }, [id]);
+
+  useEffect(() => {
+    const fetchHistogram = async (id: string) => {
+      try {
+        setIsHistogramLoading(true);
+        setIsHistogramError(null);
+
+        const response = await fetchEventHistogramAction(id);
+
+        setHistogram(response.histogram);
+      } catch (error) {
+        if (error instanceof AppError) {
+          setIsHistogramError(error.message);
+        } else {
+          setIsHistogramError('Erro desconhecido ao carregar histograma');
+        }
+      } finally {
+        setIsHistogramLoading(false);
+      }
+    }
+
+    if (id) {
+      fetchHistogram(id);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const fetchWordCloud = async (id: string) => {
+      try {
+        setIsWordCloudLoading(true);
+        setIsWordCloudError(null);
+        const response = await fetchEventWordCloudAction(id, 20);
+        setWordCloudData(response);
+      } catch (error) {
+        if (error instanceof AppError) {
+          setIsWordCloudError(error.message);
+        } else {
+          setIsWordCloudError('Erro desconhecido ao carregar nuvem de palavras');
+        }
+      } finally {
+        setIsWordCloudLoading(false);
+      }
+    }
+
+    if (id) {
+      fetchWordCloud(id);
+    }
+
   }, [id]);
 
   const handleConfirmDeactivation = async () => {
@@ -183,7 +212,7 @@ export const EventDetails = () => {
     setIsEditing(false);
   };
 
-  if (isLoading) {
+  if (isLoadingEvent) {
     return (
       <BaseScreen>
         <p>Carregando...</p>
@@ -194,7 +223,7 @@ export const EventDetails = () => {
   if (!event) {
     return (
       <BaseScreen>
-        <p>{errorMessage}</p>
+        <p>{eventErrorMessage}</p>
       </BaseScreen>
     );
   }
@@ -407,38 +436,62 @@ export const EventDetails = () => {
         </div>
       </div>
 
-      {isCompleted && isOwner && (
+      {isCompleted && (
         <div className={styles.ownerMetricsSection}>
-          <div className={styles.volunteersEvaluation}>
-            <h1>Avaliar Voluntários</h1>
-            <p>Selecione um voluntário participante para enviar sua avaliação sobre o desempenho dele no evento.</p>
+          
+          {isOwner && (
+            <div className={styles.volunteersEvaluation}>
+              <h1>Avaliar Voluntários</h1>
+              <p>Selecione um voluntário participante para enviar sua avaliação sobre o desempenho dele no evento.</p>
             
-            <div className={styles.volunteersList}>
-              {event.volunteers && event.volunteers.length > 0 ? (
-                event.volunteers.map((volunteer) => (
-                  <div key={volunteer.id} className={styles.volunteerItem}>
-                    <span>{volunteer.name}</span>
-                    <Button 
-                      text="Avaliar" 
-                      buttonStyle="secondary" 
-                      onClick={() => handleOpenVolunteerModal(String(volunteer.id), volunteer.name)}
-                    />
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum voluntário registrado para avaliação.</p>
-              )}
+              <div className={styles.volunteersList}>
+                {event.volunteers && event.volunteers.length > 0 ? (
+                  event.volunteers.map((volunteer) => (
+                    <div key={volunteer.id} className={styles.volunteerItem}>
+                      <span>{volunteer.name}</span>
+                      <Button 
+                        text="Avaliar" 
+                        buttonStyle="secondary" 
+                        onClick={() => handleOpenVolunteerModal(String(volunteer.id), volunteer.name)}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <p>Nenhum voluntário registrado para avaliação.</p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={styles.histogram}>
             <h1>Histograma de avaliações</h1>
-            <RatingHistogram ratingData={ratingData} ratingLabels={ratingLabels} />
+            {
+              isHistogramLoading ? (
+                <p>Carregando histograma...</p>
+              ) : isHistogramError ? (
+                <p>{isHistogramError}</p>
+              ) : (
+              <RatingHistogram
+                ratingData={histogramData}
+                ratingLabels={histogramLabels}
+              />
+              )
+            }
           </div>
 
           <div className={styles.wordCloud}>
             <h1>Nuvem de palavras</h1>
-            <WordCloudChart data={wordsData} />
+            {
+              isWordCloudLoading ? (
+                <p>Carregando nuvem de palavras...</p>
+              ) : isWordCloudError ? (
+                <p>{isWordCloudError}</p>
+              ) : (
+                <div>
+                  <WordCloudChart data={wordCloudData.map((entry) => [entry.word, entry.count])} />
+                </div>
+              )
+            }
           </div>
         </div>
       )}
