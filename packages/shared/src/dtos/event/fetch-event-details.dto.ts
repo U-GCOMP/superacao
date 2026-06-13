@@ -30,6 +30,10 @@ export const FetchEventDetailsResponseSchema = z.object({
     rating_sum: z.number(),
     rating_count: z.number().int(),
     ratings: z.array(EventRatingSchema),
+    volunteers: z.array(z.object({
+        id: z.string(),
+        name: z.string()
+    })).optional(),
 })
 
 export type FetchEventDetailsRequestDTO = z.infer<typeof FetchEventDetailsRequestSchema>;

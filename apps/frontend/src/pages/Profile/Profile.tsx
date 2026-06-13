@@ -16,6 +16,7 @@ import { BioComponent } from './components/BioComponent/BioComponent';
 import { UsernameComponent } from './components/UsernameComponent/UsernameComponent';
 import { LogoutButton } from './components/LogoutButton/LogoutButton';
 import { CreateEventButton } from './components/CreateEventButton/CreateEventButton';
+import { UserRatingsModal } from '../../features/user/ui/components/UserRatingsModal/UserRatingsModal';
 
 export const Profile = () => {
     const navigate = useNavigate();
@@ -27,6 +28,8 @@ export const Profile = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [profileData, setProfileData] = useState<FetchUserProfileResponseDTO | null>(null);
+
+    const [isRatingsModalOpen, setIsRatingsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchProfileData = async () => {
@@ -106,6 +109,14 @@ export const Profile = () => {
             </BaseScreen>
         );
     }
+
+    const formattedRatings = profileData.ratings.map((rating, index) => ({
+        id: String(index),
+        userId: 'unknown',
+        userName: rating.author_username,
+        comment: rating.comment,
+        score: rating.rating,
+    }));
     
     return (
         <BaseScreen hasPadding={false}>
@@ -141,7 +152,17 @@ export const Profile = () => {
                                 onImageUpdated={onAvatarUpdated}
                                 onError={(message) => setErrorMessage(message)}
                             />
-                            <RatingStars rating={profileData.rating} />
+                            
+                            <div 
+                                className={styles.ratingContainer} 
+                                onClick={() => setIsRatingsModalOpen(true)}
+                                style={{ cursor: 'pointer' }}
+                                role="button"
+                                tabIndex={0}
+                                aria-label="Ver avaliações recebidas"
+                            >
+                                <RatingStars rating={profileData.rating} />
+                            </div>
                         </div>
                     </div>
                     <div className={styles.content}>
@@ -175,6 +196,16 @@ export const Profile = () => {
                         )
                     }
                 </section>
+
+                {isRatingsModalOpen && (
+                    <UserRatingsModal
+                        isOpen={isRatingsModalOpen}
+                        onClose={() => setIsRatingsModalOpen(false)}
+                        targetUserName={profileData.username}
+                        ratings={formattedRatings}
+                        canEvaluate={false}
+                    />
+                )}
         </BaseScreen>
     )
 }

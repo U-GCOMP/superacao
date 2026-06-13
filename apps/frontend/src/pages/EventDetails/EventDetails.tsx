@@ -19,6 +19,9 @@ import { EventRatingsModal } from '../../features/event/ui/components/EventRatin
 import { RatingStars } from '../../components/RatingStars/RatingStars';
 import { registerEventRatingAction } from '../../features/event/api/register-event-rating-action';
 import { Link } from 'react-router-dom';
+import { UserRatingsModal } from '../../features/user/ui/components/UserRatingsModal/UserRatingsModal';
+import { registerUserRatingAction } from '../../features/user/api/register-user-rating-action';
+import { fetchUserDetailsAction } from '../../pages/Profile/api/fetch-user-profile-action'
 
 // Mock data
 const ratingData = [3, 4.5, 2, 5];
@@ -66,6 +69,16 @@ export const EventDetails = () => {
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isRatingsOpen, setIsRatingsOpen] = useState(false);
+  const [isUserRatingsOpen, setIsUserRatingsOpen] = useState(false);
+  const [volunteerToRate, setVolunteerToRate] = useState<{id: string, name: string} | null>(null);
+
+  const [volunteerRatings, setVolunteerRatings] = useState<{
+    id: string;
+    userId: string;
+    userName: string;
+    comment?: string | null;
+    score: number;
+  }[]>([]);
 
   const isOwner = event?.organizer.id === loggedUserId;
 
@@ -218,6 +231,52 @@ export const EventDetails = () => {
     }
   };
 
+  const handleOpenVolunteerModal = async (volunteerId: string, volunteerName: string) => {
+    setVolunteerToRate({ id: volunteerId, name: volunteerName });
+    setIsUserRatingsOpen(true);
+    setVolunteerRatings([]);
+
+    try {
+      const profile = await fetchUserDetailsAction({ id: Number(volunteerId) });
+      
+      const formattedRatings = profile.ratings.map((rating, index) => ({
+        id: String(index),
+        userId: 'unknown',
+        userName: rating.author_username,
+        comment: rating.comment,
+        score: rating.rating,
+      }));
+
+      setVolunteerRatings(formattedRatings);
+    } catch (error) {
+      console.error('Erro ao buscar histórico de avaliações do voluntário:', error);
+    }
+  };
+
+  const handleAddVolunteerRating = async (formData: FormData) => {
+    if (!id || !volunteerToRate) {
+      return { 
+        success: false, 
+        message: 'ID do evento ou voluntário inválido.' 
+      };
+    }
+
+    try {
+      await registerUserRatingAction(volunteerToRate.id, formData);
+
+      return { success: true, message: 'Avaliação do voluntário salva com sucesso!' };
+    } catch (error) {
+      if (error instanceof AppError) {
+        return { success: false, message: error.message };
+      }
+      
+      return { 
+        success: false, 
+        message: 'Ocorreu um erro inesperado ao salvar a avaliação.' 
+      };
+    }
+  };
+
   return (
     <BaseScreen>
       <div className={styles.container}>
@@ -339,20 +398,37 @@ export const EventDetails = () => {
       </div>
 
       {isCompleted && isOwner && (
-        <div>
+        <div className={styles.ownerMetricsSection}>
+          <div className={styles.volunteersEvaluation}>
+            <h1>Avaliar Voluntários</h1>
+            <p>Selecione um voluntário participante para enviar sua avaliação sobre o desempenho dele no evento.</p>
+            
+            <div className={styles.volunteersList}>
+              {event.volunteers && event.volunteers.length > 0 ? (
+                event.volunteers.map((volunteer) => (
+                  <div key={volunteer.id} className={styles.volunteerItem}>
+                    <span>{volunteer.name}</span>
+                    <Button 
+                      text="Avaliar" 
+                      buttonStyle="secondary" 
+                      onClick={() => handleOpenVolunteerModal(String(volunteer.id), volunteer.name)}
+                    />
+                  </div>
+                ))
+              ) : (
+                <p>Nenhum voluntário registrado para avaliação.</p>
+              )}
+            </div>
+          </div>
+
           <div className={styles.histogram}>
             <h1>Histograma de avaliações</h1>
-            <RatingHistogram
-              ratingData={ratingData}
-              ratingLabels={ratingLabels}
-            />
+            <RatingHistogram ratingData={ratingData} ratingLabels={ratingLabels} />
           </div>
 
           <div className={styles.wordCloud}>
             <h1>Nuvem de palavras</h1>
-            <div>
-              <WordCloudChart data={wordsData} />
-            </div>
+            <WordCloudChart data={wordsData} />
           </div>
         </div>
       )}
@@ -364,6 +440,19 @@ export const EventDetails = () => {
           eventName={event.title}
           ratings={event.ratings || []} 
           onAddRating={handleAddRating}
+        />
+      )}
+
+      {isUserRatingsOpen && volunteerToRate && (
+        <UserRatingsModal
+          isOpen={isUserRatingsOpen}
+          onClose={() => {
+            setIsUserRatingsOpen(false);
+            setVolunteerToRate(null);
+          }}
+          targetUserName={volunteerToRate.name}
+          ratings={volunteerRatings} 
+          onAddRating={handleAddVolunteerRating}
         />
       )}
 

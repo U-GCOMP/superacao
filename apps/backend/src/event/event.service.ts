@@ -152,6 +152,15 @@ export class EventService {
       };
     }
 
+    let volunteers: { id: string; name: string }[] | undefined = undefined;
+
+    if (event.status === 'COMPLETED' && event.volunteers) {
+      volunteers = event.volunteers.map((vol) => ({
+        id: String(vol.user.id),
+        name: vol.user.username ?? 'Usuário Desconhecido',
+      }));
+    }
+
     return {
       id: event.id,
       imageUrl:
@@ -170,6 +179,7 @@ export class EventService {
       rating_sum: balancedRatingSum,
       rating_count: totalUsersWhoVoted,
       ratings: formattedRatings,
+      volunteers: volunteers,
     };
   }
 
@@ -504,5 +514,15 @@ export class EventService {
       accessibility_rating: params.accessibility_rating,
       comment: params.comment,
     });
+  }
+
+  async checkIfVolunteerParticipatedInCompletedEvent(
+    organizerId: number,
+    volunteerId: number,
+  ): Promise<boolean> {
+    return this.eventsRepository.checkIfVolunteerParticipatedInCompletedEvent(
+      organizerId,
+      volunteerId,
+    );
   }
 }

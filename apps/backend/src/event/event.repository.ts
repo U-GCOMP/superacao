@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Event } from './entities/event.entity'; // Ajuste o path conforme seu projeto
+import { Event } from './entities/event.entity';
 import {
   FetchEventListQueryParametersDTO,
   RegisterEventRequestDTO,
@@ -73,7 +73,13 @@ export class EventRepository {
   async findEventByIdWithOrganizerData(eventId: string): Promise<Event | null> {
     return this.ormRepository.findOne({
       where: { id: eventId },
-      relations: ['owner', 'ratings', 'ratings.author'],
+      relations: [
+        'owner', 
+        'ratings', 
+        'ratings.author',
+        'volunteers',
+        'volunteers.user'
+      ],
     });
   }
 
@@ -110,5 +116,21 @@ export class EventRepository {
 
   async decrementVolunteersCount(eventId: string): Promise<void> {
     await this.ormRepository.decrement({ id: eventId }, 'volunteers_count', 1);
+  }
+
+  async checkIfVolunteerParticipatedInCompletedEvent(
+    organizerId: number,
+    volunteerId: number,
+  ): Promise<boolean> {
+    const count = await this.ormRepository
+      .createQueryBuilder('event')
+      .innerJoin('event.owner', 'owner')
+      .innerJoin('event.volunteers', 'eventVolunteer')
+      .where('owner.id = :organizerId', { organizerId })
+      .andWhere('event.status = :status', { status: 'COMPLETED' })
+      .andWhere('eventVolunteer.user_id = :volunteerId', { volunteerId })
+      .getCount();
+
+    return count > 0;
   }
 }
