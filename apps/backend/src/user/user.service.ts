@@ -222,6 +222,17 @@ export class UserService {
       );
     }
 
+    const canRate = await this.eventService.checkIfVolunteerParticipatedInCompletedEvent(
+      authorId,
+      targetId,
+    );
+
+    if (!canRate) {
+      throw new ForbiddenException(
+        'Você só pode avaliar usuários que participaram de seus eventos concluídos.',
+      );
+    }
+
     await this.userRatingsRepository.createUserRating(
       authorId,
       targetId,

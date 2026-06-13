@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitialSchema1781311514393 implements MigrationInterface {
-    name = 'InitialSchema1781311514393'
+export class InitialDatabase1781363784292 implements MigrationInterface {
+    name = 'InitialDatabase1781363784292'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`CREATE TABLE "user_ratings" ("id" SERIAL NOT NULL, "target_id" integer NOT NULL, "author_id" integer NOT NULL, "rating" integer NOT NULL, "comment" character varying, CONSTRAINT "PK_9de3e405c7a1a3a8ce4c0715993" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "user_ratings" ("id" SERIAL NOT NULL, "target_id" integer NOT NULL, "author_id" integer NOT NULL, "rating" real NOT NULL, "comment" character varying, CONSTRAINT "PK_9de3e405c7a1a3a8ce4c0715993" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "event_ratings" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "event_id" uuid NOT NULL, "author_id" integer NOT NULL, "category_id" integer NOT NULL, "rating" real NOT NULL, "comment" character varying, CONSTRAINT "PK_1a40669403a8ea520987fcb5396" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "event_volunteers" ("event_id" uuid NOT NULL, "user_id" integer NOT NULL, CONSTRAINT "PK_c25a66b656c0df4f0cec6b3da8d" PRIMARY KEY ("event_id", "user_id"))`);
         await queryRunner.query(`CREATE TYPE "public"."events_status_enum" AS ENUM('SCHEDULED', 'COMPLETED', 'CANCELED')`);

@@ -19,7 +19,7 @@ export class UserRatings {
   @Column()
   author_id!: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'real' })
   rating!: number;
 
   @Column({ nullable: true })

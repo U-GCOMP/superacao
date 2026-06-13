@@ -149,7 +149,6 @@ export class UserController {
   @Post(':targetId/rate')
   @UseGuards(AuthGuard)
   @HttpCode(201)
-  @UsePipes(new ZodValidationPipe(RegisterUserRatingRequestSchema))
   async createUserRating(
     @Param('targetId', ParseIntPipe) targetId: number,
     @Body() { rating, comment }: RegisterUserRatingRequestDTO,
