@@ -12,11 +12,15 @@ export const WordCloudChart = ({ data }: WordCloudProps) => {
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    const maxWeight = data[0][1];
+    const targetMaxFontSize = 95;
+    const dynamicWeightFactor = targetMaxFontSize / maxWeight;
+
     wc(canvasRef.current, {
       list: data,
-      minSize: 10,
       fontWeight: 'bold',
-      weightFactor: 1.5,
+      weightFactor: dynamicWeightFactor,
+      drawOutOfBound: false, 
     });
 
     return () => {
