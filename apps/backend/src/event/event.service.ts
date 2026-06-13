@@ -155,9 +155,13 @@ export class EventService {
     let volunteers: { id: string; name: string }[] | undefined = undefined;
 
     if (event.status === 'COMPLETED' && event.volunteers) {
-      volunteers = event.volunteers.map((vol) => ({
-        id: String(vol.user.id),
-        name: vol.user.username ?? 'Usuário Desconhecido',
+      const activeVolunteers = event.volunteers.filter(
+        (vol) => vol.user !== null && vol.user !== undefined,
+      );
+
+      volunteers = activeVolunteers.map((vol) => ({
+        id: String(vol.user?.id),
+        name: vol.user?.username ?? 'Usuário Desconhecido',
       }));
     }
 

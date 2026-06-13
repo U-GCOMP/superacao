@@ -232,14 +232,24 @@ export const EventDetails = () => {
   };
 
   const handleOpenVolunteerModal = async (volunteerId: string, volunteerName: string) => {
+    const parsedId = Number(volunteerId);
+  
+    if (!volunteerId || isNaN(parsedId)) {
+      return;
+    }
+
     setVolunteerToRate({ id: volunteerId, name: volunteerName });
     setIsUserRatingsOpen(true);
     setVolunteerRatings([]);
 
     try {
       const profile = await fetchUserDetailsAction({ id: Number(volunteerId) });
+
+      const validRatings = (profile.ratings || []).filter(
+        (rating) => rating.author_id !== null && rating.author_id !== undefined
+      );
       
-      const formattedRatings = profile.ratings.map((rating, index) => ({
+      const formattedRatings = validRatings.map((rating, index) => ({
         id: String(index),
         userId: String(rating.author_id),
         userName: rating.author_username,
