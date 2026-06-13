@@ -129,6 +129,13 @@ export class EventRepository {
       .where('owner.id = :organizerId', { organizerId })
       .andWhere('event.status = :status', { status: 'COMPLETED' })
       .andWhere('eventVolunteer.user_id = :volunteerId', { volunteerId })
+    
+  async isUserParticipant(eventId: string, userId: number): Promise<boolean> {
+    const count = await this.ormRepository
+      .createQueryBuilder('event')
+      .innerJoin('event.volunteers', 'volunteer')
+      .where('event.id = :eventId', { eventId })
+      .andWhere('volunteer.user_id = :userId', { userId })
       .getCount();
 
     return count > 0;
