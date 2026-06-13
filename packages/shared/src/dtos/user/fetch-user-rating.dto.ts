@@ -5,6 +5,7 @@ export const FetchUserRatingRequestSchema = z.object({
 });
 
 export const FetchUserRatingResponseSchema = z.object({
+  author_id: z.number().int(),
   author_username: z.string().min(1),
   rating: z.number(),
   comment: z.string().catch(''),

@@ -169,6 +169,7 @@ export class UserService {
 
       return [
         {
+          author_id: review.author_id,
           author_username: review.author.username,
           rating: review.rating,
           comment: review.comment ?? '',
