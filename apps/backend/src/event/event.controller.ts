@@ -30,6 +30,8 @@ import {
   EventOwnershipResponseDTO,
   DeactivateEventParamDTO,
   DeactivateEventParamSchema,
+  RegisterEventRatingRequestDTO,
+  RegisterEventRatingResponseDTO
 } from '@project/shared';
 import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
@@ -207,5 +209,23 @@ export class EventController {
       success: true,
       message: 'Evento desativado com sucesso.',
     };
+  }
+
+  @Post(':eventId/ratings')
+  @UseGuards(AuthGuard)
+  async registerEventRating(
+    @Request() req: AuthenticatedRequest,
+    @Param('eventId') eventId: string,
+    @Body() body: RegisterEventRatingRequestDTO,
+  ): Promise<RegisterEventRatingResponseDTO> {
+    const userId = Number(req.user.sub);
+
+    const payload: RegisterEventRatingRequestDTO = {
+      ...body,
+      author_id: userId,
+      target_id: eventId,
+    };
+
+    return this.eventsService.registerEventRating(payload);
   }
 }

@@ -14,6 +14,9 @@ import {
   RegisterEventRequestDTO,
   EventSubscriptionResponseDTO,
   EventOwnershipResponseDTO,
+  RegisterEventRatingRequestDTO,
+  RegisterEventRatingResponseDTO,
+  RegisterEventRatingResponseSchema,
 } from '@project/shared';
 import {
   FetchEventDetailsRequestDTO,
@@ -467,5 +470,39 @@ export class EventService {
         );
       }
     }
+  }
+
+  async registerEventRating(
+    params: RegisterEventRatingRequestDTO,
+  ): Promise<RegisterEventRatingResponseDTO> {
+    const event = await this.eventsRepository.getEventById(params.target_id);
+    if (!event) {
+      throw new NotFoundException('O evento especificado não existe.');
+    }
+
+    if (event.status !== 'COMPLETED') {
+      throw new BadRequestException('Apenas eventos concluídos podem ser avaliados.');
+    }
+
+    const existingRating = await this.eventRatingRepository.findUserRating(
+      params.target_id,
+      params.author_id,
+    );
+    
+    if (existingRating) {
+      throw new ConflictException('Você já avaliou este evento.');
+    }
+
+    await this.eventRatingRepository.saveEventRating(params);
+
+    return RegisterEventRatingResponseSchema.parse({
+      target_id: params.target_id,
+      author_id: params.author_id,
+      organized_rating: params.organized_rating,
+      punctuality_rating: params.punctuality_rating,
+      infrastructure_rating: params.infrastructure_rating,
+      accessibility_rating: params.accessibility_rating,
+      comment: params.comment,
+    });
   }
 }
