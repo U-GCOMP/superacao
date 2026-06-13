@@ -484,6 +484,15 @@ export class EventService {
       throw new BadRequestException('Apenas eventos concluídos podem ser avaliados.');
     }
 
+    const isParticipant = await this.eventsRepository.isUserParticipant(
+      params.target_id,
+      params.author_id,
+    );
+
+    if (!isParticipant) {
+      throw new ForbiddenException('Apenas usuários que participaram do evento podem avaliá-lo.');
+    }
+
     const existingRating = await this.eventRatingRepository.findUserRating(
       params.target_id,
       params.author_id,
