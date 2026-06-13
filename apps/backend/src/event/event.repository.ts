@@ -74,11 +74,11 @@ export class EventRepository {
     return this.ormRepository.findOne({
       where: { id: eventId },
       relations: [
-        'owner', 
-        'ratings', 
+        'owner',
+        'ratings',
         'ratings.author',
         'volunteers',
-        'volunteers.user'
+        'volunteers.user',
       ],
     });
   }
@@ -129,7 +129,11 @@ export class EventRepository {
       .where('owner.id = :organizerId', { organizerId })
       .andWhere('event.status = :status', { status: 'COMPLETED' })
       .andWhere('eventVolunteer.user_id = :volunteerId', { volunteerId })
-    
+      .getCount();
+
+    return count > 0;
+  }
+
   async isUserParticipant(eventId: string, userId: number): Promise<boolean> {
     const count = await this.ormRepository
       .createQueryBuilder('event')
