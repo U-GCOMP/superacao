@@ -428,27 +428,30 @@ export const EventDetails = () => {
 
       {isCompleted && (
         <div className={styles.ownerMetricsSection}>
-          <div className={styles.volunteersEvaluation}>
-            <h1>Avaliar Voluntários</h1>
-            <p>Selecione um voluntário participante para enviar sua avaliação sobre o desempenho dele no evento.</p>
+          
+          {isOwner && (
+            <div className={styles.volunteersEvaluation}>
+              <h1>Avaliar Voluntários</h1>
+              <p>Selecione um voluntário participante para enviar sua avaliação sobre o desempenho dele no evento.</p>
             
-            <div className={styles.volunteersList}>
-              {event.volunteers && event.volunteers.length > 0 ? (
-                event.volunteers.map((volunteer) => (
-                  <div key={volunteer.id} className={styles.volunteerItem}>
-                    <span>{volunteer.name}</span>
-                    <Button 
-                      text="Avaliar" 
-                      buttonStyle="secondary" 
-                      onClick={() => handleOpenVolunteerModal(String(volunteer.id), volunteer.name)}
-                    />
-                  </div>
-                ))
-              ) : (
-                <p>Nenhum voluntário registrado para avaliação.</p>
-              )}
+              <div className={styles.volunteersList}>
+                {event.volunteers && event.volunteers.length > 0 ? (
+                  event.volunteers.map((volunteer) => (
+                    <div key={volunteer.id} className={styles.volunteerItem}>
+                      <span>{volunteer.name}</span>
+                      <Button 
+                        text="Avaliar" 
+                        buttonStyle="secondary" 
+                        onClick={() => handleOpenVolunteerModal(String(volunteer.id), volunteer.name)}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <p>Nenhum voluntário registrado para avaliação.</p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={styles.histogram}>
             <h1>Histograma de avaliações</h1>
