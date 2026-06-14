@@ -76,7 +76,7 @@ export class EventService {
     );
 
     if (!event) {
-      throw new NotFoundException('Event not found');
+      throw new NotFoundException('Evento não encontrado');
     }
 
     const ratingsGroupedByAuthor: Record<
@@ -193,7 +193,7 @@ export class EventService {
     const imagesPath = this.configService.get<string>('IMAGES_PATH_EVENTS');
 
     if (!imagesPath) {
-      throw new Error('IMAGES_PATH_EVENTS is not defined');
+      throw new Error('IMAGES_PATH_EVENTS não definido');
     }
 
     const fullPath = join(imagesPath, filename);
@@ -209,7 +209,7 @@ export class EventService {
     const imagesPath = this.configService.get<string>('IMAGES_PATH_EVENTS');
 
     if (!imagesPath) {
-      throw new Error('IMAGES_PATH_EVENTS is not defined');
+      throw new Error('IMAGES_PATH_EVENTS não definido');
     }
 
     if (!existsSync(imagesPath)) {
@@ -225,7 +225,7 @@ export class EventService {
     const extension = mimeExtensions[image.mimetype];
 
     if (!extension) {
-      throw new Error('Unsupported image type');
+      throw new Error('Tipo de imagem não suportado');
     }
 
     const fileName = `${randomUUID()}${extension}`;
@@ -252,21 +252,26 @@ export class EventService {
     const owner = await this.authRepository.getUserById(ownerId);
 
     if (!owner) {
-      throw new ForbiddenException('An event must have a owner');
+      throw new ForbiddenException('Um evento precisa ter um proprietário');
     }
 
     const event =
       await this.eventsRepository.getEventByIdWithOwnerInfo(eventId);
 
     if (!event) {
-      throw new NotFoundException('Event not found');
+      throw new NotFoundException('Evento não encontrado');
     }
 
     if (ownerId !== event.owner.id) {
-      throw new ForbiddenException("The current user doesn't own this event");
+      throw new ForbiddenException(
+        'O usuário atual não é o proprietário deste evento.',
+      );
     }
 
-    let imageUrl = 'https://i.ibb.co/pvnYzhb4/fundo.jpg';
+    // Defaults to default image
+    //let imageUrl = 'https://i.ibb.co/pvnYzhb4/fundo.jpg';
+    // Defaults to previous image
+    let imageUrl = event.imageUrl;
     if (image) {
       const prevImageUrl = event.imageUrl;
       if (prevImageUrl) {
@@ -282,21 +287,27 @@ export class EventService {
 
     if (params.maxSlots < event.volunteers_max) {
       throw new BadRequestException(
-        'The maximum number of slots cannot be reduced.',
+        'O número máximo de vagas não pode ser reduzido',
       );
     }
 
-    if (params.endDate < event.volunteers_subscription_deadline_date) {
+    const endDate = new Date(params.endDate);
+
+    if (endDate < event.volunteers_subscription_deadline_date) {
       throw new BadRequestException(
-        'The event end date cannot be moved to an earlier date.',
+        'A data limite para inscrições não pode ser adiantada',
       );
     }
+
+    const date = new Date(params.startDate);
+    const [hours, minutes] = params.startTime.split(':').map(Number);
+    date.setHours(hours, minutes, 0, 0);
 
     event.title = params.title;
     event.description = params.description;
     event.place = params.place;
     event.volunteers_max = params.maxSlots;
-    event.date = params.startDate;
+    event.date = date;
     event.volunteers_subscription_deadline_date = params.endDate;
     event.imageUrl = imageUrl;
 
@@ -324,7 +335,7 @@ export class EventService {
     const owner = await this.authRepository.getUserById(ownerId);
 
     if (!owner) {
-      throw new ForbiddenException('An event must have a owner');
+      throw new ForbiddenException('Um evento deve ter um proprietário');
     }
 
     const event = await this.eventsRepository.registerEvent(
@@ -400,7 +411,7 @@ export class EventService {
       await this.eventsRepository.getEventByIdWithOwnerInfo(eventId);
 
     if (!event) {
-      throw new NotFoundException('Event not found');
+      throw new NotFoundException('Evento não encontrado');
     }
 
     const owns = event.owner.id == userId;

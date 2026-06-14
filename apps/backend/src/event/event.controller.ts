@@ -1,6 +1,5 @@
 import {
   Body,
-  Put,
   Controller,
   Get,
   Param,
@@ -40,6 +39,7 @@ import { ZodValidationPipe } from '../shared/pipes/zod-validation.pipe';
 import {
   FetchEventDetailsRequestDTO,
   FetchEventDetailsRequestSchema,
+  FetchEventDetailsResponseDTO,
 } from '@project/shared/src/dtos/event/fetch-event-details.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedRequest } from '../auth/interfaces/authenticated-request.interface';
@@ -153,14 +153,14 @@ export class EventController {
   }
 
   @UseGuards(AuthGuard)
-  @Put(':eventId')
+  @Patch(':eventId')
   @UseInterceptors(FileInterceptor('image'))
   async updateEvent(
     @Param('eventId') eventId: string,
     @Request() req: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: RegisterEventRequestDTO,
-  ): Promise<RegisterEventResponseDTO> {
+  ): Promise<FetchEventDetailsResponseDTO> {
     const validation = RegisterEventRequestSchema.safeParse({
       ...body,
       image: file,
@@ -175,16 +175,9 @@ export class EventController {
 
     const ownerId = Number(req['user'].sub);
 
-    const id = await this.eventsService.updateEvent(
-      body,
-      ownerId,
-      eventId,
-      file,
-    );
+    await this.eventsService.updateEvent(body, ownerId, eventId, file);
 
-    return {
-      token: id,
-    };
+    return this.eventsService.fetchEventDetails({ eventId });
   }
 
   @Post('subscribe')

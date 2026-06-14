@@ -98,4 +98,25 @@ export class HttpClient {
 
         return response.json();
     }
+
+    async patchFormData<T>(endpoint: string, body: FormData): Promise<T> {
+        const token = this._getToken();
+
+        const response = await fetch(`${this.baseUrl}${endpoint}`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': token ? `Bearer ${token}` : '',
+            },
+            body: body,
+        });
+        if (response.status === 401) {
+            HttpClient.clearAuthSession();
+        }
+        if (!response.ok) {
+            const error = await response.json() as AppError;
+            throw new AppError(error.message, error.error, error.statusCode);
+        }
+
+        return response.json();
+    }
 }
