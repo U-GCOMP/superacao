@@ -1,7 +1,9 @@
 import {
   FetchEventDetailsResponseDTO,
+  FetchEventDetailsResponseSchema,
   RegisterEventRequestSchema,
 } from '@project/shared';
+import { AppError, HttpClient } from '../../../lib/http-client';
 
 export interface EditEventActionState {
   success: boolean;
@@ -41,41 +43,23 @@ export const editEventAction = async (
   }
 
   try {
-    // const httpClient = HttpClient.getInstance();
+    const httpClient = HttpClient.getInstance();
 
-    // const response = await httpClient.patch<FetchEventDetailsResponseDTO>(
-    //   `/events/${eventId}`,
-    //   formData,
-    // );
+    const response = await httpClient.patchFormData<FetchEventDetailsResponseDTO>(
+      `/events/${eventId}`,
+      formData,
+    );
 
-    // const event: FetchEventDetailsResponseDTO = response;
-    // const parsedEvent = FetchEventDetailsResponseSchema.parse(event);
-    
-    // TODO: Substituir mockedData por valor retornado do backend
-    const mockedData: FetchEventDetailsResponseDTO = {
-        id: eventId,
-        title: String(title),
-        description: String(description),
-        place: String(place),
-        date: new Date(String(startDate)),
-        subscriptionDeadlineDate: new Date(String(endDate)),
-        maxVolunteers: Number(maxSlots),
-        volunteersCount: 0,
-        imageUrl: 'https://i.ibb.co/pvnYzhb4/fundo.jpg',
-        status: 'SCHEDULED',
-        organizer: {
-            id: Number(JSON.parse(localStorage.getItem('@Project:user')!)['sub']),
-            name: 'Organizador Exemplo',
-        }
-    }
+    const event: FetchEventDetailsResponseDTO = response;
+    const parsedEvent = FetchEventDetailsResponseSchema.parse(event);
 
     return {
       success: true,
       message: 'Evento atualizado com sucesso!',
-      event: mockedData,
+      event: parsedEvent,
     };
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof AppError) {
       return {
         success: false,
         message: error.message,
