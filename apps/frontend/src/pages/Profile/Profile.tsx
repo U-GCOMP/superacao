@@ -40,6 +40,11 @@ export const Profile = () => {
             } catch (error) {
                 if (error instanceof AppError) {
                     if (error.statusCode === 404) {
+                        if (!isOwnProfile) {
+                            navigate(AppRoutes.USER_NOT_FOUND, { replace: true });
+                            return;
+                        }
+
                         HttpClient.clearAuthSession();
                         
                     } else {
@@ -53,7 +58,7 @@ export const Profile = () => {
         };
 
         fetchProfileData();
-    }, [id]);
+    }, [id, navigate, isOwnProfile]);
 
     const onAvatarUpdated = (imageURL: string) => {
         setProfileData((currentProfile) => {

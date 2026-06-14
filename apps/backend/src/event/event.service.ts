@@ -362,7 +362,7 @@ export class EventService {
       throw new ConflictException('Esse evento já ocorreu ou está cancelado');
     }
 
-    if (event.volunteers_count > event?.volunteers_max) {
+    if (event.volunteers_count >= event?.volunteers_max) {
       throw new ConflictException('Esse evento está lotado');
     }
 
