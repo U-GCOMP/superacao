@@ -43,11 +43,15 @@ export const EventCarousel = ({ events }: EventCarouselProps) => {
 
 const EventCarouselItem = ({ event }: { event: FetchEventListItemResponseDTO }) => {
     const navigate = useNavigate();
+
+    const imageUrl = event.imageUrl && !event.imageUrl.startsWith('http')
+          ? `http://localhost:3000/events/image/${event.imageUrl}`
+          : (event.imageUrl ?? 'https://i.ibb.co/pvnYzhb4/fundo.jpg')
     
     return (
         <button className={styles.card} onClick={() => navigate(generatePath(AppRoutes.DETAIL_EVENT, { id: event.eventId }))}>
             <div className={styles.cardContent}>
-                <img src={event.imageUrl} alt="" role='presentation' />
+                <img src={imageUrl} alt="" role='presentation' />
                 <div className={styles.cardInfo}>
                     <p>{event.description}</p>
                 </div>

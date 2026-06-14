@@ -61,6 +61,7 @@ export const EventDetails = () => {
   }[]>([]);
 
   const isOwner = event?.organizer.id === loggedUserId;
+  const isFull = (event?.volunteersCount ?? 0) >= (event?.maxVolunteers ?? 0);
 
   const subscribeFn = async () => {
     if (isSubscribed) {
@@ -422,7 +423,7 @@ export const EventDetails = () => {
           <div className={styles.subscribeBtn}>
             <Button
               buttonStyle="terciary"
-              disabled={isOwner || isCompleted || isCanceled || isSubscribed}
+              disabled={isOwner || isCompleted || isCanceled || isSubscribed || isFull}
               onClick={subscribeFn}
               text={
                 isCanceled || isCompleted
