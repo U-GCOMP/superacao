@@ -156,7 +156,7 @@ export class EventRepository {
     const expiredEvents = await this.ormRepository.find({
       where: {
         status: 'SCHEDULED',
-        date: LessThanOrEqual(new Date()),
+        volunteers_subscription_deadline_date: LessThanOrEqual(new Date()),
       },
     });
 
