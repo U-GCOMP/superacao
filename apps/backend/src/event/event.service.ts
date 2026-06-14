@@ -292,6 +292,7 @@ export class EventService {
     }
 
     const endDate = new Date(params.endDate);
+    endDate.setUTCHours(23, 59, 59);
 
     if (endDate < event.volunteers_subscription_deadline_date) {
       throw new BadRequestException(

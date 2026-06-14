@@ -328,8 +328,18 @@ export const EventDetails = () => {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
+                  hour: 'numeric',
+                  minute: 'numeric',
                 })}`}
               </h4>
+              <h4>
+                {`Data término: ${new Date(event.subscriptionDeadlineDate).toLocaleDateString('pt-BR', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                })}`}
+              </h4>
+
               {isCanceled && (
                 <span className={styles.canceledBadge}>EVENTO CANCELADO</span>
               )}
