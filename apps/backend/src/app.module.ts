@@ -7,6 +7,7 @@ import { MailModule } from './mail/mail.module';
 import { EventModule } from './event/event.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { join } from 'path';
       rootPath: join(__dirname, '..', 'uploads', 'users'),
       serveRoot: '/users/image',
     }),
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}

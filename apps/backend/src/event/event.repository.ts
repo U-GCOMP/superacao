@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull, Repository, LessThanOrEqual } from 'typeorm';
 import { Event } from './entities/event.entity';
 import {
   FetchEventListQueryParametersDTO,
@@ -150,5 +150,16 @@ export class EventRepository {
       .getCount();
 
     return count > 0;
+  }
+
+  async getExpiredEvents(): Promise<Event[] | null> {
+    const expiredEvents = await this.ormRepository.find({
+      where: {
+        status: 'SCHEDULED',
+        date: LessThanOrEqual(new Date()),
+      },
+    });
+
+    return expiredEvents;
   }
 }
