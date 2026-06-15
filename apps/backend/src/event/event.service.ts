@@ -37,6 +37,7 @@ import { mkdir, writeFile, unlink } from 'fs/promises';
 import { existsSync } from 'fs';
 import { EventCategoriesEnum } from './enums/event-category.enum';
 import { WORD_CLOUD_BLACK_LIST } from './constants/word-cloud-black-list';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class EventService {
@@ -625,5 +626,23 @@ export class EventService {
       .map(([word, count]) => ({ word, count }));
 
     return result;
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async handleAutoCompleteEvents(): Promise<void> {
+    console.log('[Cron Job] Verificando eventos vencidos para conclusão...');
+
+    const expiredEvents =
+      (await this.eventsRepository.getExpiredEvents()) ?? [];
+
+    if (expiredEvents.length === 0) return;
+
+    for (const event of expiredEvents) {
+      event.status = 'COMPLETED';
+      await this.eventsRepository.saveEvent(event);
+      console.log(
+        `[Cron Job] Evento "${event.title}" (${event.id}) concluído automaticamente.`,
+      );
+    }
   }
 }
