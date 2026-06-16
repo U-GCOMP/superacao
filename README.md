@@ -6,11 +6,12 @@
 # How to run
 1. Clone locally the main branch;
 2. Have docker desktop, pnpm and node installed on your machine;
-3. Run on main directory:
+3. Create inside apps/backend a .env file and copy all the contents from .env.example inside this new file;
+4. Run on main directory:
 ```bash
 pnpm install
 ```
-4. Change directory to apps/backend and run all the appropriate database related scripts:
+5. Change directory to apps/backend and run all the appropriate database related scripts:
 ```bash
 docker compose up -d
 ```
@@ -20,7 +21,7 @@ pnpm typeorm migration:run
 ```bash
 pnpm run seed
 ```
-5. Change directory back into main directory and run:
+6. Change directory back into main directory and run:
 ```bash
 pnpm run dev
 ```
