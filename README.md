@@ -1,6 +1,6 @@
 # Jorge (professor)
 - Documentation: https://drive.google.com/drive/folders/13i6HHmDM3tgAwozobs6Q-L0VLLXL3dwW?usp=sharing
-- Prototype: https://www.figma.com/files/team/1304939853512937627/project/128429033?fuid=1291144248627052129
+- Prototype: https://www.figma.com/team_invite/redeem/1HKeZ7PpqehU7E86RkGiae?t=cIl7NCsH8ZGLDxCO-21
 - Activity tracking: https://superacao-unesp.atlassian.net/jira/software/projects/SCRUM/boards/1
 
 # How to run
