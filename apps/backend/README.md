@@ -13,6 +13,12 @@ Executes all pending migrations against the database.
 pnpm typeorm migration:run
 ```
 
+## Run seed
+Executes seed to populate database, in order to facilitate testing
+```bash
+pnpm run seed
+```
+
 ## Start containers
 Starts all services defined in `docker-compose.yml` in detached mode.
 
