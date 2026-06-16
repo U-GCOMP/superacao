@@ -5,7 +5,7 @@
 
 # How to run
 1. Clone locally the main branch;
-2. Have docker desktop and pnpm installed on your machine;
+2. Have docker desktop, pnpm and node installed on your machine;
 3. Run on main directory:
 ```bash
 pnpm install
